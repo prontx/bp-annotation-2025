@@ -7,9 +7,6 @@ import { MenuButton } from "./style/MenuButton";
 import { MenuItems } from "./style/MenuItems";
 import "@reach/menu-button/styles.css";
 
-// q: what should DropdownProps extend?
-// a: probably ButtonProps, use React.HTMLAttributes<HTMLButtonElement>
-
 interface DropdownProps extends React.HTMLAttributes<typeof Menu> {
     variant: "text" | "icon" | "menu",
     selectedOption: string,
@@ -25,7 +22,7 @@ const Button: FC<DropdownProps> = ({variant, selectedOption, options, ...props})
                     <MenuPopover position={positionMatchWidth}>
                         <MenuItems>
                             {options.map((option) => (
-                                option !== selectedOption ? <MenuItem onSelect={() => {}}>{option}</MenuItem> : <></>
+                                option !== selectedOption ? <MenuItem key={option} onSelect={() => {}}>{option}</MenuItem> : null
                                 // TODO: change state onSelect
                             ))}
                         </MenuItems>
