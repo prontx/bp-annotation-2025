@@ -43,7 +43,11 @@ export const playbackSlice = createSlice({
             state.currentTime += 1
         },
         skipBackward: (state) => {
-            state.currentTime -= 1
+            if (state.currentTime < 1){
+                state.currentTime = 0
+            } else {
+                state.currentTime -= 1
+            }
         },
         skipToStart: (state) => {
             state.currentTime = 0
