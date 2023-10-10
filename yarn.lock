@@ -2875,6 +2875,11 @@ vite@^4.4.5:
   optionalDependencies:
     fsevents "~2.3.2"
 
+wavesurfer.js@^7.3.4:
+  version "7.3.4"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.3.4.tgz#294a322b70ae3748f59bc9b0e9de92413f21f49c"
+  integrity sha512-x2Ue4Dh+4RoaWay3LOLHhXgkdxPAIoC/BcbXh0yk8WNhQH2NboPoa52XXoCo4jEfjSe1bc7nxuM5vBIxUMZyBA==
+
 which@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/which/-/which-2.0.2.tgz#7c6a8dd0a636a0327e10b59c9286eee93f3f51b1"

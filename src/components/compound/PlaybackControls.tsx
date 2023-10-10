@@ -1,13 +1,12 @@
 import { FC, useState } from "react";
 
 // state management
+import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../redux/hooks";
-import { play, pause, skipBackward, skipForward, skipToEnd, skipToStart, setTime } from "../../redux/slices/playbackSlice";
+import { play, pause, skipBy, setTime, selectLength, selectIsPlaying, selectCurrentTimeValue } from "../../redux/slices/playbackSlice";
 
 // styles
 import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
 
 // components
 import Button from "../basic/Button/Button";
@@ -39,8 +38,10 @@ const PlaybackControlsContainer = styled.div`
  */
 const PlaybackControls : FC = () => {
     const displatch = useAppDispatch()
-    const { isPlaying, currentTime } = useSelector((state: RootState) => state.playback)
-    const [timeString, setTimeString ] = useState(timeToFormatedString(currentTime))
+    const isPlaying = useSelector(selectIsPlaying)
+    const length = useSelector(selectLength)
+    const currentTimeValue = useSelector(selectCurrentTimeValue)
+    const [timeString, setTimeString ] = useState(timeToFormatedString(currentTimeValue))
     const [isFocused, setIsFocused] = useState(false)
     
     /**
@@ -56,7 +57,7 @@ const PlaybackControls : FC = () => {
         // if the time string is valid, update global state
         const possibleNumber = formatedStringToTime(value) // returns NaN if not a valid time string
         if (!isNaN(possibleNumber)){
-            displatch(setTime(possibleNumber))
+            displatch(setTime({value: possibleNumber, changedBy: "controlsInput"}))
         }
     }
     
@@ -69,9 +70,9 @@ const PlaybackControls : FC = () => {
      * 
      * @returns {string} formated time string
      */
-    const getTimeString = () => {
+    const getCurrentTimeString = () => {
         if (!isFocused) {
-            const globalTimeAsString = timeToFormatedString(currentTime)
+            const globalTimeAsString = timeToFormatedString(currentTimeValue)
             if (globalTimeAsString !== timeString){
                 setTimeString(globalTimeAsString)
             }
@@ -80,24 +81,34 @@ const PlaybackControls : FC = () => {
         return timeString
     }
     
-    // TODO: load audio length from metadata
-
     return (
         <PlaybackControlsContainer>
-            <Button variant="icon" onClick={() => displatch(skipToStart())}><Icon variant="skipToStart" /></Button>
-            <Button variant="icon" onClick={() => displatch(skipBackward())}><Icon variant="skipBackward" /></Button>
+            <Button variant="icon" onClick={() => displatch(setTime({value: 0, changedBy: "controlsButton"}))}>
+                <Icon variant="skipToStart" />
+            </Button>
+            <Button variant="icon" onClick={() => displatch(skipBy({value: -1, changedBy: "controlsButton"}))}>
+                <Icon variant="skipBackward" />
+            </Button>
             { isPlaying
-                ? <Button variant="icon" onClick={() => displatch(pause())}><Icon variant="pause" /></Button>
-                : <Button variant="icon" onClick={() => displatch(play())}><Icon variant="play" /></Button> }
-            <Button variant="icon" onClick={() => displatch(skipForward())}><Icon variant="skipForward" /></Button>
-            <Button variant="icon" onClick={() => displatch(skipToEnd())}><Icon variant="skipToEnd" /></Button>
+                ? <Button variant="icon" onClick={() => displatch(pause())}>
+                    <Icon variant="pause" />
+                </Button>
+                : <Button variant="icon" onClick={() => displatch(play())}>
+                    <Icon variant="play" />
+                </Button> }
+            <Button variant="icon" onClick={() => displatch(skipBy({value: 1, changedBy: "controlsButton"}))}>
+                <Icon variant="skipForward" />
+            </Button>
+            <Button variant="icon" onClick={() => displatch(setTime({value: length, changedBy: "controlsButton"}))}>
+                <Icon variant="skipToEnd" />
+            </Button>
             <p>
                 <SubtleInput type="text"
-                    value={getTimeString()}
+                    value={getCurrentTimeString()}
                     onChange={(e) => handleInputChange(e.target.value)}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)} >
-                </SubtleInput>/ <span>0:00:42.5</span>
+                </SubtleInput>/ {length ? timeToFormatedString(length) : ""}
             </p>
         </PlaybackControlsContainer>
     );

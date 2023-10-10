@@ -2,7 +2,7 @@ export const timeToFormatedString = (time: number): string => {
     const hours = Math.floor(time / 3600)
     const minutes = Math.floor((time - hours * 3600) / 60)
     const seconds = Math.floor(time - hours * 3600 - minutes * 60)
-    const tenths = Math.round((time - Math.floor(time)) * 10)
+    const tenths = Math.floor((time - Math.floor(time)) * 10)
 
     // Pad minutes and seconds with zeros if needed
     const paddedMinutes = minutes.toString().padStart(2, '0');
