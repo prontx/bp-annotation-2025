@@ -20,6 +20,7 @@ const WaveformContainer = styled.div`
         border-bottom-right-radius: 4px;
         background: ${({theme}) => theme.gray80};
         pointer-events: none;
+        min-height: 16px;
     }
 `
 

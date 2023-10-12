@@ -7,8 +7,9 @@ import { setTime, setLength } from "../../../redux/slices/playbackSlice";
 
 // hooks
 import usePlayPause from "./usePlayPause"
-import useCurrentTimeChanges from "./useCurrentTimeChanges"
+import useSetTime from "./useSetTime"
 import useSetSpeed from "./useSetSpeed"
+import useSetVolume from "./useSetVolume";
 
 // wavesurfer
 import WaveSurfer from "wavesurfer.js";
@@ -29,8 +30,11 @@ const Waveform : FC = () => {
     
     // initialize wavesurfer and all plugins
     useEffect(() => {
+        // create minimap with regions
+        const regions = RegionsPlugin.create()
+        const minimap = Minimap.create({ ...minimapOptions, plugins: [ regions ] })
         if (!wavesurfer.current) {
-            wavesurfer.current = WaveSurfer.create({ ...wavesurferOptions, plugins: [Timeline.create(timelineOptions)] })
+            wavesurfer.current = WaveSurfer.create({ ...wavesurferOptions, plugins: [Timeline.create(timelineOptions), minimap] })
         }
         
         const unsubscribe = wavesurfer.current.on('timeupdate', (currentTime) => dispatch(setTime({value: currentTime, changedBy: "wavesurfer"})))
@@ -39,27 +43,18 @@ const Waveform : FC = () => {
             dispatch(setLength(wavesurfer.current.getDuration()))
         })
 
-        // create minimap with regions
-        const regions = RegionsPlugin.create()
-        const minimap = Minimap.create({ ...minimapOptions, plugins: [ regions ] })
-        wavesurfer.current.registerPlugin(minimap)
         minimap.on("ready", () => {
-            regions.addRegion({ start: 100, end: 300, color: "rgba(168, 168, 168, 0.33)" })
+            regions.addRegion({ start: 0, end: 100 })
         })
 
-        return () => {
-            unsubscribe()
-            // undergister all plugins to prevent rerenders
-            wavesurfer.current?.getActivePlugins().forEach((plugin) => {
-                plugin.destroy()
-            })
-        }
+        return () => { unsubscribe() }
     }, [wavesurfer])
 
     // react to global state changes
     usePlayPause(wavesurfer)
-    useCurrentTimeChanges(wavesurfer)
+    useSetTime(wavesurfer)
     useSetSpeed(wavesurfer)
+    useSetVolume(wavesurfer)
 
     return <WaveformContainer>
         <MinimapContainer>

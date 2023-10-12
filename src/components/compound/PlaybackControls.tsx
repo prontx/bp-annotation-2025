@@ -37,7 +37,7 @@ const PlaybackControlsContainer = styled.div`
  * @returns {JSX.Element} PlaybackControls component
  */
 const PlaybackControls : FC = () => {
-    const displatch = useAppDispatch()
+    const dispatch = useAppDispatch()
     const isPlaying = useSelector(selectIsPlaying)
     const length = useSelector(selectLength)
     const currentTimeValue = useSelector(selectCurrentTimeValue)
@@ -57,7 +57,7 @@ const PlaybackControls : FC = () => {
         // if the time string is valid, update global state
         const possibleNumber = formatedStringToTime(value) // returns NaN if not a valid time string
         if (!isNaN(possibleNumber)){
-            displatch(setTime({value: possibleNumber, changedBy: "controlsInput"}))
+            dispatch(setTime({value: possibleNumber, changedBy: "controlsInput"}))
         }
     }
     
@@ -83,23 +83,23 @@ const PlaybackControls : FC = () => {
     
     return (
         <PlaybackControlsContainer>
-            <Button variant="icon" onClick={() => displatch(setTime({value: 0, changedBy: "controlsButton"}))}>
+            <Button variant="icon" onClick={() => dispatch(setTime({value: 0, changedBy: "controlsButton"}))}>
                 <Icon variant="skipToStart" />
             </Button>
-            <Button variant="icon" onClick={() => displatch(skipBy({value: -1, changedBy: "controlsButton"}))}>
+            <Button variant="icon" onClick={() => dispatch(skipBy({value: -1, changedBy: "controlsButton"}))}>
                 <Icon variant="skipBackward" />
             </Button>
             { isPlaying
-                ? <Button variant="icon" onClick={() => displatch(pause())}>
+                ? <Button variant="icon" onClick={() => dispatch(pause())}>
                     <Icon variant="pause" />
                 </Button>
-                : <Button variant="icon" onClick={() => displatch(play())}>
+                : <Button variant="icon" onClick={() => dispatch(play())}>
                     <Icon variant="play" />
                 </Button> }
-            <Button variant="icon" onClick={() => displatch(skipBy({value: 1, changedBy: "controlsButton"}))}>
+            <Button variant="icon" onClick={() => dispatch(skipBy({value: 1, changedBy: "controlsButton"}))}>
                 <Icon variant="skipForward" />
             </Button>
-            <Button variant="icon" onClick={() => displatch(setTime({value: length, changedBy: "controlsButton"}))}>
+            <Button variant="icon" onClick={() => dispatch(setTime({value: length, changedBy: "controlsButton"}))}>
                 <Icon variant="skipToEnd" />
             </Button>
             <p>

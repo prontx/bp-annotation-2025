@@ -3,7 +3,7 @@ import { useSelector } from "react-redux"
 import WaveSurfer from "wavesurfer.js"
 import { selectCurrentTimeChangedBy, selectCurrentTimeValue } from "../../../redux/slices/playbackSlice";
 
-const useCurrentTimeChanges = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
+const useSetTime = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
     const currentTimeValue = useSelector(selectCurrentTimeValue)
     const currentTimeChangedBy = useSelector(selectCurrentTimeChangedBy)
 
@@ -14,8 +14,4 @@ const useCurrentTimeChanges = (wavesurfer: React.MutableRefObject<WaveSurfer | n
     }, [currentTimeValue, currentTimeChangedBy])
 }
 
-export default useCurrentTimeChanges
-
-// git reset --soft HEAD
-// git add .
-// git commit -m "commit message"
+export default useSetTime
