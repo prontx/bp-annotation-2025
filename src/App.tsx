@@ -1,4 +1,4 @@
-import Controls from "./components/compound/Controls"
+import Controls from "./components/compound/Controls/Controls"
 import Waveform from "./components/compound/Waveform/Waveform"
 
 import styled from "styled-components"

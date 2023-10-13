@@ -1,15 +1,16 @@
 import { FC } from "react";
 
 // state management
-import { useAppDispatch } from "../../redux/hooks";
-import { setVolume } from "../../redux/slices/playbackSlice";
+import { useAppDispatch } from "../../../redux/hooks";
+import { setVolume } from "../../../redux/slices/playbackSlice";
 
 // styles
 import styled from "styled-components";
+import VolumeMuteRoundedIcon from '@mui/icons-material/VolumeMuteRounded';
+import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded';
 
 // components
-import Icon from "../basic/Icon/Icon";
-import Slider from "../basic/Slider/Slider";
+import Slider from "../../basic/Slider/Slider";
 
 const VolumeControlsContainer = styled.div`
     display: flex;
@@ -17,16 +18,12 @@ const VolumeControlsContainer = styled.div`
     gap: 4px;
 
     p {
-        margin-right: 12px;
-    }
-
-    .icon {
-        fill: ${({theme}) => theme.textSecondary};
-        stroke: ${({theme}) => theme.textSecondary};
+        margin-bottom: 2px;
+        margin-right: 4px;
     }
 
     .space {
-        margin-left: 16px;
+        margin-left: 12px;
     }
 `
 
@@ -40,9 +37,9 @@ const VolumeControls : FC = () => {
     return (
         <VolumeControlsContainer>
             <p>Volume:</p>
-            <Icon className="icon" variant="volumeMute" />
+            <VolumeMuteRoundedIcon />
             <Slider min={0} max={100} defaultValue={100} onChange={(val) => handleSliderChange(val)}/>
-            <Icon className="icon space" variant="volumeFull" />
+            <VolumeUpRoundedIcon className="space" />
         </VolumeControlsContainer>
     );
 }

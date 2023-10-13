@@ -3,7 +3,7 @@ import WaveSurfer from "wavesurfer.js"
 import { selectSpeed } from "../../../redux/slices/playbackSlice"
 import { useSelector } from "react-redux"
 
-const usePlayPause = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
+const useSetSpeed = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
     const speed = useSelector(selectSpeed)
 
     // listen for playback changes
@@ -12,4 +12,4 @@ const usePlayPause = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => 
     }, [speed])
 }
 
-export default usePlayPause
+export default useSetSpeed

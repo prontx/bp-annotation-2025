@@ -4,12 +4,16 @@ import { FC, useRef, useEffect } from "react";
 // state management
 import { useAppDispatch } from "../../../redux/hooks";
 import { setTime, setLength } from "../../../redux/slices/playbackSlice";
+import { useSelector } from "react-redux";
+import { selectZoom } from "../../../redux/slices/playbackSlice";
 
 // hooks
 import usePlayPause from "./usePlayPause"
-import useSetTime from "./useSetTime"
+import useReactToTimeChanges from "./useReactToTimeChanges"
 import useSetSpeed from "./useSetSpeed"
 import useSetVolume from "./useSetVolume";
+// import useZoomByRegion from "./useZoomByRegion";
+import useSetZoom from "./useSetZoom";
 
 // wavesurfer
 import WaveSurfer from "wavesurfer.js";
@@ -26,35 +30,53 @@ import MinimapContainer from "./MinimapContainer"
 
 const Waveform : FC = () => {
     const wavesurfer = useRef<WaveSurfer | null>(null)
+    const minimapRegions = useRef<RegionsPlugin>(RegionsPlugin.create())
     const dispatch = useAppDispatch()
+    const zoom = useSelector(selectZoom)
     
     // initialize wavesurfer and all plugins
     useEffect(() => {
-        // create minimap with regions
-        const regions = RegionsPlugin.create()
-        const minimap = Minimap.create({ ...minimapOptions, plugins: [ regions ] })
+        const minimap = Minimap.create({ ...minimapOptions, plugins: [ minimapRegions.current ] })
+        
         if (!wavesurfer.current) {
-            wavesurfer.current = WaveSurfer.create({ ...wavesurferOptions, plugins: [Timeline.create(timelineOptions), minimap] })
+            wavesurfer.current = WaveSurfer.create({
+                ...wavesurferOptions,
+                plugins: [
+                    Timeline.create(timelineOptions),
+                    RegionsPlugin.create(),
+                    minimap,
+                ]
+            })
         }
         
         const unsubscribe = wavesurfer.current.on('timeupdate', (currentTime) => dispatch(setTime({value: currentTime, changedBy: "wavesurfer"})))
+
+        // TODO: update minimap region start and timeline based on scroll 👆
+
         wavesurfer.current.once('ready', () => {
             if (!wavesurfer.current) return // TODO: throw error
+            wavesurfer.current.zoom(zoom)
             dispatch(setLength(wavesurfer.current.getDuration()))
+
+            // TODO: remove temp region
+            // const regions = wavesurfer.current.getActivePlugins()[1] as RegionsPlugin
+            // regions.addRegion({ start: 0, end: 100, color: "rgba(128, 128, 255, 0.4)" })
         })
 
         minimap.on("ready", () => {
-            regions.addRegion({ start: 0, end: 100 })
+            
         })
 
-        return () => { unsubscribe() }
+        return () => unsubscribe()
     }, [wavesurfer])
 
     // react to global state changes
     usePlayPause(wavesurfer)
-    useSetTime(wavesurfer)
+    useReactToTimeChanges(wavesurfer)
     useSetSpeed(wavesurfer)
     useSetVolume(wavesurfer)
+    // useZoomByRegion(wavesurfer, minimapRegions)
+    useSetZoom(wavesurfer)
 
     return <WaveformContainer>
         <MinimapContainer>

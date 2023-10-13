@@ -3,7 +3,7 @@ import { useSelector } from "react-redux"
 import WaveSurfer from "wavesurfer.js"
 import { selectCurrentTimeChangedBy, selectCurrentTimeValue } from "../../../redux/slices/playbackSlice";
 
-const useSetTime = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
+const useReactToTimeChanges = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
     const currentTimeValue = useSelector(selectCurrentTimeValue)
     const currentTimeChangedBy = useSelector(selectCurrentTimeChangedBy)
 
@@ -14,4 +14,4 @@ const useSetTime = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
     }, [currentTimeValue, currentTimeChangedBy])
 }
 
-export default useSetTime
+export default useReactToTimeChanges

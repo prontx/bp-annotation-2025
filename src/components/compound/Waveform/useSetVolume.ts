@@ -3,7 +3,7 @@ import WaveSurfer from "wavesurfer.js"
 import { selectVolume } from "../../../redux/slices/playbackSlice"
 import { useSelector } from "react-redux"
 
-const usePlayPause = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
+const useSetVolume = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
     const volume = useSelector(selectVolume)
 
     // listen for playback changes
@@ -12,4 +12,4 @@ const usePlayPause = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => 
     }, [volume])
 }
 
-export default usePlayPause
+export default useSetVolume

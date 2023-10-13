@@ -13,6 +13,7 @@ interface PlaybackState {
     speed: number,
     volume: number,
     length: number,
+    zoom: number
 }
 
 // initial state of the slice
@@ -25,7 +26,8 @@ const initialState: PlaybackState = {
     playingTo: null,
     speed: 1.0,
     volume: 1.0,
-    length: NaN
+    length: NaN,
+    zoom: 4
 }
 
 export const playbackSlice = createSlice({
@@ -63,10 +65,18 @@ export const playbackSlice = createSlice({
         setLength: (state, action: PayloadAction<number>) => {
             state.length = action.payload
         },
+        zoomOut: (state) => {
+            if (state.zoom < 8) return
+            state.zoom /= 2
+        },
+        zoomIn: (state) => {
+            if (state.zoom > 64) return
+            state.zoom *= 2
+        }
     },
 })
 
-export const { play, pause, playSegment, setTime, skipBy, setSpeed, setVolume, setLength } = playbackSlice.actions
+export const { play, pause, playSegment, setTime, skipBy, setSpeed, setVolume, setLength, zoomIn, zoomOut } = playbackSlice.actions
 
 export const selectIsPlaying = (state: RootState) => state.playback.isPlaying
 export const selectCurrentTimeValue = (state: RootState) => state.playback.currentTime.value
@@ -75,5 +85,6 @@ export const selectPlayingTo = (state: RootState) => state.playback.playingTo
 export const selectSpeed = (state: RootState) => state.playback.speed
 export const selectVolume = (state: RootState) => state.playback.volume
 export const selectLength = (state: RootState) => state.playback.length
+export const selectZoom = (state: RootState) => state.playback.zoom
 
 export default playbackSlice.reducer

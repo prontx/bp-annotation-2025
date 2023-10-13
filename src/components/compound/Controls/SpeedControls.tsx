@@ -1,11 +1,11 @@
 import { FC } from "react";
 
 import { useSelector } from "react-redux"
-import { useAppDispatch } from "../../redux/hooks";
-import { selectSpeed } from "../../redux/slices/playbackSlice";
-import { setSpeed } from "../../redux/slices/playbackSlice";
+import { useAppDispatch } from "../../../redux/hooks";
+import { selectSpeed } from "../../../redux/slices/playbackSlice";
+import { setSpeed } from "../../../redux/slices/playbackSlice";
 
-import Dropdown from "../basic/Dropdown/Dropdown";
+import Dropdown from "../../basic/Dropdown/Dropdown";
 
 import styled from "styled-components";
 
