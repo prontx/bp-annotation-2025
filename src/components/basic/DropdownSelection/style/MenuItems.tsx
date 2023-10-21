@@ -4,9 +4,8 @@ import styled from "styled-components";
 import { MenuItems as BaseMenuItems } from "@reach/menu-button";
 
 export const MenuItems = styled(BaseMenuItems)`
-    ${clickableBaseStyles}
-    
-    background-color: ${({theme}) => theme.gray80};
+    background-color: transparent;
+    border: none;
     padding: 4px;
     
     [data-reach-menu-item] {
