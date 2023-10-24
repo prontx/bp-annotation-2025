@@ -8,6 +8,7 @@ import { setSpeed } from "../../../redux/slices/playbackSlice";
 import DropdownSelection from "../../basic/DropdownSelection/DropdownSelection";
 
 import styled from "styled-components";
+import Layer from "../../../style/Layer";
 
 const SpeedControlsContainer = styled.div`
     display: flex;
@@ -15,7 +16,7 @@ const SpeedControlsContainer = styled.div`
     gap: 16px;
 `
 
-const SpeedControls : FC = () => {
+const SpeedControls : FC<Layer> = ({layer}) => {
     const dispatch = useAppDispatch()
     const speed  = useSelector(selectSpeed)
 
@@ -26,7 +27,7 @@ const SpeedControls : FC = () => {
     return (
         <SpeedControlsContainer>
             <p>Speed:</p>
-            <DropdownSelection variant="text" onSelection={handleSpeedChange} initialState={speed} options={[1, 0.9, 0.8, 0.7, 0.6, 0.5]}/>
+            <DropdownSelection layer={layer} variant="text" onSelection={handleSpeedChange} initialState={speed} options={[1, 0.9, 0.8, 0.7, 0.6, 0.5]}/>
         </SpeedControlsContainer>
     );
 }

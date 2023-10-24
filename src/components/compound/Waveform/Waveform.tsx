@@ -27,8 +27,9 @@ import { wavesurferOptions, minimapOptions, timelineOptions } from "./wavesurfer
 // styles
 import WaveformContainer from "./WaveformContainer"
 import MinimapContainer from "./MinimapContainer"
+import Layer from "../../../style/Layer";
 
-const Waveform : FC = () => {
+const Waveform : FC<Layer> = ({layer}) => {
     const wavesurfer = useRef<WaveSurfer | null>(null)
     const minimapRegions = useRef<RegionsPlugin>(RegionsPlugin.create())
     const dispatch = useAppDispatch()
@@ -78,8 +79,8 @@ const Waveform : FC = () => {
     // useZoomByRegion(wavesurfer, minimapRegions)
     useSetZoom(wavesurfer)
 
-    return <WaveformContainer>
-        <MinimapContainer>
+    return <WaveformContainer layer={layer}>
+        <MinimapContainer layer={layer}>
             <div id="minimap"></div>
         </MinimapContainer>
         <div id="waveform"></div>

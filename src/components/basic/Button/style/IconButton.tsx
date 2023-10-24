@@ -1,20 +1,21 @@
 import styled from "styled-components";
 import { clickableBaseStyles } from "../../../../style/clickableBaseStyles";
+import Layer from "../../../../style/Layer";
 
-export const IconButton = styled.button`
+export const IconButton = styled.button<Layer>`
     ${clickableBaseStyles}
 
     display: flex;
     padding: 4px 8px;
 
-    background-color: ${({theme}) => theme.gray80};
+    background-color: ${({theme, layer}) => theme.layers[layer].background};
 
     &:hover, &:focus {
-        background-color: ${({theme}) => theme.gray80Hover};
+        background-color: ${({theme, layer}) => theme.layers[layer].hover};
     }
 
     &:active {
-        background-color: ${({theme}) => theme.gray70};
+        background-color: ${({theme, layer}) => theme.layers[layer].active};
     }
 
     & svg {

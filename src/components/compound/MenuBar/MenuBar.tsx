@@ -7,8 +7,9 @@ import { MenuItems } from "../../basic/DropdownSelection/style/MenuItems"
 // import { positionMatchWidth } from "@reach/popover";
 
 import styled from "styled-components";
+import Layer from "../../../style/Layer"
 
-const MenuBarContainer = styled.div`
+const MenuBarContainer = styled.div<Layer>`
     display: grid;
     grid-template-areas:
         "logo title"
@@ -16,7 +17,7 @@ const MenuBarContainer = styled.div`
     grid-template-columns: auto 1fr;
     gap: 0 16px;
     padding: 8px 16px;
-    background: ${({theme}) => theme.gray100};
+    background: ${({theme, layer}) => theme.layers[layer].background};
 
     img {
         grid-area: logo;
@@ -34,63 +35,52 @@ const MenuBarContainer = styled.div`
 const MenuItemsContainer = styled.div`
     display: flex;
     gap: 8px;
-    
-    /* & > * {
-        padding: 2px 8px;
-        color: ${({theme}) => theme.textPrimary};
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    & > *:hover {
-        background-color: ${({theme}) => theme.gray100Hover};
-    } */
 
     & [data-reach-menu-popover] {
         z-index: 999;
     }
 `
 
-const MenuBar : FC = () => {
+const MenuBar : FC<Layer> = ({layer}) => {
     return (
-        <MenuBarContainer>
+        <MenuBarContainer layer={layer}>
             <img src="/src/assets/logo-spokendata-inverse.png" alt="SpokenData" />
             <h1>ATCO Lorem Ipsum Dolor 42</h1>
             <MenuItemsContainer>
                 <Menu>
-                    <MenuButton>File</MenuButton>
-                    <MenuPopover>
-                        <MenuItems>
+                    <MenuButton layer={layer}>File</MenuButton>
+                    <MenuPopover layer={layer+1}>
+                        <MenuItems layer={layer+1}>
                             <MenuItem onSelect={() => {}}>Undo</MenuItem>
                             <MenuItem onSelect={() => {}}>Redo</MenuItem>
                         </MenuItems>
-                        <MenuItems>
+                        <MenuItems layer={layer+1}>
                             <MenuItem onSelect={() => {}}>Auto Save</MenuItem>
                             <MenuItem onSelect={() => {}}>Save</MenuItem>
                             <MenuItem onSelect={() => {}}>Export</MenuItem>
                         </MenuItems>
-                        <MenuItems>
+                        <MenuItems layer={layer+1}>
                             <MenuItem onSelect={() => {}}>Close as DONE</MenuItem>
                             <MenuItem onSelect={() => {}}>Close as REFUSED</MenuItem>
                         </MenuItems>
-                        <MenuItems>
+                        <MenuItems layer={layer+1}>
                             <MenuItem onSelect={() => {}}>Shortcuts</MenuItem>
                         </MenuItems>
                     </MenuPopover>
                 </Menu>
                 <Menu>
-                    <MenuButton>Playback</MenuButton>
-                    <MenuPopover>
-                        <MenuItems>
+                    <MenuButton layer={layer}>Playback</MenuButton>
+                    <MenuPopover layer={layer+1}>
+                        <MenuItems layer={layer+1}>
                             <MenuItem onSelect={() => {}}>Pre-play [s]</MenuItem>
                             <MenuItem onSelect={() => {}}>Time Shift [s]</MenuItem>
                         </MenuItems>
                     </MenuPopover>
                 </Menu>
                 <Menu>
-                    <MenuButton>View</MenuButton>
-                    <MenuPopover>
-                        <MenuItems>
+                    <MenuButton layer={layer}>View</MenuButton>
+                    <MenuPopover layer={layer+1}>
+                        <MenuItems layer={layer+1}>
                             <MenuItem onSelect={() => {}}>Job Details</MenuItem>
                             <MenuItem onSelect={() => {}}>Speaker Labels</MenuItem>
                             <MenuItem onSelect={() => {}}>Sorted Waypoint-Callsign pairs</MenuItem>
@@ -98,9 +88,9 @@ const MenuBar : FC = () => {
                     </MenuPopover>
                 </Menu>
                 <Menu>
-                    <MenuButton>Help</MenuButton>
-                    <MenuPopover>
-                        <MenuItems>
+                    <MenuButton layer={layer}>Help</MenuButton>
+                    <MenuPopover layer={layer+1}>
+                        <MenuItems layer={layer+1}>
                             <MenuItem onSelect={() => {}}>Cheat Sheet</MenuItem>
                             <MenuItem onSelect={() => {}}>Annotation Manual</MenuItem>
                             <MenuItem onSelect={() => {}}>Some Other Manual</MenuItem>
@@ -108,7 +98,7 @@ const MenuBar : FC = () => {
                     </MenuPopover>
                 </Menu>
                 <Menu>
-                    <MenuButton>Open in old editor</MenuButton>
+                    <MenuButton layer={layer}>Open in old editor</MenuButton>
                 </Menu>
             </MenuItemsContainer>
         </MenuBarContainer>

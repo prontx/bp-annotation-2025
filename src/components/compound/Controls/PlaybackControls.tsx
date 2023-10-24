@@ -12,7 +12,8 @@ import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
 import SkipNextRoundedIcon from '@mui/icons-material/SkipNextRounded';
 import SkipPreviousRoundedIcon from '@mui/icons-material/SkipPreviousRounded';
 import FastForwardRoundedIcon from '@mui/icons-material/FastForwardRounded';
-import FastRewindRoundedIcon from '@mui/icons-material/FastRewindRounded'; 
+import FastRewindRoundedIcon from '@mui/icons-material/FastRewindRounded';
+import Layer from "../../../style/Layer";
 
 // components
 import Button from "../../basic/Button/Button";
@@ -39,7 +40,7 @@ const PlaybackControlsContainer = styled.div`
  * 
  * @returns {JSX.Element} PlaybackControls component
  */
-const PlaybackControls : FC = () => {
+const PlaybackControls : FC<Layer> = ({layer}) => {
     const dispatch = useAppDispatch()
     const isPlaying = useSelector(selectIsPlaying)
     const length = useSelector(selectLength)
@@ -86,27 +87,27 @@ const PlaybackControls : FC = () => {
     
     return (
         <PlaybackControlsContainer>
-            <Button variant="icon" onClick={() => dispatch(setTime({value: 0, changedBy: "controlsButton"}))}>
+            <Button layer={layer} variant="icon" onClick={() => dispatch(setTime({value: 0, changedBy: "controlsButton"}))}>
                 <FastRewindRoundedIcon />
             </Button>
-            <Button variant="icon" onClick={() => dispatch(skipBy({value: -1, changedBy: "controlsButton"}))}>
+            <Button layer={layer} variant="icon" onClick={() => dispatch(skipBy({value: -1, changedBy: "controlsButton"}))}>
                 <SkipPreviousRoundedIcon />
             </Button>
             { isPlaying
-                ? <Button variant="icon" onClick={() => dispatch(pause())}>
+                ? <Button layer={layer} variant="icon" onClick={() => dispatch(pause())}>
                     <PauseRoundedIcon />
                 </Button>
-                : <Button variant="icon" onClick={() => dispatch(play())}>
+                : <Button layer={layer} variant="icon" onClick={() => dispatch(play())}>
                     <PlayArrowRoundedIcon />
                 </Button> }
-            <Button variant="icon" onClick={() => dispatch(skipBy({value: 1, changedBy: "controlsButton"}))}>
+            <Button layer={layer} variant="icon" onClick={() => dispatch(skipBy({value: 1, changedBy: "controlsButton"}))}>
                 <SkipNextRoundedIcon />
             </Button>
-            <Button variant="icon" onClick={() => dispatch(setTime({value: length, changedBy: "controlsButton"}))}>
+            <Button layer={layer} variant="icon" onClick={() => dispatch(setTime({value: length, changedBy: "controlsButton"}))}>
                 <FastForwardRoundedIcon />
             </Button>
             <p>
-                <SubtleInput type="text"
+                <SubtleInput layer={layer} type="text"
                     value={getCurrentTimeString()}
                     onChange={(e) => handleInputChange(e.target.value)}
                     onFocus={() => setIsFocused(true)}

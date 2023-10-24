@@ -4,10 +4,10 @@ import MenuBar from "./components/compound/MenuBar/MenuBar"
 
 function App() {
     return <>
-        <MenuBar />
+        <MenuBar layer={0} />
         <div style={{margin: "0 16px"}}>
-            <Waveform />
-            <Controls />
+            <Waveform layer={1}/>
+            <Controls layer={1}/>
         </div>
     </>
 }

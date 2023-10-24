@@ -8,6 +8,7 @@ import { zoomIn, zoomOut } from "../../../redux/slices/playbackSlice";
 import styled from "styled-components";
 import ZoomInRoundedIcon from '@mui/icons-material/ZoomInRounded';
 import ZoomOutRoundedIcon from '@mui/icons-material/ZoomOutRounded';
+import Layer from "../../../style/Layer";
 
 // components
 import Button from "../../basic/Button/Button";
@@ -25,7 +26,7 @@ const ZoomControlsContainer = styled.div`
     }
 `
 
-const ZoomControls : FC = () => {
+const ZoomControls : FC<Layer> = ({layer}) => {
     const dispatch = useAppDispatch()
 
     // TODO: fix icons
@@ -33,10 +34,10 @@ const ZoomControls : FC = () => {
     return (
         <ZoomControlsContainer>
             <p>Zoom:</p>
-            <Button variant="icon" onClick={ () => dispatch(zoomIn()) }>
+            <Button layer={layer} variant="icon" onClick={ () => dispatch(zoomIn()) }>
                 <ZoomInRoundedIcon />
             </Button>
-            <Button variant="icon" onClick={ () => dispatch(zoomOut()) }>
+            <Button layer={layer} variant="icon" onClick={ () => dispatch(zoomOut()) }>
                 <ZoomOutRoundedIcon />
             </Button>
         </ZoomControlsContainer>

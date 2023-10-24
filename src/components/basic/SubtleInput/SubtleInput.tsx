@@ -1,22 +1,20 @@
 import styled from "styled-components";
 import { editableBaseStyles } from "../../../style/editableBaseStyles";
+import Layer from "../../../style/Layer";
 
-const SubtleInput = styled.input`
+const SubtleInput = styled.input<Layer>`
     ${editableBaseStyles}
-    background: transparent;
     font-size: 1rem;
     color: currentColor;
     padding: 2px 4px;
     display: inline;
     width: 80px;
+    background: ${({theme, layer}) => theme.layers[layer-1].background};
     
     &:hover, &:focus {
-        outline: 2px solid ${({theme}) => theme.gray90Hover};
+        background: ${({theme, layer}) => theme.layers[layer].background};
+        outline: 2px solid ${({theme, layer}) => theme.layers[layer].active};
         color: ${({theme}) => theme.textPrimary};
-    }
-
-    &:focus {
-        outline: 2px solid ${({theme}) => theme.gray80};
     }
 `
 

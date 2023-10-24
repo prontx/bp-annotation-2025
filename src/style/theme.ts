@@ -59,21 +59,29 @@ export const theme = {
     textPrimary: GRAY10,
     textSecondary: GRAY30,
 
-    "layer1": {
-        background: GRAY100,
-        hover: GRAY100HOVER,
-        active: GRAY90
-    },
-    "layer2": {
-        background: GRAY90,
-        hover: GRAY90HOVER,
-        active: GRAY80
-    },
-    "layer3": {
-        background: GRAY80,
-        hover: GRAY80HOVER,
-        active: GRAY70
-    },
+    layers: [
+        {
+            background: GRAY100,
+            hover: GRAY100HOVER,
+            active: GRAY90
+        },{
+            background: GRAY90,
+            hover: GRAY90HOVER,
+            active: GRAY80
+        },{
+            background: GRAY80,
+            hover: GRAY80HOVER,
+            active: GRAY70
+        },{
+            background: GRAY70,
+            hover: GRAY70HOVER,
+            active: GRAY60
+        },{
+            background: GRAY60,
+            hover: GRAY60HOVER,
+            active: GRAY50
+        }
+    ],
 
     speakerColors: ["#8FBA69", "#45BCCC", "#CA9FCA", "#E59C77", "#54BFA3", "#8DB0DE", "#E399A2", "#C5AC50"],
 

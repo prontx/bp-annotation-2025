@@ -6,6 +6,7 @@ import { MenuPopover } from "./style/MenuPopover";
 import { MenuButton } from "./style/MenuButton";
 import { MenuItems } from "./style/MenuItems";
 import "@reach/menu-button/styles.css";
+import Layer from "../../../style/Layer";
 
 interface DropdownSelectionProps extends React.HTMLAttributes<typeof Menu> {
     variant: "text" | "icon",
@@ -14,7 +15,7 @@ interface DropdownSelectionProps extends React.HTMLAttributes<typeof Menu> {
     options: number[]
 }
 
-const DropdownSelection: FC<DropdownSelectionProps> = ({variant, onSelection, initialState, options, ...props}) => {
+const DropdownSelection: FC<DropdownSelectionProps & Layer> = ({layer, variant, onSelection, initialState, options, ...props}) => {
     const [ value, setValue ] = useState(initialState)
     const [ choices, setChoices ] = useState(options.filter(option => option !== value))
 
@@ -26,9 +27,9 @@ const DropdownSelection: FC<DropdownSelectionProps> = ({variant, onSelection, in
 
     return (
         <Menu {...props}>
-            <MenuButton>{value+"x"}<span className="dropdownArrow" aria-hidden>▾</span></MenuButton>
-            <MenuPopover position={positionMatchWidth}>
-                <MenuItems>
+            <MenuButton layer={layer}>{value+"x"}<span className="dropdownArrow" aria-hidden>▾</span></MenuButton>
+            <MenuPopover layer={layer} position={positionMatchWidth}>
+                <MenuItems layer={layer}>
                     {choices.map((choice) => <MenuItem key={choice} onSelect={() => handleSelect(choice)}>{choice+"x"}</MenuItem>)}
                 </MenuItems>
             </MenuPopover>

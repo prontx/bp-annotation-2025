@@ -56,7 +56,6 @@ export const playbackSlice = createSlice({
             state.currentTime.changedBy = action.payload.changedBy
         },
         setSpeed: (state, action: PayloadAction<number>) => {
-            console.log(`setting speed: ${action.payload}`)
             state.speed = action.payload
         },
         setVolume: (state, action: PayloadAction<number>) => {

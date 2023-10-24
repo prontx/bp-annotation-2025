@@ -2,12 +2,13 @@ import { FC } from "react"
 import { IconButton } from "./style/IconButton";
 import { TextButton } from "./style/TextButton";
 
+import Layer from "../../../style/Layer";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant: string
 }
 
-const Button: FC<ButtonProps> = ({variant, ...props}) => {
+const Button: FC<ButtonProps & Layer> = ({variant, ...props}) => {
     switch(variant) {
         case "icon":
             return <IconButton {...props}></IconButton>

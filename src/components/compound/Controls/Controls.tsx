@@ -6,22 +6,23 @@ import VolumeControls from "./VolumeControls";
 import ZoomControls from "./ZoomControls";
 
 import styled from "styled-components";
+import Layer from "../../../style/Layer";
 
-const ControlsContainer = styled.div`
+const ControlsContainer = styled.div<Layer>`
     display: flex;
     justify-content: space-around;
     height: 48px;
     padding: 8px 16px;
     border-radius: 0 0 8px 8px;
-    background: ${({theme}) => theme.gray90};
+    background: ${({theme, layer}) => theme.layers[layer].background};
 `
 
-const Controls : FC = () => {
+const Controls : FC<Layer> = ({layer}) => {
     return (
-        <ControlsContainer>
-            <SpeedControls />
-            <ZoomControls />
-            <PlaybackControls />
+        <ControlsContainer layer={layer}>
+            <SpeedControls layer={layer+1}/>
+            <ZoomControls layer={layer+1} />
+            <PlaybackControls layer={layer+1} />
             <VolumeControls />
         </ControlsContainer>
     );

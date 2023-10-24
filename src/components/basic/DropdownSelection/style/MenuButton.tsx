@@ -2,34 +2,35 @@ import { FC } from "react";
 
 import { clickableBaseStyles } from "../../../../style/clickableBaseStyles";
 import styled from "styled-components";
+import Layer from "../../../../style/Layer"
 
 import { useMenuButtonContext } from "@reach/menu-button";
 import { MenuButton as BaseMenuButton, MenuButtonProps } from "@reach/menu-button";
 
-interface CustomMenuButtonProps {
-    isExpanded: boolean;
+interface CustomMenuButtonProps extends Layer {
+    isExpanded: boolean
 }
 
-const MenuButton2 = styled(BaseMenuButton)<CustomMenuButtonProps>`
+const StyledMenuButton = styled(BaseMenuButton)<CustomMenuButtonProps>`
     ${clickableBaseStyles}
 
-    background-color: ${({theme}) => theme.gray80};
+    background-color: ${({theme, layer}) => theme.layers[layer].background};
     color: ${({theme}) => theme.textSecondary};
     padding: 4px 8px;
     font-size: 1rem;
 
-    ${({isExpanded, theme}) => isExpanded && `
-        background-color: ${theme.gray80Hover};
+    ${({isExpanded, theme, layer}) => isExpanded && `
+        background-color: ${theme.layers[layer].hover};
         color: ${theme.textPrimary};
     `}
 
     &:hover, &:focus {
-        background-color: ${({theme}) => theme.gray80Hover};
+        background-color: ${({theme, layer}) => theme.layers[layer].hover};
         color: ${({theme}) => theme.textPrimary};
     }
 
     &:active {
-        background-color: ${({theme}) => theme.gray70};
+        background-color: ${({theme, layer}) => theme.layers[layer].active};
         color: ${({theme}) => theme.textPrimary};
     }
 
@@ -38,10 +39,10 @@ const MenuButton2 = styled(BaseMenuButton)<CustomMenuButtonProps>`
     }
 `
 
-export const MenuButton : FC<MenuButtonProps> = ({...props}) => {
+export const MenuButton : FC<MenuButtonProps & Layer> = ({...props}) => {
     const { isExpanded } = useMenuButtonContext()
 
     return (
-        <MenuButton2 isExpanded={isExpanded} {...props} />
+        <StyledMenuButton isExpanded={isExpanded} {...props} />
     )
 }
