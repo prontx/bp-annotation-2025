@@ -12,7 +12,7 @@ export const wavesurferOptions : WaveSurferOptions = {
     autoScroll: true,
     autoCenter: false,
     container: '#waveform',
-    height: "auto",
+    height: 80,
     url: 'http://localhost:5173/src/assets/test_audio.mp3',
     duration: 936.94,
     peaks: [0, 0, 0, 0],
@@ -32,7 +32,6 @@ export const minimapOptions : MinimapPluginOptions = {
 }
 
 export const timelineOptions = {
-    container: "#timeline",
     height: 16,
     style: {
         color: '#c6c6c6'

@@ -17,9 +17,9 @@ const ControlsContainer = styled.div<Layer>`
     background: ${({theme, layer}) => theme.layers[layer].background};
 `
 
-const Controls : FC<Layer> = ({layer}) => {
+const Controls : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({layer, ...props}) => {
     return (
-        <ControlsContainer layer={layer}>
+        <ControlsContainer layer={layer} {...props}>
             <SpeedControls layer={layer+1}/>
             <ZoomControls layer={layer+1} />
             <PlaybackControls layer={layer+1} />

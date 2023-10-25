@@ -29,7 +29,7 @@ import WaveformContainer from "./WaveformContainer"
 import MinimapContainer from "./MinimapContainer"
 import Layer from "../../../style/Layer";
 
-const Waveform : FC<Layer> = ({layer}) => {
+const Waveform : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({layer, ...props}) => {
     const wavesurfer = useRef<WaveSurfer | null>(null)
     const minimapRegions = useRef<RegionsPlugin>(RegionsPlugin.create())
     const dispatch = useAppDispatch()
@@ -76,15 +76,13 @@ const Waveform : FC<Layer> = ({layer}) => {
     useReactToTimeChanges(wavesurfer)
     useSetSpeed(wavesurfer)
     useSetVolume(wavesurfer)
-    // useZoomByRegion(wavesurfer, minimapRegions)
     useSetZoom(wavesurfer)
 
-    return <WaveformContainer layer={layer}>
+    return <WaveformContainer layer={layer} {...props}>
         <MinimapContainer layer={layer}>
             <div id="minimap"></div>
         </MinimapContainer>
         <div id="waveform"></div>
-        <div id="timeline"></div>
     </WaveformContainer>
 }
 

@@ -41,9 +41,9 @@ const MenuItemsContainer = styled.div`
     }
 `
 
-const MenuBar : FC<Layer> = ({layer}) => {
+const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({layer, ...props}) => {
     return (
-        <MenuBarContainer layer={layer}>
+        <MenuBarContainer layer={layer} {...props}>
             <img src="/src/assets/logo-spokendata-inverse.png" alt="SpokenData" />
             <h1>ATCO Lorem Ipsum Dolor 42</h1>
             <MenuItemsContainer>

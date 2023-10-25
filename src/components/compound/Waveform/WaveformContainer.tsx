@@ -10,18 +10,8 @@ const WaveformContainer = styled.div<Layer>`
     #waveform {
         padding: 0 4px;
         background: ${({theme, layer}) => theme.layers[layer+1].background};
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-        max-height: 80px;
-    }
-    
-    #timeline {
-        padding: 0 4px;
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 4px;
-        background: ${({theme, layer}) => theme.layers[layer+1].background};
-        pointer-events: none;
-        min-height: 16px;
+        border-radius: 4px;
+        height: 96px;
     }
 `
 
