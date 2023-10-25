@@ -1,5 +1,6 @@
 import { WaveSurferOptions } from "wavesurfer.js";
 import { MinimapPluginOptions } from "wavesurfer.js/plugins/minimap"
+import testData from "../../../testing/test_visualisation_data.json"
 
 export const wavesurferOptions : WaveSurferOptions = {
     normalize: true,
@@ -13,10 +14,11 @@ export const wavesurferOptions : WaveSurferOptions = {
     autoCenter: false,
     container: '#waveform',
     height: 80,
-    url: 'http://localhost:5173/src/assets/test_audio.mp3',
+    url: 'http://localhost:5173/src/testing/test_audio.mp3',
     duration: 936.94,
-    peaks: [0, 0, 0, 0],
+    peaks: testData,
 }
+// peeks has error in Wavesurfer Types, just ignore it
 
 export const minimapOptions : MinimapPluginOptions = { 
     normalize: true,
