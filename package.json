@@ -14,6 +14,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.13",
     "@mui/material": "^5.14.13",
+    "@reach/combobox": "^0.18.0",
     "@reach/menu-button": "^0.18.0",
     "@reach/slider": "^0.18.0",
     "@reduxjs/toolkit": "^1.9.7",
