@@ -1,7 +1,7 @@
 import Controls from "./components/compound/Controls/Controls"
 import Waveform from "./components/compound/Waveform/Waveform"
 import MenuBar from "./components/compound/MenuBar/MenuBar"
-import Segments from "./components/compound/Segments/Segments"
+import SegmentList from "./components/compound/Segments/SegmentList"
 
 import styled from "styled-components";
 import Layer from "./style/Layer";
@@ -47,6 +47,7 @@ const ScrollBox = styled.div<Layer>`
     position: relative;
     padding-right: 8px;
     box-shadow: inset 0 12px 8px -8px rgba(0,0,0,0.2);
+    /* background: ${({theme, layer}) => theme.layers[layer].background}; */
 
     &::after {
         content: "";
@@ -70,7 +71,7 @@ function App() {
             
         </ScrollBox>
         <ScrollBox className="segments" layer={2}>
-            <Segments layer={2}/>
+            <SegmentList layer={2}/>
         </ScrollBox>
     </AppLayout>
 }

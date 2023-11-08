@@ -26,7 +26,7 @@ const Pretext = styled.p`
     margin-bottom: 2px;
 `
 
-const TreeSelectInput: FC<Layer> = ({layer}) => {
+const TreeSelectInput: FC<Layer & {callback: (tagValue:string) => void} & React.HTMLAttributes<HTMLDivElement>> = ({layer, callback, ...props}) => {
     const tagTree: TagData[] = test_group_tags
     const [selected, setSelected] = useState<string[]>([])
     const [pretext, setPretext] = useState<string>('')
@@ -45,8 +45,8 @@ const TreeSelectInput: FC<Layer> = ({layer}) => {
             setSelectionOptions(option.sub)
             setFilteredOptions(option.sub)
         } else {
-            // TODO: add tag
-            console.log(`> add tag ${value}`)
+            callback(value)
+            // console.log(`> add tag ${value}`)
             setPretext('')
             setSelected([])
             setSelectionOptions(tagTree)
@@ -83,15 +83,15 @@ const TreeSelectInput: FC<Layer> = ({layer}) => {
     }
 
     return (
-        <Combobox aria-label="choose a fruit" openOnFocus layer={layer} onSelect={(item: any) => handleSelect(item)} onClick={selectInput}>
+        <Combobox {...props} aria-label="choose a fruit" openOnFocus layer={layer} onSelect={(item: any) => handleSelect(item)} onClick={selectInput}>
             <Pretext onClick={selectInput}>{(selected.length > 1) ? ".../" : ""}{pretext}{pretext ? "/" : ""}</Pretext>
-            <ComboboxInput autocomplete={false} selectOnClick layer={layer} value={value} placeholder={pretext ? "" : "Search tags..."} onChange={(e) => handleSearch(e.target.value)}/>
+            <ComboboxInput autocomplete={false} selectOnClick layer={layer} value={value} placeholder={pretext ? "" : "Add tags..."} onChange={(e) => handleSearch(e.target.value)}/>
 
             {selected.length
                 ? <Button className="stepBackBtn" layer={layer} variant="icon" onClick={() => handleStepBack()}><ArrowBackRounded /></Button>
                 : null}
 
-            <ComboboxPopover layer={layer}>
+            <ComboboxPopover layer={layer} portal={false}>
                 <ComboboxList layer={layer}>
                     {filteredOptions.map((option: TagData) => <ComboboxOption key={option.id} value={option.name} />)}
                 </ComboboxList>
