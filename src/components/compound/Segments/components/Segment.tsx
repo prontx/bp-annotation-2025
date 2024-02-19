@@ -4,8 +4,9 @@ import { FC } from "react"
 import Button from "../../../basic/Button/Button"
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import SubtleInput from "../../../basic/SubtleInput/SubtleInput";
-import DropdownSelection from "../../../basic/DropdownSelection/DropdownSelection";
-import Tag from "../../../basic/Tag/Tag";
+import SegmentActions from "./SegmentActions";
+import DropdownSelection from "../../../basic/DropdownSelection/DropdownSelection"
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 // utils
 import { timeToFormatedString } from "../../../../utils/convertTimeAndFormatedString"
@@ -22,14 +23,19 @@ import { useAppDispatch } from "../../../../redux/hooks"
 
 // styles
 import styled from "styled-components";
+import Tag from "../../../basic/Tag/Tag";
 
 
 const SegmentLayout = styled.div<Layer>`
-    display: flex;
-    gap: 24px;
-    padding: 4px;
+    display: grid;
+    gap: 4px;
+    margin: 0 8px;
+    padding: 8px 0;
     border-bottom: 1px solid ${({theme, layer}) => theme.layers[layer].active};
-    align-items: center;
+    /* align-items: center; */
+    grid-template-areas:
+        "header tags"
+        "body tags";
 
     & button {
         margin: auto;
@@ -44,22 +50,28 @@ const Segment: FC<{idx: EntityId} & Layer & React.HTMLAttributes<HTMLDivElement>
 
     return (
         <SegmentLayout layer={layer} {...props}>
-            <Button variant="icon" layer={layer} onClick={() => {}}>
-                <PlayArrowRoundedIcon />
-            </Button>
-            <div>
-                <SubtleInput layer={layer+1} type="text" value={timeToFormatedString(segment.start)} />
-                <SubtleInput layer={layer+1} type="text" value={timeToFormatedString(segment.end)} />
+            <div style={{display: "flex", gap: "8px", marginRight: "auto", alignItems: "center"}}>
+                <DropdownSelection layer={layer+1} variant="speaker" onSelection={() => {}} initialState={0} options={[1, 2, 3]} />
+                <div>
+                    {/* TODO: implement onChange */}
+                    <SubtleInput layer={layer+1} type="text" value={timeToFormatedString(segment.start)} onChange={() => {}} />
+                    –
+                    {/* TODO: implement onChange */}
+                    <SubtleInput layer={layer+1} type="text" value={timeToFormatedString(segment.end)} onChange={() => {}} />
+                </div>
+                <SegmentActions idx={id} layer={layer} />
             </div>
             <div>
-                {/* TOOD: fix segment options, onSelection */}
-                {/* <DropdownSelection layer={layer} onSelection={() => {}} variant="text" initialState={123} options={[456, 789, 420]}/>  */}
-                <p>Speaker{segment.speaker}<span className="dropdownArrow" aria-hidden>▾</span></p>
+                {/* TODO: tags */}
+                {/* TODO: get tag display text based on tag text */}
+                {/* <TagArea tags={segment.segment_tags} placeholder="" layer={layer} span={1} onTagAdd={() => {}} onTagDelete={() => {}} /> */}
             </div>
-
-            {/* TODO: get tag display text based on tag text */}
-            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eveniet, qui inventore dolore quod officia itaque non ratione recusandae debitis reiciendis!</p>
-            <p style={{margin: "4px"}}>{segment.segment_tags.map(t => <Tag layer={layer+1}>{t}</Tag>)}</p>
+            <div style={{marginRight: "auto", display: "flex"}}>
+                <Button variant="icon" layer={layer} onClick={() => {}} style={{margin: "0 4px auto 4px"}}>
+                    <PlayArrowRoundedIcon />
+                </Button>
+                <p>{segment.words as string /* FIXME */}</p>
+            </div>
         </SegmentLayout>
     )
 }

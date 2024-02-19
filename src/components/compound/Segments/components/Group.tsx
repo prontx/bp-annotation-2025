@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useRef } from "react";
 
 // components
 import Tag from "../../../basic/Tag/Tag";
@@ -17,6 +17,7 @@ import { useAppDispatch } from "../../../../redux/hooks";
 
 // styles
 import styled from "styled-components";
+import TagArea from "./TagArea";
 
 
 interface GroupProps extends Layer {
@@ -61,34 +62,55 @@ const TagBlock = styled.div<Layer>`
     padding: 4px;
     height: 100%;
 
-    & > span:not(:last-of-type) {
+    & > div:not(:last-of-type) {
         margin-right: 8px;
         margin-bottom: 8px;
         /* TODO: fix aby sa to nerozbilo, keď je moc tagov */
     }
 `
 
+// const GroupLayout = styled.div<GroupProps>`
+//     grid-row: span ${({span}) => span};
+//     margin: 4px;
+//     height: 100%;
+//     height: calc(100% - 2px);
+//     position: relative;
+
+//     &::after {
+//         content: "";
+//         position: absolute;
+//         bottom: 2px;
+//         left: -5px;
+//         width: calc(100% + 10px);
+//         border-bottom: 1px solid ${({theme, layer}) => theme.layers[layer].active};
+//     }
+// `
 
 const Group: FC<GroupProps & {idx: EntityId} & React.HTMLAttributes<HTMLDivElement>> = ({layer, idx, span, ...props}) => {
     const dispatch = useAppDispatch()
-    const { id: _, segment } = useSelector((state: RootState) => selectSegmentById(state, idx))
+    const { id, segment } = useSelector((state: RootState) => selectSegmentById(state, idx))
     if (segment === undefined || segment === null) return null
-    const tags = segment.group_tags.filter(tag => tag[0] !== "!")
+    const tags = segment.group_tags.filter((tag: string) => tag[0] !== "!")
     
-    /**
-     * Dispatch event to update a segment with segmentId - add tagValue into segment.group_tags 
-     */
     const handleAddTag = (tagValue: string) => {
         const newSegment: Segment = {...segment, group_tags: [...segment.group_tags, tagValue]}
-        dispatch(updateSegment({ id: newSegment.id, changes: newSegment }));
+        dispatch(updateSegment({ id: id, changes: newSegment }));
+    }
+
+    const handleDeleteTag = (toDelete: string) => {
+        const newSegment: Segment = {...segment, group_tags: segment.group_tags.filter(tag => tag !== toDelete)}
+        dispatch(updateSegment({ id: id, changes: newSegment }));
     }
 
     return (
+        // <GroupLayout layer={layer} span={span}>
+        //     <TagArea tags={tags} layer={layer} placeholder="Add tags..." span={span} onTagAdd={handleAddTag} onTagDelete={handleDeleteTag} />
+        // </GroupLayout>
         <GroupLayout layer={layer} span={span} {...props}>
             <TagBlock layer={layer}>
-                {tags.map((tag, idx) => <Tag key={idx} layer={layer+1}>{tag}</Tag>)}
+                {tags.map((tag, idx) => <Tag key={idx} layer={layer+1} deleteCallback={handleDeleteTag} tag={tag} />)}
             </TagBlock>
-            <TreeSelectInput className="treeSelection" callback={handleAddTag} layer={layer} />
+            <TreeSelectInput className="treeSelection" placeholder="Add tags..." callback={handleAddTag} layer={layer} />
         </GroupLayout>
     )
 }

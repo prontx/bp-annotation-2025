@@ -10,6 +10,8 @@ const ComboboxPopover = styled(BaseComboboxPopover)<Layer>`
     width: 100%;
     bottom: 0;
     transform: translateY(100%);
+    max-height: 300px;
+    overflow-y: scroll;
     border-radius: 4px;
     background: ${({theme, layer}) => theme.layers[layer].background} !important;
     border: 1px solid ${({theme, layer}) => theme.layers[layer].active};

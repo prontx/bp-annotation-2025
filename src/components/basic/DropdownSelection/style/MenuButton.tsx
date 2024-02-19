@@ -18,31 +18,46 @@ const StyledMenuButton = styled(BaseMenuButton)<CustomMenuButtonProps>`
     color: ${({theme}) => theme.textSecondary};
     padding: 4px 8px;
     font-size: 1rem;
-
+    
     ${({isExpanded, theme, layer}) => isExpanded && `
         background-color: ${theme.layers[layer].hover};
         color: ${theme.textPrimary};
-    `}
+        `}
 
-    &:hover, &:focus {
-        background-color: ${({theme, layer}) => theme.layers[layer].hover};
-        color: ${({theme}) => theme.textPrimary};
-    }
+&:hover, &:focus {
+    background-color: ${({theme, layer}) => theme.layers[layer].hover};
+    color: ${({theme}) => theme.textPrimary};
+}
 
-    &:active {
+&:active {
         background-color: ${({theme, layer}) => theme.layers[layer].active};
         color: ${({theme}) => theme.textPrimary};
     }
-
+    
     .dropdownArrow {
         margin-left: 8px;
     }
+    
+    &.speaker {
+        display: flex;
+        align-items: center;
+
+        &::before {
+            content: "";
+            display: block;
+            width: 1em;
+            height: 1em;
+            border-radius: 1em;
+            background: ${({theme}) => theme.speakerColors[0]}  ;
+            margin-right: 4px;
+        }
+    }
 `
 
-export const MenuButton : FC<MenuButtonProps & Layer> = ({...props}) => {
+export const MenuButton : FC<MenuButtonProps & Layer & {className?: string}> = ({...props}) => {
     const { isExpanded } = useMenuButtonContext()
 
     return (
-        <StyledMenuButton isExpanded={isExpanded} {...props} />
+        <StyledMenuButton className={props.className} isExpanded={isExpanded} {...props} />
     )
 }

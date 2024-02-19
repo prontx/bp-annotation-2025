@@ -32,6 +32,22 @@ export const selectSegmentById = createSelector(
     }
 )
 
+/**
+ * Select the start segment of the group a segment belongs to. If segment is the start, return the segment. In case of error, return {id: -1, segment: null}.
+ */
+export const selectGroupStart = createSelector(
+    [selectSegments, (_: RootState, segmentId: EntityId) => segmentId],
+    (segments, segmentId) => { 
+    for (let idx = segments.ids.indexOf(segmentId); idx >= 0; idx--){
+            const segment = segments.entities[segments.ids[idx]]
+            if (segment && segment.group_tags.length > 0 && segment.group_tags[0] === "!START_group") {
+                return { id: segments.ids[idx], segment: segment }
+            }
+        }
+        return { id: -1, segment: null }
+    }
+)
+
 export const selectIds = createSelector(
     [selectSegments],
     (segments) => segments.ids

@@ -16,10 +16,22 @@ export const MenuItems = styled(BaseMenuItems)<Layer>`
         color: ${({theme}) => theme.textSecondary};
         padding: 4px 8px;
         font-size: 1rem;
+        display: flex;
+        align-items: center;
         
         &[data-selected] {
             background-color: ${({theme, layer}) => theme.layers[layer].active};
             color: ${({theme}) => theme.textPrimary};
+        }
+
+        &.speaker::before {
+            content: "";
+            display: block;
+            width: 1em;
+            height: 1em;
+            border-radius: 1em;
+            background: ${({theme}) => theme.speakerColors[0]}  ;
+            margin: 2px 4px 0 0;
         }
     }
 `

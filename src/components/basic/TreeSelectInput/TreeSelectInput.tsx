@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 
 // components
 import { ComboboxOption } from "@reach/combobox";
@@ -19,6 +19,7 @@ import { TagData } from './types/TagData';
 
 // test data
 import test_group_tags from '../../../testing/test_group_tags.json'
+import metadata from '../../../testing/metadata.json'
 
 
 const Pretext = styled.p`
@@ -26,15 +27,18 @@ const Pretext = styled.p`
     margin-bottom: 2px;
 `
 
-const TreeSelectInput: FC<Layer & {callback: (tagValue:string) => void} & React.HTMLAttributes<HTMLDivElement>> = ({layer, callback, ...props}) => {
-    const tagTree: TagData[] = test_group_tags
+const TreeSelectInput: FC<Layer & {placeholder: string} & {callback: (tagValue:string) => void} & React.HTMLAttributes<HTMLDivElement>> = ({layer, placeholder, callback, ...props}) => {
+    const tagTree: TagData[] = metadata // test_group_tags
     const [selected, setSelected] = useState<string[]>([])
     const [pretext, setPretext] = useState<string>('')
     const [value, setValue] = useState<string>('')
     const [selectionOptions, setSelectionOptions] = useState<TagData[]>(tagTree)
     const [filteredOptions, setFilteredOptions] = useState<TagData[]>(tagTree)
+    const input = useRef<HTMLInputElement>(null)
 
     const handleSelect = (value: string) => {
+        // TODO: fix: when the first options is chosen, old options are not replaced
+        // lebo key je rovnaký, takže sa nererendrujú
         const option = selectionOptions.find(option => option.name === value)
         if (!option) return // this should never happen
 
@@ -54,6 +58,7 @@ const TreeSelectInput: FC<Layer & {callback: (tagValue:string) => void} & React.
         }
 
         setValue('')
+        selectInput()
     }
 
     const handleSearch = (value: string) => {
@@ -75,17 +80,21 @@ const TreeSelectInput: FC<Layer & {callback: (tagValue:string) => void} & React.
         })
         setSelectionOptions(newOptions)
         setFilteredOptions(newOptions)
+        selectInput()
     }
 
-    const selectInput = (event: any) => { // TODO: fix any
-        let input = event.target.querySelector('input') || event.target.parentElement.querySelector('input')
-        input?.select()
+    const selectInput = () => { // TODO: fix any
+        // let input = event.target.querySelector('input') || event.target.parentElement.querySelector('input')
+        // input?.select()
+        input.current?.blur()
+        input.current?.focus()
+        input.current?.select()
     }
 
     return (
         <Combobox {...props} aria-label="choose a fruit" openOnFocus layer={layer} onSelect={(item: any) => handleSelect(item)} onClick={selectInput}>
             <Pretext onClick={selectInput}>{(selected.length > 1) ? ".../" : ""}{pretext}{pretext ? "/" : ""}</Pretext>
-            <ComboboxInput autocomplete={false} selectOnClick layer={layer} value={value} placeholder={pretext ? "" : "Add tags..."} onChange={(e) => handleSearch(e.target.value)}/>
+            <ComboboxInput ref={input} autocomplete={false} selectOnClick layer={layer} value={value} placeholder={pretext ? "" : placeholder } onChange={(e) => handleSearch(e.target.value)}/>
 
             {selected.length
                 ? <Button className="stepBackBtn" layer={layer} variant="icon" onClick={() => handleStepBack()}><ArrowBackRounded /></Button>

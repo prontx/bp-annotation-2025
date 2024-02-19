@@ -8,5 +8,5 @@ export interface Segment {
     language: string|null,
     segment_tags: string[],
     group_tags: string[],
-    words: Word[] | null
+    words: Word[] | string | null
 }

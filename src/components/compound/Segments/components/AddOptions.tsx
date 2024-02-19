@@ -6,6 +6,7 @@ import VerticalAlignBottomRoundedIcon from '@mui/icons-material/VerticalAlignBot
 import VerticalAlignTopRoundedIcon from '@mui/icons-material/VerticalAlignTopRounded';
 // import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
+import Tooltip from "../../../basic/Tooltip/Tooltip";
 
 // redux
 import { useSelector } from "react-redux";
@@ -93,15 +94,21 @@ const AddOptions: FC<AddOptionsProps & React.HTMLAttributes<HTMLDivElement>> = (
 
     return (
         <AddOptionsLayout layer={layer} {...props}>
-            <Button variant="icon" style={shouldShow("merge_up") ? {} : {opacity: 0, pointerEvents: "none"}} layer={layer} onClick={handleAppendAbove}>
-                <VerticalAlignTopRoundedIcon />
-            </Button>
-            <Button variant="icon" layer={layer} onClick={handleCreateGroup}>
-                <AddBoxOutlinedIcon />
-            </Button>
-            <Button variant="icon" style={shouldShow("merge_down") ? {} : {opacity: 0, pointerEvents: "none"}} layer={layer} onClick={handleAppendBelow}>
-                <VerticalAlignBottomRoundedIcon />
-            </Button>
+            <Tooltip layer={layer} label="Add above">
+                <Button variant="icon" style={shouldShow("merge_up") ? {} : {opacity: 0, pointerEvents: "none"}} layer={layer} onClick={handleAppendAbove}>
+                    <VerticalAlignTopRoundedIcon />
+                </Button>
+            </Tooltip>
+            <Tooltip layer={layer} label="New group">
+                <Button variant="icon" layer={layer} onClick={handleCreateGroup}>
+                    <AddBoxOutlinedIcon />
+                </Button>
+            </Tooltip>
+            <Tooltip layer={layer} label="Add below">
+                <Button variant="icon" style={shouldShow("merge_down") ? {} : {opacity: 0, pointerEvents: "none"}} layer={layer} onClick={handleAppendBelow}>
+                    <VerticalAlignBottomRoundedIcon />
+                </Button>
+            </Tooltip>
         </AddOptionsLayout>
     )
 }

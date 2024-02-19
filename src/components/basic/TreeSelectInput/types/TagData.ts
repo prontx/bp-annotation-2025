@@ -1,5 +1,5 @@
 export interface TagData {
-    id: number,
+    id: number|string,
     name: string,
     sub: TagData[]
 }
