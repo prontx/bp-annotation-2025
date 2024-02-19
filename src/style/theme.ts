@@ -80,6 +80,10 @@ export const theme = {
             background: GRAY60,
             hover: GRAY60HOVER,
             active: GRAY50
+        },{
+            background: GRAY50,
+            hover: GRAY50HOVER,
+            active: GRAY40
         }
     ],
 

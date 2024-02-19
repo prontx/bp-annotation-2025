@@ -38,7 +38,7 @@ const Groups: FC<Layer & React.HTMLAttributes<HTMLDivElement>> = ({layer, ...pro
                 {/* TODO: implement deleteCallback */}
                 <GroupExpandable layer={layer} startTime={0}
                     endTime={14.6} title="New Group With Super Long Name"
-                    tag={<Tag deleteCallback={() => {}} tag="fooABC" layer={layer+1}/>}>
+                    tag={<Tag tagText="fooABC" sub1="bar" sub2="buz" deleteCallback={() => {}} layer={layer+1}/>}>
                 </GroupExpandable>
                 {/* <Expandable layer={layer} title="New Group With Super Long Name">
                     foo

@@ -10,25 +10,35 @@ import Layer from "../../../style/Layer"
 import styled from "styled-components"
 
 
-interface TagProps extends Layer {
-    deleteCallback: (tag: string) => void,
-    tag: string
+interface TagProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
+    deleteCallback?: (tag: string) => void,
+    tagText: string,
+    sub1?: string,
+    sub2?: string
 }
 
-const StyledTag = styled.div<Layer>`
+const StyledTag = styled.div`
     display: inline-flex;
-    background: ${({theme, layer}) => theme.layers[layer].background};
     border-radius: 1rem;
     padding: 0 8px;
     height: 24px;
     align-items: center;
-    position: relative;
+`
 
-    & > .text {
-        transform: translateY(-2px);
+const Capsule = styled.div<Layer>`
+    background: ${({theme, layer}) => theme.layers[layer].background};
+    line-height: 1rem;
+    display: flex;
+    border-radius: 24px;
+    padding: 2px 2px 2px 8px;
+    align-items: center;
+    gap: 4px;
+
+    &.top {
+        padding-right: 8px;
     }
 
-    & > .deleteIcon {
+    & .deleteIcon {
         display: none;
         height: 20px;
         cursor: pointer;
@@ -39,18 +49,16 @@ const StyledTag = styled.div<Layer>`
     }
 
     &:hover {
-        /* padding: 0 3px 0 8px; */
-
         .deleteIcon {
             display: block;
         }
     }
 
     .deleteIcon {
-        position: absolute;
-        right: 4px;
+        right: 12px;
         height: 18px;
         width: 18px;
+        margin-right: -6px;
         background: ${({theme, layer}) => theme.layers[layer+1].background};
 
         &:hover {
@@ -65,16 +73,26 @@ const StyledTag = styled.div<Layer>`
         svg {
             width: 16px;
             height: 16px;
-            transform: translate(-1px, -3px)
+            transform: translate(-1px, -1px)
         }
     }
 `
 
-const Tag: FC<TagProps & React.HTMLAttributes<HTMLDivElement>> = ({layer, deleteCallback, tag, ...props}) => {
+const Tag: FC<TagProps> = ({layer, deleteCallback, tagText, ...props}) => {
     return (
-        <StyledTag layer={layer} {...props}>
-            <span className="text">{tag}</span>
-            <span className="deleteIcon" onClick={() => deleteCallback(tag)}><ClearRoundedIcon /></span>
+        <StyledTag {...props}>
+            <Capsule layer={layer} className={`text ${!props.sub1 && "top"}`}>
+                {tagText}
+                {props.sub1 && <Capsule layer={layer+1} className={`text ${!props.sub2 && "top"}`}>
+                    {props.sub1}
+                    {props.sub2 && <Capsule layer={layer+2} className="text top">
+                        {props.sub2}
+                        {deleteCallback && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
+                    </Capsule>}
+                    {(deleteCallback && !props.sub2) && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
+                </Capsule>}
+                {(deleteCallback && !props.sub1) && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
+            </Capsule>
         </StyledTag>
     )
 }
