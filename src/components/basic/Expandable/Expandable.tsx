@@ -6,6 +6,7 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 // styles
 import styled from "styled-components"
+import { clickableBaseStyles } from "../../../style/clickableBaseStyles";
 
 // types
 import Layer from "../../../style/Layer"
@@ -22,10 +23,21 @@ const ExpandableContainer = styled.div<Layer>`
 `
 
 const ExpandableHeader = styled.div<Layer>`
+    ${clickableBaseStyles};
+    border-radius: 2px;
+
     background: ${({theme, layer}) => theme.layers[layer+1].background};
     padding: 4px 8px;
     display: flex;
     align-items: center;
+    
+    &:hover {
+        background: ${({theme, layer}) => theme.layers[layer+1].hover};
+    }
+
+    &:active {
+        background: ${({theme, layer}) => theme.layers[layer+1].active};
+    }
     
     & p {
         font-weight: 600;
