@@ -2,7 +2,7 @@
 import Controls from "./components/compound/Controls/Controls"
 import Waveform from "./components/compound/Waveform/Waveform"
 import MenuBar from "./components/compound/MenuBar/MenuBar"
-import SegmentList from "./components/compound/Segments/SegmentList"
+import SegmentList from "./features/transcript/components/SegmentList"
 import Groups from "./components/compound/Groups/Groups"
 
 // styles
@@ -10,9 +10,15 @@ import styled from "styled-components";
 
 // hooks
 import { useFetchJob } from "./features/job/hooks/useFetchJob"
+import { useFetchTranscript } from "./features/transcript/hooks/useFetchTranscript"
 
 // types
 import Layer from "./style/Layer";
+
+// temp for testing, FIXME
+import { selectSegments } from "./features/transcript/redux/transcriptSlice"
+import { useSelector } from "react-redux"
+import { useEffect } from "react"
 
 
 const AppLayout = styled.div`
@@ -58,6 +64,13 @@ const ScrollBox = styled.div<Layer>`
 
 function App() {
     useFetchJob()
+    useFetchTranscript()
+    
+    // FIXME: remove after testing
+    // const segments = useSelector(selectSegments)
+    // useEffect(() => {
+    //     console.log(segments)
+    // }, [segments])
 
     return <AppLayout>
         <MenuBar className="menuBar" layer={0}/>

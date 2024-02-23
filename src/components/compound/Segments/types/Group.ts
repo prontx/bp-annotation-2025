@@ -1,4 +1,4 @@
-import { Segment } from "./Segment";
+import { Segment } from "../../../../features/transcript/types/Segment";
 
 export interface Group {
     segmetns: Segment[],

@@ -8,7 +8,7 @@ import TreeSelectInput from "../../../basic/TreeSelectInput/TreeSelectInput";
 import Layer from "../../../../style/Layer";
 import { EntityId } from "@reduxjs/toolkit";
 import { RootState } from "../../../../redux/store";
-import { Segment } from "../types/Segment";
+import { Segment } from "../../../../features/transcript/types/Segment";
 
 // redux
 import { useSelector } from "react-redux";

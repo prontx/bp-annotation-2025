@@ -1,7 +1,7 @@
 import { createSlice, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
 import type { EntityId } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import { Segment } from '../../components/compound/Segments/types/Segment'
+import { Segment } from '../../features/transcript/types/Segment'
 
 
 const segmentAdapter = createEntityAdapter<Segment>({

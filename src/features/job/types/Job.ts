@@ -1,17 +1,10 @@
-interface BaseTag {
+import { SegmentTag } from "../../transcript/types/SegmentTag"
+import { SpeakerTag } from "../../transcript/types/SpeakerTag"
+import { TextTag } from "../../transcript/types/TextTag"
+
+interface DocumentTag {
     id: string,
     label: string
-}
-
-interface TextTag {
-    label: string,
-    title: string,
-    color?: string
-}
-
-interface SpeakerTag extends BaseTag {
-    likelihood?: number,
-    color?: string
 }
 
 interface Link {
@@ -27,9 +20,9 @@ interface View {
 }
 
 interface JobUserInterface {
-    document_tags?: BaseTag[],
+    document_tags?: DocumentTag[],
     speaker_tags?: SpeakerTag[],
-    segment_tags?: BaseTag[],
+    segment_tags?: SegmentTag[],
     text_tags?: TextTag[],
     links?: Link[],
     views?: View[]

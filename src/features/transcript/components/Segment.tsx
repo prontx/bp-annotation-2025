@@ -1,30 +1,28 @@
-import { FC } from "react"
+import { FC, useEffect } from "react"
 
 // components
-import Button from "../../../basic/Button/Button"
+import Button from "../../../components/basic/Button/Button"
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
-import SubtleInput from "../../../basic/SubtleInput/SubtleInput";
-import SegmentActions from "./SegmentActions";
-import DropdownSelection from "../../../basic/DropdownSelection/DropdownSelection"
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import SubtleInput from "../../../components/basic/SubtleInput/SubtleInput";
+import SegmentActions from "../../../components/compound/Segments/components/SegmentActions";
+import DropdownSelection from "../../../components/basic/DropdownSelection/DropdownSelection"
 
 // utils
-import { timeToFormatedString } from "../../../../utils/convertTimeAndFormatedString"
+import { timeToFormatedString } from "../../../utils/convertTimeAndFormatedString"
 
 // types
-import Layer from "../../../../style/Layer"
-import { EntityId } from "@reduxjs/toolkit"
-import { RootState } from "../../../../redux/store"
-
-// redux
-import { useSelector } from "react-redux"
-import { selectSegmentById } from "../../../../redux/slices/segmentSlice"
-import { useAppDispatch } from "../../../../redux/hooks"
+import type Layer from "../../../style/Layer"
+import type { Segment } from "../types/Segment";
 
 // styles
 import styled from "styled-components";
-import Tag from "../../../basic/Tag/Tag";
+import Tag from "../../../components/basic/Tag/Tag";
+import { segmentWords2String } from "../../../utils/segmentWords2String";
 
+
+interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
+    data: Segment
+}
 
 const SegmentLayout = styled.div<Layer>`
     display: grid;
@@ -42,11 +40,14 @@ const SegmentLayout = styled.div<Layer>`
     }
 `
 
-const Segment: FC<{idx: EntityId} & Layer & React.HTMLAttributes<HTMLDivElement>> = ({idx, layer, ...props}) => {
-    const dispatch = useAppDispatch()
-    const { id, segment } = useSelector((state: RootState) => selectSegmentById(state, idx))
+const Segment: FC<SegmentProps> = ({data, layer, ...props}) => {
+    if (data === undefined || data === null ) return
 
-    if (segment === undefined || segment === null ) return
+    // TODO: implement functionality
+    // TODO: how to change specific segment in the store
+    // TODO: implement segment tags
+    // TODO: implement group visualisation
+    // TODO: fix SegmentActions
 
     return (
         <SegmentLayout layer={layer} {...props}>
@@ -54,12 +55,12 @@ const Segment: FC<{idx: EntityId} & Layer & React.HTMLAttributes<HTMLDivElement>
                 <DropdownSelection layer={layer+1} variant="speaker" onSelection={() => {}} initialState={0} options={[1, 2, 3]} />
                 <div>
                     {/* TODO: implement onChange */}
-                    <SubtleInput layer={layer+1} type="text" value={timeToFormatedString(segment.start)} onChange={() => {}} />
+                    <SubtleInput layer={layer+1} type="text" value={timeToFormatedString(data.start)} onChange={() => {}} />
                     –
                     {/* TODO: implement onChange */}
-                    <SubtleInput layer={layer+1} type="text" value={timeToFormatedString(segment.end)} onChange={() => {}} />
+                    <SubtleInput layer={layer+1} type="text" value={timeToFormatedString(data.end)} onChange={() => {}} />
                 </div>
-                <SegmentActions idx={id} layer={layer} />
+                {/* <SegmentActions layer={layer} /> */}
             </div>
             <div>
                 {/* TODO: tags */}
@@ -70,7 +71,7 @@ const Segment: FC<{idx: EntityId} & Layer & React.HTMLAttributes<HTMLDivElement>
                 <Button variant="icon" layer={layer} onClick={() => {}} style={{margin: "0 4px auto 4px"}}>
                     <PlayArrowRoundedIcon />
                 </Button>
-                <p>{segment.words as string /* FIXME */}</p>
+                <p>{segmentWords2String(data.words) /* TODO, FIXME: use text editor with tag support etc. */}</p>
             </div>
         </SegmentLayout>
     )
