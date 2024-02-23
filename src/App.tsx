@@ -8,6 +8,9 @@ import Groups from "./components/compound/Groups/Groups"
 // styles
 import styled from "styled-components";
 
+// hooks
+import { useFetchJob } from "./features/job/hooks/useFetchJob"
+
 // types
 import Layer from "./style/Layer";
 
@@ -48,28 +51,14 @@ const ScrollBox = styled.div<Layer>`
     background: ${({theme, layer}) => theme.layers[layer].background};
     border-radius: 8px 8px 0 0;
     min-height: 100%;
-    /* overflow: hidden; */
     overflow-y: scroll;
     scrollbar-width: none;
     position: relative;
-    /* padding-right: 8px; */
-    /* box-shadow: inset 0 12px 8px -8px rgba(0,0,0,0.2); */
-    /* background: ${({theme, layer}) => theme.layers[layer].background}; */
-/* 
-    &::after {
-        content: "";
-        display: block;
-        background: ${({theme, layer}) => theme.layers[layer].background};
-        width: 4px;
-        height: 24%;
-        border-radius: 2px;
-        position: absolute;
-        top: 4px;
-        right: 0;
-    } */
 `
 
 function App() {
+    useFetchJob()
+
     return <AppLayout>
         <MenuBar className="menuBar" layer={0}/>
         <Waveform className="waveform" layer={1}/>

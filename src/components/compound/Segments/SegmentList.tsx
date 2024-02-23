@@ -18,6 +18,7 @@ import Layer from "../../../style/Layer"
 // styles
 import styled from "styled-components"
 
+
 const SegmentLayout = styled.div<Layer>`
     background: ${({theme, layer}) => theme.layers[layer].background};
 `
