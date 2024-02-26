@@ -67,7 +67,6 @@ const Segment: FC<SegmentProps> = ({data, layer, ...props}) => {
         dispatch(playSegment({from: data.start, to: data.end, changedBy: `segment:${data.id}`}))
     }
 
-    // TODO: implement functionality
     // TODO: implement segment tags
     // TODO: implement group visualisation on the side
 

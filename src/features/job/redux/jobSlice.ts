@@ -78,6 +78,7 @@ export const {  } = jobSlice.actions
 
 export const selectJob = (state: RootState) => state.job
 export const selectJobStatus = (state: RootState) => state.job.status
+export const selectDuration = (state: RootState) => state.job.duration
 
 export default jobSlice.reducer
 

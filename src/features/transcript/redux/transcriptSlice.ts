@@ -35,7 +35,7 @@ export const transcriptSlice = createSlice({
         updateSegment: (state, action: PayloadAction<SegmentUpdate>) => {
             if (!state.segments)
                 return
-
+            
             const idx = state.segments.findIndex(segment => segment.id === action.payload.id)
             if (idx >= 0 && idx < state.segments.length){
                 state.segments[idx] = {...state.segments[idx], ...action.payload}

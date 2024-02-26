@@ -1,9 +1,10 @@
 import { FC, useEffect, useState } from "react";
 
-// state management
+// redux
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
-import { play, pause, skipBy, setTime, selectLength, selectIsPlaying, selectCurrentTimeValue } from "../redux/playbackSlice";
+import { play, pause, skipBy, setTime, selectIsPlaying, selectCurrentTimeValue } from "../redux/playbackSlice";
+import { selectDuration } from "../../job/redux/jobSlice";
 
 // styles
 import styled from "styled-components";
@@ -43,7 +44,7 @@ const PlaybackControlsContainer = styled.div`
 const PlaybackControls : FC<Layer> = ({layer}) => {
     const dispatch = useAppDispatch()
     const isPlaying = useSelector(selectIsPlaying)
-    const length = useSelector(selectLength) // FIXME: use Job.duration
+    const length = useSelector(selectDuration)
     const currentTimeValue = useSelector(selectCurrentTimeValue)
     const [timeString, setTimeString ] = useState(timeToFormatedString(currentTimeValue))
     const [isFocused, setIsFocused] = useState(false)

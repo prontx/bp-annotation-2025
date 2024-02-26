@@ -3,7 +3,7 @@ import { FC, useRef, useEffect } from "react";
 
 // state management
 import { useAppDispatch } from "../../../redux/hooks";
-import { setTime, setLength } from "../../../features/playback/redux/playbackSlice";
+import { setTime } from "../../../features/playback/redux/playbackSlice";
 import { useSelector } from "react-redux";
 import { selectZoom } from "../../../features/playback/redux/playbackSlice";
 
@@ -57,7 +57,6 @@ const Waveform : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({layer, ...
         wavesurfer.current.once('ready', () => {
             if (!wavesurfer.current) return // TODO: throw error
             wavesurfer.current.zoom(zoom)
-            dispatch(setLength(wavesurfer.current.getDuration()))
 
             // TODO: remove temp region
             // const regions = wavesurfer.current.getActivePlugins()[1] as RegionsPlugin
