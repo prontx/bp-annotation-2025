@@ -1,3 +1,7 @@
+/**
+ * @param time number of seconds
+ * @returns time string formated like h:mm:ss.d (hod, min, sec, decimal)
+ */
 export const timeToFormatedString = (time: number): string => {
     const hours = Math.floor(time / 3600)
     const minutes = Math.floor((time - hours * 3600) / 60)
@@ -11,6 +15,10 @@ export const timeToFormatedString = (time: number): string => {
     return `${hours}:${paddedMinutes}:${paddedSeconds}.${tenths}`
 }
 
+/**
+ * @param timeString time string formated like h:mm:ss.d (hod, min, sec, decimal)
+ * @returns number of seconds if conversion is possible, NaN otherwise
+ */
 export const formatedStringToTime = (timeString: string): number => {
 
     // TODO: handle wrong input and edge cases

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { mockJobRequest } from '../../../testing/mock_api'
+import { mockJobRequest } from '../../../testing/mockAPI'
 
 // types
 import { Job } from "../types/Job"

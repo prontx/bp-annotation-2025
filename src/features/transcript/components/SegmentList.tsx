@@ -23,7 +23,7 @@ const SegmentList: FC<Layer> = ({layer}) => {
 
     return (
         <SegmentLayout layer={layer}>
-            {segments && segments.map(segment => <Segment className="segment" key={segment.start} data={segment} layer={layer} />)}
+            {segments && segments.map(segment => <Segment className="segment" key={segment.id} data={segment} layer={layer} />)}
         </SegmentLayout>
     )
 }
