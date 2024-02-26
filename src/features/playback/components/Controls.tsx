@@ -7,6 +7,7 @@ import ZoomControls from "./ZoomControls";
 
 import styled from "styled-components";
 import Layer from "../../../style/Layer";
+import useWatchPlayingTo from "../hooks/useWatchPlayingTo";
 
 const ControlsContainer = styled.div<Layer>`
     display: flex;
@@ -18,6 +19,8 @@ const ControlsContainer = styled.div<Layer>`
 `
 
 const Controls : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({layer, ...props}) => {
+    useWatchPlayingTo()
+    
     return (
         <ControlsContainer layer={layer} {...props}>
             <SpeedControls layer={layer+1}/>

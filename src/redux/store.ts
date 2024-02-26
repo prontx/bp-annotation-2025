@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 // refucers
-import playbackReducer from './slices/playbackSlice'
+import playbackReducer from '../features/playback/redux/playbackSlice'
 import segmentReducer from './slices/segmentSlice'
 import jobReducer from "../features/job/redux/jobSlice"
 import transcriptReducer from "../features/transcript/redux/transcriptSlice"

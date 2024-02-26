@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from '../store'
+import type { RootState } from '../../../redux/store'
 
 // slice state type
 interface PlaybackState {
@@ -36,7 +36,7 @@ export const playbackSlice = createSlice({
     reducers: {
         play: (state) => {
             state.isPlaying = true
-            playingTo: null
+            state.playingTo = null
         },
         pause: (state) => {
             state.isPlaying = false

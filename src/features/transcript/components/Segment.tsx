@@ -11,7 +11,7 @@ import TimeRange from "./TimeRange";
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, updateSegment } from "../redux/transcriptSlice";
-import { playSegment } from "../../../redux/slices/playbackSlice";
+import { playSegment } from "../../playback/redux/playbackSlice";
 
 // utils
 import { segmentWords2String } from "../../../utils/segmentWords2String";

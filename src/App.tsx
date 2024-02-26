@@ -1,5 +1,5 @@
 // components
-import Controls from "./components/compound/Controls/Controls"
+import Controls from "./features/playback/components/Controls"
 import Waveform from "./components/compound/Waveform/Waveform"
 import MenuBar from "./components/compound/MenuBar/MenuBar"
 import SegmentList from "./features/transcript/components/SegmentList"

@@ -2,7 +2,7 @@ import { FC } from "react";
 
 // state management
 import { useAppDispatch } from "../../../redux/hooks";
-import { setVolume } from "../../../redux/slices/playbackSlice";
+import { setVolume } from "../redux/playbackSlice";
 
 // styles
 import styled from "styled-components";
@@ -10,7 +10,7 @@ import VolumeMuteRoundedIcon from '@mui/icons-material/VolumeMuteRounded';
 import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded';
 
 // components
-import Slider from "../../basic/Slider/Slider";
+import Slider from "../../../components/basic/Slider/Slider";
 
 const VolumeControlsContainer = styled.div`
     display: flex;

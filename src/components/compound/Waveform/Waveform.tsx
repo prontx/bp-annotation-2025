@@ -3,9 +3,9 @@ import { FC, useRef, useEffect } from "react";
 
 // state management
 import { useAppDispatch } from "../../../redux/hooks";
-import { setTime, setLength } from "../../../redux/slices/playbackSlice";
+import { setTime, setLength } from "../../../features/playback/redux/playbackSlice";
 import { useSelector } from "react-redux";
-import { selectZoom } from "../../../redux/slices/playbackSlice";
+import { selectZoom } from "../../../features/playback/redux/playbackSlice";
 
 // hooks
 import usePlayPause from "./usePlayPause"

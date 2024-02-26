@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import WaveSurfer from "wavesurfer.js"
-import { selectSpeed } from "../../../redux/slices/playbackSlice"
+import { selectSpeed } from "../../../features/playback/redux/playbackSlice"
 import { useSelector } from "react-redux"
 
 const useSetSpeed = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {

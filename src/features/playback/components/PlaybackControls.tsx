@@ -1,9 +1,9 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 // state management
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
-import { play, pause, skipBy, setTime, selectLength, selectIsPlaying, selectCurrentTimeValue } from "../../../redux/slices/playbackSlice";
+import { play, pause, skipBy, setTime, selectLength, selectIsPlaying, selectCurrentTimeValue } from "../redux/playbackSlice";
 
 // styles
 import styled from "styled-components";
@@ -16,8 +16,8 @@ import FastRewindRoundedIcon from '@mui/icons-material/FastRewindRounded';
 import Layer from "../../../style/Layer";
 
 // components
-import Button from "../../basic/Button/Button";
-import SubtleInput from "../../basic/SubtleInput/SubtleInput";
+import Button from "../../../components/basic/Button/Button";
+import SubtleInput from "../../../components/basic/SubtleInput/SubtleInput";
 
 // utils
 import { timeToFormatedString, formatedStringToTime } from "../../../utils/convertTimeAndFormatedString";
@@ -43,7 +43,7 @@ const PlaybackControlsContainer = styled.div`
 const PlaybackControls : FC<Layer> = ({layer}) => {
     const dispatch = useAppDispatch()
     const isPlaying = useSelector(selectIsPlaying)
-    const length = useSelector(selectLength)
+    const length = useSelector(selectLength) // FIXME: use Job.duration
     const currentTimeValue = useSelector(selectCurrentTimeValue)
     const [timeString, setTimeString ] = useState(timeToFormatedString(currentTimeValue))
     const [isFocused, setIsFocused] = useState(false)
@@ -64,26 +64,13 @@ const PlaybackControls : FC<Layer> = ({layer}) => {
             dispatch(setTime({value: possibleNumber, changedBy: "controlsInput"}))
         }
     }
-    
-    /**
-     * Returns formated time string.
-     * 
-     * @description
-     * If input looses focus, any invalid string will be replaced with the last valid value from global state.
-     * If global state changes to a new value, e.g. user clickes on a skip button, local state is updated.
-     * 
-     * @returns {string} formated time string
-     */
-    const getCurrentTimeString = () => {
-        if (!isFocused) {
-            const globalTimeAsString = timeToFormatedString(currentTimeValue)
-            if (globalTimeAsString !== timeString){
-                setTimeString(globalTimeAsString)
-            }
-        }
 
-        return timeString
-    }
+    // set local time string value on global change
+    useEffect(() => {
+        if (!isFocused){
+            setTimeString(timeToFormatedString(currentTimeValue))
+        }
+    }, [currentTimeValue, isFocused])
     
     return (
         <PlaybackControlsContainer>
@@ -108,7 +95,7 @@ const PlaybackControls : FC<Layer> = ({layer}) => {
             </Button>
             <p>
                 <SubtleInput layer={layer} type="text"
-                    value={getCurrentTimeString()}
+                    value={timeString}
                     onChange={(e) => handleInputChange(e.target.value)}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)} >

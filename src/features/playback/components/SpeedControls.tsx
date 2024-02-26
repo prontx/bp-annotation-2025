@@ -2,10 +2,10 @@ import { FC } from "react";
 
 import { useSelector } from "react-redux"
 import { useAppDispatch } from "../../../redux/hooks";
-import { selectSpeed } from "../../../redux/slices/playbackSlice";
-import { setSpeed } from "../../../redux/slices/playbackSlice";
+import { selectSpeed } from "../redux/playbackSlice";
+import { setSpeed } from "../redux/playbackSlice";
 
-import DropdownSelection from "../../basic/DropdownSelection/DropdownSelection";
+import DropdownSelection from "../../../components/basic/DropdownSelection/DropdownSelection";
 
 import styled from "styled-components";
 import Layer from "../../../style/Layer";

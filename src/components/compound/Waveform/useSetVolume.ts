@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import WaveSurfer from "wavesurfer.js"
-import { selectVolume } from "../../../redux/slices/playbackSlice"
+import { selectVolume } from "../../../features/playback/redux/playbackSlice"
 import { useSelector } from "react-redux"
 
 const useSetVolume = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
