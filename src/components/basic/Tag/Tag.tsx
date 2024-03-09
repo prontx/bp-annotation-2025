@@ -78,20 +78,20 @@ const Capsule = styled.div<Layer>`
     }
 `
 
-const Tag: FC<TagProps> = ({layer, deleteCallback, tagText, ...props}) => {
+const Tag: FC<TagProps> = ({layer, deleteCallback, tagText, sub1, sub2, ...props}) => {
     return (
         <StyledTag {...props}>
-            <Capsule layer={layer} className={`text ${!props.sub1 && "top"}`}>
+            <Capsule layer={layer} className={`text ${!sub1 && "top"}`}>
                 {tagText}
-                {props.sub1 && <Capsule layer={layer+1} className={`text ${!props.sub2 && "top"}`}>
-                    {props.sub1}
-                    {props.sub2 && <Capsule layer={layer+2} className="text top">
-                        {props.sub2}
+                {sub1 && <Capsule layer={layer+1} className={`text ${!sub2 && "top"}`}>
+                    {sub1}
+                    {sub2 && <Capsule layer={layer+2} className="text top">
+                        {sub2}
                         {deleteCallback && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
                     </Capsule>}
-                    {(deleteCallback && !props.sub2) && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
+                    {(deleteCallback && !sub2) && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
                 </Capsule>}
-                {(deleteCallback && !props.sub1) && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
+                {(deleteCallback && !sub1) && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
             </Capsule>
         </StyledTag>
     )
