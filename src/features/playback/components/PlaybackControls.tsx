@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 // redux
 import { useSelector } from "react-redux";
@@ -21,7 +21,7 @@ import Button from "../../../components/basic/Button/Button";
 import SubtleInput from "../../../components/basic/SubtleInput/SubtleInput";
 
 // utils
-import { timeToFormatedString, formatedStringToTime } from "../../../utils/convertTimeAndFormatedString";
+import { timeToFormatedString } from "../../../utils/convertTimeAndFormatedString";
 
 /**
  * A container for the playback controls that positions them.
@@ -46,32 +46,6 @@ const PlaybackControls : FC<Layer> = ({layer}) => {
     const isPlaying = useSelector(selectIsPlaying)
     const length = useSelector(selectDuration)
     const currentTimeValue = useSelector(selectCurrentTimeValue)
-    const [timeString, setTimeString ] = useState(timeToFormatedString(currentTimeValue))
-    const [isFocused, setIsFocused] = useState(false)
-    
-    /**
-     * Set local state to `value`, and if it's valid, update global state.
-     * 
-     * @param {string} value changed input value
-     * 
-     * @returns {void}
-     */
-    const handleInputChange = (value: string) => {
-        setTimeString(value)
-        
-        // if the time string is valid, update global state
-        const possibleNumber = formatedStringToTime(value) // returns NaN if not a valid time string
-        if (!isNaN(possibleNumber)){
-            dispatch(setTime({value: possibleNumber, changedBy: "controlsInput"}))
-        }
-    }
-
-    // set local time string value on global change
-    useEffect(() => {
-        if (!isFocused){
-            setTimeString(timeToFormatedString(currentTimeValue))
-        }
-    }, [currentTimeValue, isFocused])
     
     return (
         <PlaybackControlsContainer>
@@ -95,12 +69,11 @@ const PlaybackControls : FC<Layer> = ({layer}) => {
                 <FastForwardRoundedIcon />
             </Button>
             <p>
-                <SubtleInput layer={layer} type="text"
-                    value={timeString}
-                    onChange={(e) => handleInputChange(e.target.value)}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)} >
-                </SubtleInput>/ {length ? timeToFormatedString(length) : ""}
+                <SubtleInput
+                    layer={layer}
+                    time={currentTimeValue}
+                    globalStateUpdateCallback={(newTime: number) => dispatch(setTime({value: newTime, changedBy: "controlsInput"}))}
+                />/ {length ? timeToFormatedString(length) : ""}
             </p>
         </PlaybackControlsContainer>
     );
