@@ -7,7 +7,7 @@ import { Job } from "../types/Job"
 import { RootState } from '../../../redux/store'
 
 
-export const fetchJob = createAsyncThunk("job", async () => {
+export const fetchJob = createAsyncThunk("job", async (): Promise<Job> => {
     const data = await mockJobRequest()
     return data
 })

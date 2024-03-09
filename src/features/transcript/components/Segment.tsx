@@ -9,23 +9,28 @@ import Tag from "../../../components/basic/Tag/Tag";
 import TimeRange from "./TimeRange";
 
 // redux
+import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
-import { deleteSegment, mergeSegment, updateSegment } from "../redux/transcriptSlice";
+import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playSegment } from "../../playback/redux/playbackSlice";
 
 // utils
 import { segmentWords2String } from "../../../utils/segmentWords2String";
 
-// types
-import type Layer from "../../../style/Layer"
-import type { Segment } from "../types/Segment";
-
 // styles
 import styled from "styled-components";
 
+// types
+import type Layer from "../../../style/Layer"
+import type { Segment } from "../types/Segment";
+import type { RootState } from "../../../redux/store";
+import type { SegmentUpdateOptions } from "../../transcript/types/SegmentActionPayload";
+
 
 interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
-    data: Segment
+    segmentID: string,
+    regionUpdateCallback: (regionID: string, options: SegmentUpdateOptions) => void,
+    regionsReloadCallback: () => void
 }
 
 const SegmentLayout = styled.div<Layer>`
@@ -44,27 +49,29 @@ const SegmentLayout = styled.div<Layer>`
     }
 `
 
-const Segment: FC<SegmentProps> = ({data, layer, ...props}) => {
-    if (data === undefined || data === null ) return
+const Segment: FC<SegmentProps> = ({segmentID, layer, regionUpdateCallback, regionsReloadCallback, ...props}) => {
+    const data = useSelector((state: RootState) => selectSegmentByID(state, segmentID))
 
+    if (!data)
+        return null
+    
     const dispatch = useAppDispatch()
-
+    
     const handleTimeRangeChange = (change: {start?: number, end?: number}) => {
-        dispatch(updateSegment({id: data.id as string, ...change}))
+        dispatch(updateSegment({type: "id", key: segmentID, change: change, callback: regionUpdateCallback}))
     }
 
     const handleDeletion = () => {
-        console.log("> delete segment from Segment")
-        dispatch(deleteSegment({id: data.id as string}))
+        dispatch(deleteSegment({id: segmentID, callback: regionsReloadCallback}))
     }
     
     const handleMerge = () => {
         console.log("> merge segment from Segment")
-        dispatch(mergeSegment({id: data.id as string}))
+        dispatch(mergeSegment({id: segmentID}))
     }
 
     const handlePlay = () => {
-        dispatch(playSegment({from: data.start, to: data.end, changedBy: `segment:${data.id}`}))
+        dispatch(playSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
     }
 
     // TODO: implement segment tags

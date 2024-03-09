@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 // components
 import SubtleInput from "../../../components/basic/SubtleInput/SubtleInput";
@@ -22,6 +22,13 @@ const TimeRange: FC<TimeRangeProps> = ({layer, start, end, changeHandler}) => {
         end: timeToFormatedString(end)
     }
     const [ rangeStrings, setRangeStrings ] = useState(initialState)
+    
+    useEffect(() => { // react to waveform region changes
+        setRangeStrings({
+            start: timeToFormatedString(start),
+            end: timeToFormatedString(end)
+        })
+    }, [start, end])
 
     const handleRangeChange = (change: {start?: string, end?: string}) => {
         setRangeStrings({...rangeStrings, ...change})

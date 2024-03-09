@@ -1,6 +1,4 @@
-import { SegmentTag } from "../../transcript/types/SegmentTag"
-import { SpeakerTag } from "../../transcript/types/SpeakerTag"
-import { TextTag } from "../../transcript/types/TextTag"
+import { SegmentTag, SpeakerTag, TextTag } from "../../transcript/types/Tag"
 
 interface DocumentTag {
     id: string,

@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import WaveSurfer from "wavesurfer.js"
-import { selectIsPlaying } from "../../../features/playback/redux/playbackSlice"
+import { selectIsPlaying } from "../../playback/redux/playbackSlice"
 import { useSelector } from "react-redux"
 
 const usePlayPause = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {

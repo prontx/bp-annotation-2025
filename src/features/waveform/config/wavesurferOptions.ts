@@ -1,6 +1,8 @@
 import { WaveSurferOptions } from "wavesurfer.js";
 import { MinimapPluginOptions } from "wavesurfer.js/plugins/minimap"
-import testData from "../../../testing/test_visualisation_data.json"
+import { mockWaveformRequest } from "../../../testing/mockAPI";
+
+const testData = await mockWaveformRequest()
 
 export const wavesurferOptions : WaveSurferOptions = {
     normalize: true,
@@ -18,7 +20,6 @@ export const wavesurferOptions : WaveSurferOptions = {
     duration: 936.94,
     peaks: testData,
 }
-// peeks has error in Wavesurfer Types, just ignore it
 
 export const minimapOptions : MinimapPluginOptions = { 
     normalize: true,

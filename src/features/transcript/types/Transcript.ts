@@ -1,15 +1,27 @@
-import { SpeakerTag } from "./SpeakerTag"
-import { SegmentTag } from "./SegmentTag";
+import { SpeakerTag } from "./Tag"
+import { SegmentTag, TextTag } from "./Tag";
 import { Segment } from "./Segment";
-import { TextTag } from "./TextTag";
 
-export interface Transcript {
+interface TranscriptCommon {
     id: string,
     status?: string,
     source: string,
     created_at: string,
-    speaker_tags: SpeakerTag[]|null,
-    segment_tags?: SegmentTag[]|null,
-    text_tags?: TextTag[]|null,
-    segments: Segment[]|null
+    speaker_tags: SpeakerTag[] | null,
+    segment_tags?: SegmentTag[] | null,
+    text_tags?: TextTag[] | null,
+}
+
+export interface TranscriptLoadingParams extends TranscriptCommon {
+    segments: Segment[] | null
+}
+
+export interface SegmentStorage {
+    keys: string[],
+    region2ID: { [key: string]: string }
+    entities: { [key: string]: Segment }
+}
+
+export interface Transcript extends TranscriptCommon {
+    segments: SegmentStorage
 }

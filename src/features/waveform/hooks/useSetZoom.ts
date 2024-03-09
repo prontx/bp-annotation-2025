@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import WaveSurfer from "wavesurfer.js"
-import { selectZoom } from "../../../features/playback/redux/playbackSlice"
+import { selectZoom } from "../../playback/redux/playbackSlice"
 import { useSelector } from "react-redux"
 
 const useSetZoom = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
@@ -10,8 +10,8 @@ const useSetZoom = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
     useEffect(() => {
         try {
             wavesurfer.current?.zoom(minPxPerSec)
-        } catch (e) {}
-    }, [minPxPerSec])
+        } catch (err) {}
+    }, [wavesurfer.current, minPxPerSec])
 }
 
 export default useSetZoom

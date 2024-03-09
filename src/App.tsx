@@ -1,9 +1,14 @@
+import { useRef } from "react"
+
 // components
 import Controls from "./features/playback/components/Controls"
-import Waveform from "./components/compound/Waveform/Waveform"
+import Waveform from "./features/waveform/components/Waveform"
 import MenuBar from "./components/compound/MenuBar/MenuBar"
 import SegmentList from "./features/transcript/components/SegmentList"
 import Groups from "./components/compound/Groups/Groups"
+
+// wavesurfer
+import RegionsPlugin from "wavesurfer.js/plugins/regions"
 
 // styles
 import styled from "styled-components";
@@ -14,11 +19,6 @@ import { useFetchTranscript } from "./features/transcript/hooks/useFetchTranscri
 
 // types
 import Layer from "./style/Layer";
-
-// temp for testing, FIXME
-import { selectSegments } from "./features/transcript/redux/transcriptSlice"
-import { useSelector } from "react-redux"
-import { useEffect } from "react"
 
 
 const AppLayout = styled.div`
@@ -65,21 +65,16 @@ const ScrollBox = styled.div<Layer>`
 function App() {
     useFetchJob()
     useFetchTranscript()
-    
-    // FIXME: remove after testing
-    // const segments = useSelector(selectSegments)
-    // useEffect(() => {
-    //     console.log(segments)
-    // }, [segments])
+    const waveformRegionsRef = useRef<RegionsPlugin>(RegionsPlugin.create())
 
     return <AppLayout>
         <MenuBar className="menuBar" layer={0}/>
-        <Waveform className="waveform" layer={1}/>
+        <Waveform waveformRegionsRef={waveformRegionsRef} className="waveform" layer={1}/>
         <Controls className="controls" layer={1}/>
         <ScrollBox className="sideBar" layer={1}>
         </ScrollBox>
         <ScrollBox className="segments" layer={2}>
-            <SegmentList layer={2}/>
+            <SegmentList waveformRegionsRef={waveformRegionsRef} layer={2}/>
         </ScrollBox>
         <Groups className="groups" layer={1}>
         </Groups>
