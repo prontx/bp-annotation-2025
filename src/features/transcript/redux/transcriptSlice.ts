@@ -70,6 +70,7 @@ export const transcriptSlice = createSlice({
             // FIXME: update state.segments.keys order by state.segments.entities[key].start (possibly changed)
 
             // trigger region update on waveform
+            // WARNING: the callbacks must not update the redux state!
             if (callback && segment && segment.regionID){
                 callback(segment.regionID, {
                     start: change.start || segment.start,
@@ -92,6 +93,7 @@ export const transcriptSlice = createSlice({
             }
 
             // reload waveform regions
+            // WARNING: the callbacks must not update the redux state!
             action.payload.callback()
         },
         mergeSegment: (_, __: PayloadAction<{id: string}>) => {
