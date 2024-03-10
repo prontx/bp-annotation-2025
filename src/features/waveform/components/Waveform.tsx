@@ -17,7 +17,7 @@ import WaveformContainer from "../style/WaveformContainer"
 import MinimapContainer from "../style/MinimapContainer"
 
 // types
-import type Layer from "../../../style/Layer";
+import type Layer from "../../../types/Layer";
 
 
 interface WaveformProps extends React.HTMLAttributes<HTMLDivElement>, Layer {

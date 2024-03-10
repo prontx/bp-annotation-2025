@@ -1,15 +1,15 @@
 import { FC } from "react"
 
 // components
-import Button from "../../../components/basic/Button/Button"
+import Button from "../../../components/Button/Button"
 import GroupExpandable from "./GroupExpandable"
-import Tag from "../../../components/basic/Tag/Tag"
+import Tag from "../../../components/Tag/Tag"
 
 // styles
 import styled from "styled-components"
 
 // types
-import Layer from "../../../style/Layer"
+import Layer from "../../../types/Layer"
 
 
 const GroupWrapper = styled.div<Layer>`

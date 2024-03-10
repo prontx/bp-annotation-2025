@@ -11,7 +11,7 @@ import { MenuItems } from "./style/MenuItems";
 import "@reach/menu-button/styles.css";
 
 // types
-import Layer from "../../../style/Layer";
+import Layer from "../../types/Layer";
 
 interface DropdownSelectionProps extends React.HTMLAttributes<typeof Menu>, Layer {
     variant: "speed" | "speaker",

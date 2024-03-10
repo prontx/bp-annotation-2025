@@ -14,11 +14,11 @@ import SkipNextRoundedIcon from '@mui/icons-material/SkipNextRounded';
 import SkipPreviousRoundedIcon from '@mui/icons-material/SkipPreviousRounded';
 import FastForwardRoundedIcon from '@mui/icons-material/FastForwardRounded';
 import FastRewindRoundedIcon from '@mui/icons-material/FastRewindRounded';
-import Layer from "../../../style/Layer";
+import Layer from "../../../types/Layer";
 
 // components
-import Button from "../../../components/basic/Button/Button";
-import SubtleInput from "../../../components/basic/SubtleInput/SubtleInput";
+import Button from "../../../components/Button/Button";
+import SubtleInput from "../../../components/SubtleInput/SubtleInput";
 
 // utils
 import { timeToFormatedString } from "../../../utils/convertTimeAndFormatedString";

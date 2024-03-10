@@ -1,8 +1,8 @@
 import { FC } from "react";
 
-import { clickableBaseStyles } from "../../../../style/clickableBaseStyles";
+import { clickableBaseStyles } from "../../../style/clickableBaseStyles";
 import styled from "styled-components";
-import Layer from "../../../../style/Layer"
+import Layer from "../../../types/Layer"
 
 import { useMenuButtonContext } from "@reach/menu-button";
 import { MenuButton as BaseMenuButton, MenuButtonProps } from "@reach/menu-button";

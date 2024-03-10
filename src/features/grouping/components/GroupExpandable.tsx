@@ -1,13 +1,13 @@
 import { FC, ReactElement } from "react"
 
 // components
-import Expandable from "../../../components/basic/Expandable/Expandable"
+import Expandable from "../../../components/Expandable/Expandable"
 
 // styles
 import styled from "styled-components"
 
 // types
-import { ExpandableProps } from "../../../components/basic/Expandable/types/ExpandableProps"
+import { ExpandableProps } from "../../../components/Expandable/types/ExpandableProps"
 
 // utils
 import { timeToFormatedString } from "../../../utils/convertTimeAndFormatedString"

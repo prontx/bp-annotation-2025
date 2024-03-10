@@ -4,7 +4,7 @@ import { FC } from "react"
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 
 // types
-import Layer from "../../../style/Layer"
+import Layer from "../../types/Layer"
 
 // styles
 import styled from "styled-components"

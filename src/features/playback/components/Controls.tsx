@@ -6,7 +6,7 @@ import VolumeControls from "./VolumeControls";
 import ZoomControls from "./ZoomControls";
 
 import styled from "styled-components";
-import Layer from "../../../style/Layer";
+import Layer from "../../../types/Layer";
 import useWatchPlayingTo from "../hooks/useWatchPlayingTo";
 
 const ControlsContainer = styled.div<Layer>`

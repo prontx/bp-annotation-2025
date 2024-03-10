@@ -1,11 +1,11 @@
 import { FC } from "react"
 
 // components
-import Button from "../../../components/basic/Button/Button"
+import Button from "../../../components/Button/Button"
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import SegmentActions from "./SegmentActions";
-import DropdownSelection from "../../../components/basic/DropdownSelection/DropdownSelection"
-import Tag from "../../../components/basic/Tag/Tag";
+import DropdownSelection from "../../../components/DropdownSelection/DropdownSelection"
+import Tag from "../../../components/Tag/Tag";
 import TimeRange from "./TimeRange";
 
 // redux
@@ -21,7 +21,7 @@ import { segmentWords2String } from "../../../utils/segmentWords2String";
 import styled from "styled-components";
 
 // types
-import type Layer from "../../../style/Layer"
+import type Layer from "../../../types/Layer"
 import type { Segment } from "../types/Segment";
 import type { RootState } from "../../../redux/store";
 import type { SegmentUpdateOptions } from "../../transcript/types/SegmentActionPayload";

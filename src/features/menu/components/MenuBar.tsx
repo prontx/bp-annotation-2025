@@ -1,13 +1,13 @@
 import { FC } from "react";
 
 import { Menu, MenuItem } from "@reach/menu-button";
-import { MenuPopover } from "../../basic/DropdownSelection/style/MenuPopover"
-import { MenuButton } from "../../basic/DropdownSelection/style/MenuButton"
-import { MenuItems } from "../../basic/DropdownSelection/style/MenuItems"
+import { MenuPopover } from "../../../components/DropdownSelection/style/MenuPopover"
+import { MenuButton } from "../../../components/DropdownSelection/style/MenuButton"
+import { MenuItems } from "../../../components/DropdownSelection/style/MenuItems"
 // import { positionMatchWidth } from "@reach/popover";
 
 import styled from "styled-components";
-import Layer from "../../../style/Layer"
+import Layer from "../../../types/Layer"
 
 const MenuBarContainer = styled.div<Layer>`
     display: grid;

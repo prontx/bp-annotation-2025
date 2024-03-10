@@ -5,10 +5,10 @@ import { useAppDispatch } from "../../../redux/hooks";
 import { selectSpeed } from "../redux/playbackSlice";
 import { setSpeed } from "../redux/playbackSlice";
 
-import DropdownSelection from "../../../components/basic/DropdownSelection/DropdownSelection";
+import DropdownSelection from "../../../components/DropdownSelection/DropdownSelection";
 
 import styled from "styled-components";
-import Layer from "../../../style/Layer";
+import Layer from "../../../types/Layer";
 
 const SpeedControlsContainer = styled.div`
     display: flex;

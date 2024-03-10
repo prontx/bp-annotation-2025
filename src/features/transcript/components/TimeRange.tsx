@@ -1,10 +1,10 @@
 import { FC } from "react";
 
 // components
-import SubtleInput from "../../../components/basic/SubtleInput/SubtleInput";
+import SubtleInput from "../../../components/SubtleInput/SubtleInput";
 
 // types
-import type Layer from "../../../style/Layer";
+import type Layer from "../../../types/Layer";
 
 
 interface TimeRangeProps extends Layer {

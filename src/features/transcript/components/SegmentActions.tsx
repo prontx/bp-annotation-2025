@@ -1,16 +1,16 @@
 import { FC } from "react";
 
 // components
-import Button from "../../../components/basic/Button/Button";
+import Button from "../../../components/Button/Button";
 import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-import Tooltip from "../../../components/basic/Tooltip/Tooltip";
+import Tooltip from "../../../components/Tooltip/Tooltip";
 
 // styles
 import styled from "styled-components";
 
 // types
-import type Layer from "../../../style/Layer";
+import type Layer from "../../../types/Layer";
 
 interface SegmentActionsProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
     deleteHandler: () => void, 

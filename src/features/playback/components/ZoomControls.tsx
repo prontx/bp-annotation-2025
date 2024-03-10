@@ -8,10 +8,10 @@ import { zoomIn, zoomOut } from "../redux/playbackSlice";
 import styled from "styled-components";
 import ZoomInRoundedIcon from '@mui/icons-material/ZoomInRounded';
 import ZoomOutRoundedIcon from '@mui/icons-material/ZoomOutRounded';
-import Layer from "../../../style/Layer";
+import Layer from "../../../types/Layer";
 
 // components
-import Button from "../../../components/basic/Button/Button";
+import Button from "../../../components/Button/Button";
 
 /**
  * A container for the playback controls that positions them.

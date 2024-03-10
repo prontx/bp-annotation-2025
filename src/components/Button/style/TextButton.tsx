@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { clickableBaseStyles } from "../../../../style/clickableBaseStyles";
-import Layer from "../../../../style/Layer";
+import { clickableBaseStyles } from "../../../style/clickableBaseStyles";
+import Layer from "../../../types/Layer";
 
 export const TextButton = styled.button<Layer>`
     ${clickableBaseStyles}

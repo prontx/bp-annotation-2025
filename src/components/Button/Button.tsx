@@ -2,7 +2,7 @@ import { FC } from "react"
 import { IconButton } from "./style/IconButton";
 import { TextButton } from "./style/TextButton";
 
-import Layer from "../../../style/Layer";
+import Layer from "../../types/Layer";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant: string

@@ -3,7 +3,7 @@ import { useRef } from "react"
 // components
 import Controls from "./features/playback/components/Controls"
 import Waveform from "./features/waveform/components/Waveform"
-import MenuBar from "./components/compound/MenuBar/MenuBar"
+import MenuBar from "./features/menu/components/MenuBar"
 import SegmentList from "./features/transcript/components/SegmentList"
 import Groups from "./features/grouping/components/Groups"
 
@@ -18,7 +18,7 @@ import { useFetchJob } from "./features/job/hooks/useFetchJob"
 import { useFetchTranscript } from "./features/transcript/hooks/useFetchTranscript"
 
 // types
-import Layer from "./style/Layer";
+import Layer from "./types/Layer";
 
 
 const AppLayout = styled.div`

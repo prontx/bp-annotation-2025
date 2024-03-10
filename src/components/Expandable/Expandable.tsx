@@ -1,15 +1,15 @@
 import { FC, useState } from "react"
 
 // components
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 // styles
 import styled from "styled-components"
-import { clickableBaseStyles } from "../../../style/clickableBaseStyles";
+import { clickableBaseStyles } from "../../style/clickableBaseStyles";
 
 // types
-import Layer from "../../../style/Layer"
+import Layer from "../../types/Layer"
 import { ExpandableProps } from "./types/ExpandableProps"
 
 
@@ -52,7 +52,7 @@ const Expandable: FC<ExpandableProps> = ({layer, ...props}) => {
         <ExpandableContainer layer={layer}>
             <ExpandableHeader layer={layer} onClick={() => setOpen(!open)}>
                 <p>{props.title}</p>
-                {open ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+                {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ExpandableHeader>
             {open && <div className="body">
                 {props.children}

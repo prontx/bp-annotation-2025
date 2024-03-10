@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Layer from "../../../../style/Layer";
+import Layer from "../../../types/Layer";
 
 import { MenuPopover as BaseMenuPopover } from "@reach/menu-button";
 

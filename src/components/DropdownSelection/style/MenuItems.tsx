@@ -1,6 +1,6 @@
-import { clickableBaseStyles } from "../../../../style/clickableBaseStyles";
+import { clickableBaseStyles } from "../../../style/clickableBaseStyles";
 import styled from "styled-components";
-import Layer from "../../../../style/Layer";
+import Layer from "../../../types/Layer";
 
 import { MenuItems as BaseMenuItems } from "@reach/menu-button";
 

@@ -8,7 +8,7 @@ import { useSelector } from "react-redux"
 import { selectSegmentIDs } from "../redux/transcriptSlice"
 
 // types
-import Layer from "../../../style/Layer"
+import Layer from "../../../types/Layer"
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
 import type { SegmentUpdateOptions } from "../types/SegmentActionPayload"
 

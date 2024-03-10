@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Layer from "../../../style/Layer";
+import Layer from "../../../types/Layer";
 
 const MinimapContainer = styled.div<Layer>`
     background: ${({theme, layer}) => theme.layers[layer].background};
