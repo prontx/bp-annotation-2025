@@ -1,15 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit'
 
-// refucers
+// reducers
 import playbackReducer from '../features/playback/redux/playbackSlice'
 import jobReducer from "../features/job/redux/jobSlice"
 import transcriptReducer from "../features/transcript/redux/transcriptSlice"
+import groupingReducer from "../features/grouping/redux/groupingSlice"
 
 export const store = configureStore({
   reducer: {
     job: jobReducer,
     playback: playbackReducer,
-    transcript: transcriptReducer
+    transcript: transcriptReducer,
+    grouping: groupingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

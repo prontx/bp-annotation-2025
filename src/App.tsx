@@ -5,7 +5,7 @@ import Controls from "./features/playback/components/Controls"
 import Waveform from "./features/waveform/components/Waveform"
 import MenuBar from "./components/compound/MenuBar/MenuBar"
 import SegmentList from "./features/transcript/components/SegmentList"
-import Groups from "./components/compound/Groups/Groups"
+import Groups from "./features/grouping/components/Groups"
 
 // wavesurfer
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
