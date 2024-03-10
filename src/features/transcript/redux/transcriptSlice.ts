@@ -39,7 +39,11 @@ export const transcriptSlice = createSlice({
         createSegment: (state, action: PayloadAction<SegmentCreationPayload>) => {
             const idx = state.segments.keys.findIndex((key) => state.segments.entities[key].start > action.payload.start);
             const id = uuid()
-            state.segments.keys.splice(idx, 0, id);
+            if (idx === -1){
+                state.segments.keys.push(id)
+            } else {
+                state.segments.keys.splice(idx, 0, id);
+            }
             state.segments.entities[id] = {
                 ...action.payload,
                 speaker: "A",
