@@ -4,5 +4,6 @@ export interface Group {
     startSegmentID: string,
     endSegmentID: string,
     tags: string[],
-    childrenIDs?: string[]
+    parentID?: string,
+    childrenIDs: string[]
 }

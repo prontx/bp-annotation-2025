@@ -1,9 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 
 // types
 import type { Group } from "../types/Group"
 import type { RootState } from "../../../redux/store"
 import type { Lookup } from "../../../types/Lookup"
+import type { GroupCreationPayload } from "../types/GroupActionPayload"
+
+// utils
+import { v4 as uuid } from 'uuid';
 
 
 interface GroupingState {
@@ -26,10 +30,27 @@ const initialState: GroupingState = {
 export const groupingSlice = createSlice({
     name: "groups",
     initialState,
-    reducers: {}
+    reducers: {
+        createGroup: (state, action: PayloadAction<GroupCreationPayload>) => {
+            // create new group entity
+            const id = uuid()
+            state.groups.entities[id] = {
+                id: id,
+                ...action.payload,
+                childrenIDs: [],
+            }
+            
+            // insert key
+            // TODO: add nesting -- top-level keys are in state.groups.keys, rest in entity.childrenIDs
+            state.groups.keys.push(id)
+            
+            // FIXME: set `parentID`
+            // FIXME: what if parent is created after its child?
+        },
+    },
 })
 
-export const {} = groupingSlice.actions
+export const { createGroup } = groupingSlice.actions
 
 export const selectGroups = (state: RootState) => state.grouping.groups
 

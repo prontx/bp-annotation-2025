@@ -5,7 +5,7 @@ import Controls from "./features/playback/components/Controls"
 import Waveform from "./features/waveform/components/Waveform"
 import MenuBar from "./features/menu/components/MenuBar"
 import SegmentList from "./features/transcript/components/SegmentList"
-import Groups from "./features/grouping/components/Groups"
+import GroupList from "./features/grouping/components/GroupList"
 
 // wavesurfer
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
@@ -76,8 +76,8 @@ function App() {
         <ScrollBox className="segments" layer={2}>
             <SegmentList waveformRegionsRef={waveformRegionsRef} layer={2}/>
         </ScrollBox>
-        <Groups className="groups" layer={1}>
-        </Groups>
+        <GroupList className="groups" layer={1}>
+        </GroupList>
     </AppLayout>
 }
 
