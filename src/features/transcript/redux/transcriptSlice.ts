@@ -134,5 +134,9 @@ export const selectTranscriptStatus = (state: RootState) => state.transcript.sta
 export const selectSegments = (state: RootState) => state.transcript.segments
 export const selectSegmentIDs = (state: RootState) => state.transcript.segments.keys
 export const selectSegmentByID = (state: RootState, id: string) => state.transcript.segments.entities[id]
+export const selectGroupStartEndByIDs = (state: RootState, startID: string, endID: string) => {
+    return [state.transcript.segments.entities[startID].start, state.transcript.segments.entities[endID].end]
+    // FIXME: can entities[ID] called from groups return undefined anyhow?
+}
 
 export default transcriptSlice.reducer

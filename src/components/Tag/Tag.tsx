@@ -12,9 +12,7 @@ import styled from "styled-components"
 
 interface TagProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
     deleteCallback?: (tag: string) => void,
-    tagText: string,
-    sub1?: string,
-    sub2?: string
+    tags: string[],
 }
 
 const StyledTag = styled.div`
@@ -78,7 +76,9 @@ const Capsule = styled.div<Layer>`
     }
 `
 
-const Tag: FC<TagProps> = ({layer, deleteCallback, tagText, sub1, sub2, ...props}) => {
+const Tag: FC<TagProps> = ({layer, deleteCallback, tags, ...props}) => {
+    const [tagText, sub1, sub2] = tags
+    
     return (
         <StyledTag {...props}>
             <Capsule layer={layer} className={`text ${!sub1 && "top"}`}>

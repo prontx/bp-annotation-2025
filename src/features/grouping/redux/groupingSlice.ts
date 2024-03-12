@@ -53,5 +53,7 @@ export const groupingSlice = createSlice({
 export const { createGroup } = groupingSlice.actions
 
 export const selectGroups = (state: RootState) => state.grouping.groups
+export const selectGroupIDs = (state: RootState) => state.grouping.groups.keys
+export const selectGroupByID = (state: RootState, id: string) => state.grouping.groups.entities[id]
 
 export default groupingSlice.reducer

@@ -2,11 +2,14 @@ import { FC } from "react"
 
 // components
 import GroupExpandable from "./GroupExpandable"
-import Tag from "../../../components/Tag/Tag"
 import GroupListHeader from "./GroupListHeader"
 
 // styles
 import styled from "styled-components"
+
+// redux
+import { useSelector } from "react-redux"
+import { selectGroupIDs } from "../redux/groupingSlice"
 
 // types
 import Layer from "../../../types/Layer"
@@ -19,20 +22,15 @@ const GroupListContainer = styled.div<Layer>`
 `
 
 const GroupList: FC<Layer & React.HTMLAttributes<HTMLDivElement>> = ({layer, ...props}) => {
+    const groupIDs = useSelector(selectGroupIDs)
+
     return (
         <GroupListContainer layer={layer} {...props}>
             <GroupListHeader layer={layer} />
             
             {/* TODO: SCROLLING GROUPS LIST */}
             <div style={{margin: "8px", display: "flex", flexDirection: "column", gap: "2px"}}>
-                {/* TODO: implement deleteCallback */}
-                <GroupExpandable
-                    layer={layer}
-                    startTime={0}
-                    endTime={14.6}
-                    title="New Group With Super Long Name"
-                    tag={<Tag tagText="fooABC" sub1="bar" sub2="buz" deleteCallback={() => {}} layer={layer+1}/>}
-                />
+                {groupIDs.map(id => <GroupExpandable groupID={id} layer={layer+1}/>)}
             </div>
         </GroupListContainer>
     )
