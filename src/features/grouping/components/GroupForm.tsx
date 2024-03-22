@@ -2,6 +2,8 @@ import { FC, FormEvent, useState } from "react";
 
 // components
 import Button from "../../../components/Button/Button";
+import TagSelection from "../../../components/TagSelection/TagSelection";
+import Tag from "../../../components/Tag/Tag";
 
 // style
 import styled from "styled-components";
@@ -12,7 +14,9 @@ import { createGroup } from "../redux/groupingSlice";
 
 // types
 import Layer from "../../../types/Layer";
-import { RootState } from "../../../redux/store";
+
+// test data
+import metadata from "../../../testing/metadata.json"
 
 
 interface GroupFormProps extends Layer, React.HTMLAttributes<HTMLFormElement> {
@@ -41,13 +45,14 @@ const GroupFormContainer = styled.form<Layer>`
 const GroupTitleInput = styled.input<Layer>`
     width: 100%;
     padding: 4px 8px;
-    font-size: 1rem;
+    font-size: 19px;
     font-weight: 600;
     color: ${({theme}) => theme.textSecondary};
     margin-right: auto;
     background: ${({theme, layer}) => theme.layers[layer].background};
     border-radius: 2px;
     border: 2px solid ${({theme, layer}) => theme.layers[layer].active};
+    outline: none;
     
     &:hover {
         background: ${({theme, layer}) => theme.layers[layer].hover};
@@ -104,8 +109,9 @@ const GroupForm: FC<GroupFormProps> = ({layer, groupID, closeFn, ...props}) => {
             <div className="body">
                 {/* TODO: time range selection */}
                 <p>from - to</p>
-                {/* TODO: tag selection */}
-                <p>| tag A | tag B | |</p>
+                {tags.length > 0
+                    ? <Tag tags={tags} layer={layer+1} deleteCallback={() => setTags([])} />
+                    : <TagSelection options={metadata} layer={layer} onSelection={setTags} />}
                 {error && <p className="error">{error}</p>}
                 <GroupFormActions>
                     <Button variant="text" layer={layer+1} type="submit">Vytvořit</Button>
