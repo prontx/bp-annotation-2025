@@ -30,7 +30,7 @@ const GroupList: FC<Layer & React.HTMLAttributes<HTMLDivElement>> = ({layer, ...
             
             {/* TODO: SCROLLING GROUPS LIST */}
             <div style={{margin: "8px", display: "flex", flexDirection: "column", gap: "2px"}}>
-                {groupIDs.map(id => <GroupExpandable groupID={id} layer={layer+1}/>)}
+                {groupIDs.map(id => <GroupExpandable key={id} groupID={id} layer={layer+1}/>)}
             </div>
         </GroupListContainer>
     )

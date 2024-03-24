@@ -1,16 +1,17 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, MouseEventHandler, useState } from "react";
 
 // components
 import Button from "../../../components/Button/Button";
 import TagSelection from "../../../components/TagSelection/TagSelection";
 import Tag from "../../../components/Tag/Tag";
+import StartEndSelection from "./StartEndSelection";
 
 // style
 import styled from "styled-components";
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
-import { createGroup } from "../redux/groupingSlice";
+import { createGroup, resetSelecting } from "../redux/groupingSlice";
 
 // types
 import Layer from "../../../types/Layer";
@@ -97,6 +98,12 @@ const GroupForm: FC<GroupFormProps> = ({layer, groupID, closeFn, ...props}) => {
         closeFn()
     }
 
+    const handleCancelation: MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.stopPropagation() // prevent form submission
+        dispatch(resetSelecting())
+        closeFn()
+    }
+
     return (
         <GroupFormContainer layer={layer} onSubmit={handleSubmit} {...props}>
             <GroupTitleInput
@@ -107,16 +114,21 @@ const GroupForm: FC<GroupFormProps> = ({layer, groupID, closeFn, ...props}) => {
                 onChange={(e) => setTitle(e.target.value)}
             />
             <div className="body">
-                {/* TODO: time range selection */}
-                <p>from - to</p>
+                <StartEndSelection
+                    layer={layer+1}
+                    startSegmentID={startSegmentID}
+                    setStartSegmentID={setStartSegmentID}
+                    endSegmentID={endSegmentID}
+                    setEndSegmentID={setEndSegmentID}
+                />
                 {tags.length > 0
                     ? <Tag tags={tags} layer={layer+1} deleteCallback={() => setTags([])} />
                     : <TagSelection options={metadata} layer={layer} onSelection={setTags} />}
                 {error && <p className="error">{error}</p>}
                 <GroupFormActions>
                     <Button variant="text" layer={layer+1} type="submit">Vytvořit</Button>
-                    {/* FIXME: cancel button color: 'danger' */}
-                    <Button variant="text" layer={layer+1} onClick={closeFn}>Zrušit</Button>
+                    {/* FIXME: cancel button color: 'danger', call dispatch(resetSelecting()) */}
+                    <Button variant="text" layer={layer+1} onClick={handleCancelation}>Zrušit</Button>
                 </GroupFormActions>
             </div>
         </GroupFormContainer>

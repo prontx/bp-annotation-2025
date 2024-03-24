@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playSegment } from "../../playback/redux/playbackSlice";
+import { selectIsSelecting, selectSegment } from "../../grouping/redux/groupingSlice";
 
 // utils
 import { segmentWords2String } from "../../../utils/segmentWords2String";
@@ -43,9 +44,21 @@ const SegmentLayout = styled.div<Layer>`
     grid-template-areas:
         "header tags"
         "body tags";
-
+    
     & button {
         margin: auto;
+    }
+    
+    &.selecting {
+        & > * {
+            pointer-events: none;
+            background: transparent;
+        }
+        &:hover {
+            border-radius: 4px;
+            cursor: pointer;
+            background: ${({theme, layer}) => theme.layers[layer].hover}
+        }
     }
 `
 
@@ -56,6 +69,7 @@ const Segment: FC<SegmentProps> = ({segmentID, layer, regionUpdateCallback, regi
         return null
     
     const dispatch = useAppDispatch()
+    const isSelecting = useSelector(selectIsSelecting)
     
     const handleTimeRangeChange = (change: {start?: number, end?: number}) => {
         dispatch(updateSegment({type: "id", key: segmentID, change: change, callback: regionUpdateCallback}))
@@ -74,11 +88,19 @@ const Segment: FC<SegmentProps> = ({segmentID, layer, regionUpdateCallback, regi
         dispatch(playSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
     }
 
+    const handleSelectingSegment = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault()
+        if (!isSelecting)
+            return
+        
+        dispatch(selectSegment(segmentID))
+    }
+
     // TODO: implement segment tags
     // TODO: implement group visualisation on the side
 
     return (
-        <SegmentLayout layer={layer} {...props}>
+        <SegmentLayout layer={layer} {...props} className={isSelecting ? "selecting" : ""} onClick={isSelecting ? (e) => handleSelectingSegment(e) : () => {}}>
             <div style={{display: "flex", gap: "8px", marginRight: "auto", alignItems: "center"}}>
                 <DropdownSelection layer={layer+1} variant="speaker" onSelection={() => {}} initialState={0} options={[1, 2, 3]} />
                 <TimeRange start={data.start} end={data.end} layer={layer+1} changeHandler={handleTimeRangeChange}></TimeRange>
