@@ -39,7 +39,7 @@ const SegmentLayout = styled.div<Layer>`
     gap: 4px;
     margin: 0 8px;
     padding: 8px 0;
-    border-bottom: 1px solid ${({theme, layer}) => theme.layers[layer].active};
+    border-bottom: 1px solid ${({theme, $layer}) => theme.layers[$layer].active};
     /* align-items: center; */
     grid-template-areas:
         "header tags"
@@ -57,12 +57,12 @@ const SegmentLayout = styled.div<Layer>`
         &:hover {
             border-radius: 4px;
             cursor: pointer;
-            background: ${({theme, layer}) => theme.layers[layer].hover}
+            background: ${({theme, $layer}) => theme.layers[$layer].hover}
         }
     }
 `
 
-const Segment: FC<SegmentProps> = ({segmentID, layer, regionUpdateCallback, regionsReloadCallback, ...props}) => {
+const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, regionsReloadCallback, ...props}) => {
     const data = useSelector((state: RootState) => selectSegmentByID(state, segmentID))
 
     if (!data)
@@ -100,19 +100,19 @@ const Segment: FC<SegmentProps> = ({segmentID, layer, regionUpdateCallback, regi
     // TODO: implement group visualisation on the side
 
     return (
-        <SegmentLayout layer={layer} {...props} className={isSelecting ? "selecting" : ""} onClick={isSelecting ? (e) => handleSelectingSegment(e) : () => {}}>
+        <SegmentLayout $layer={$layer} {...props} className={isSelecting ? "selecting" : ""} onClick={isSelecting ? (e) => handleSelectingSegment(e) : () => {}}>
             <div style={{display: "flex", gap: "8px", marginRight: "auto", alignItems: "center"}}>
-                <DropdownSelection layer={layer+1} variant="speaker" onSelection={() => {}} initialState={0} options={[1, 2, 3]} />
-                <TimeRange start={data.start} end={data.end} layer={layer+1} changeHandler={handleTimeRangeChange}></TimeRange>
-                <SegmentActions layer={layer} deleteHandler={handleDeletion} mergeHandler={handleMerge} />
+                <DropdownSelection $layer={$layer+1} variant="speaker" onSelection={() => {}} initialState={0} options={[1, 2, 3]} />
+                <TimeRange start={data.start} end={data.end} $layer={$layer+1} changeHandler={handleTimeRangeChange}></TimeRange>
+                <SegmentActions $layer={$layer} deleteHandler={handleDeletion} mergeHandler={handleMerge} />
             </div>
             <div>
                 {/* TODO: tags */}
                 {/* TODO: get tag display text based on tag text */}
-                {/* <TagArea tags={segment.segment_tags} placeholder="" layer={layer} span={1} onTagAdd={() => {}} onTagDelete={() => {}} /> */}
+                {/* <TagArea tags={segment.segment_tags} placeholder="" $layer={$layer} span={1} onTagAdd={() => {}} onTagDelete={() => {}} /> */}
             </div>
             <div style={{marginRight: "auto", display: "flex"}}>
-                <Button layer={layer} onClick={handlePlay} style={{margin: "0 4px auto 4px"}}>
+                <Button $layer={$layer} onClick={handlePlay} style={{margin: "0 4px auto 4px"}}>
                     <PlayArrowRoundedIcon />
                 </Button>
                 <p>{segmentWords2String(data.words) /* TODO, FIXME: use text editor with tag support etc. */}</p>

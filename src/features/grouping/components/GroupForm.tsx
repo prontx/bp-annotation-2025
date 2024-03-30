@@ -26,7 +26,7 @@ interface GroupFormProps extends Layer, React.HTMLAttributes<HTMLFormElement> {
 }
 
 const GroupFormContainer = styled.form<Layer>`
-    border: 2px solid ${({theme, layer}) => theme.layers[layer+1].background};
+    border: 2px solid ${({theme, $layer}) => theme.layers[$layer+1].background};
     border-radius: 4px;
 
     & .body {
@@ -50,17 +50,17 @@ const GroupTitleInput = styled.input<Layer>`
     font-weight: 600;
     color: ${({theme}) => theme.textSecondary};
     margin-right: auto;
-    background: ${({theme, layer}) => theme.layers[layer].background};
+    background: ${({theme, $layer}) => theme.layers[$layer].background};
     border-radius: 2px;
-    border: 2px solid ${({theme, layer}) => theme.layers[layer].active};
+    border: 2px solid ${({theme, $layer}) => theme.layers[$layer].active};
     outline: none;
     
     &:hover {
-        background: ${({theme, layer}) => theme.layers[layer].hover};
+        background: ${({theme, $layer}) => theme.layers[$layer].hover};
     }
     
     &:active, &:focus {
-        background: ${({theme, layer}) => theme.layers[layer].active};
+        background: ${({theme, $layer}) => theme.layers[$layer].active};
     }
 `
 
@@ -74,7 +74,7 @@ const GroupFormActions = styled.div`
     }
 `
 
-const GroupForm: FC<GroupFormProps> = ({layer, groupID, closeFn, ...props}) => {
+const GroupForm: FC<GroupFormProps> = ({$layer, groupID, closeFn, ...props}) => {
     const dispatch = useAppDispatch()
     const [title, setTitle] = useState("")
     const [error, setError] = useState("")
@@ -105,9 +105,9 @@ const GroupForm: FC<GroupFormProps> = ({layer, groupID, closeFn, ...props}) => {
     }
 
     return (
-        <GroupFormContainer layer={layer} onSubmit={handleSubmit} {...props}>
+        <GroupFormContainer $layer={$layer} onSubmit={handleSubmit} {...props}>
             <GroupTitleInput
-                layer={layer+1}
+                $layer={$layer+1}
                 type="text"
                 value={title}
                 placeholder="Zadat název"
@@ -115,19 +115,19 @@ const GroupForm: FC<GroupFormProps> = ({layer, groupID, closeFn, ...props}) => {
             />
             <div className="body">
                 <StartEndSelection
-                    layer={layer+1}
+                    $layer={$layer+1}
                     startSegmentID={startSegmentID}
                     setStartSegmentID={setStartSegmentID}
                     endSegmentID={endSegmentID}
                     setEndSegmentID={setEndSegmentID}
                 />
                 {tags.length > 0
-                    ? <Tag tags={tags} layer={layer+1} deleteCallback={() => setTags([])} />
-                    : <TagSelection options={metadata} layer={layer} onSelection={setTags} />}
+                    ? <Tag tags={tags} $layer={$layer+1} deleteCallback={() => setTags([])} />
+                    : <TagSelection options={metadata} $layer={$layer} onSelection={setTags} />}
                 {error && <p className="error">{error}</p>}
                 <GroupFormActions>
-                    <Button size="l" layer={layer+1} type="submit">Vytvořit</Button>
-                    <Button size="l" color="danger" layer={layer+1} onClick={handleCancelation}>Zrušit</Button>
+                    <Button $size="l" $layer={$layer+1} type="submit">Vytvořit</Button>
+                    <Button $size="l" $color="danger" $layer={$layer+1} onClick={handleCancelation}>Zrušit</Button>
                 </GroupFormActions>
             </div>
         </GroupFormContainer>

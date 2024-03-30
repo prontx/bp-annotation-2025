@@ -9,14 +9,13 @@ import Layer from "../../types/Layer";
 
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, Layer {
-    blended?: boolean,
     icon?: ReactNode,
-    color?: "neutral"|"danger",
-    disabled?: boolean,
-    size?: "s"|"m"|"l",
+    $blended?: boolean,
+    $color?: "neutral"|"danger",
+    $size?: "s"|"m"|"l",
 }
 
-const StyledButton = styled.button<{$layer: number, $color?: "neutral"|"danger", $blended?: boolean, $size?: "s"|"m"|"l"}>`
+const StyledButton = styled.button<Omit<ButtonProps, "icon">>`
     ${clickableBaseStyles}
     
     display: flex;
@@ -58,9 +57,9 @@ const StyledButton = styled.button<{$layer: number, $color?: "neutral"|"danger",
     }
 ` 
 
-const Button: FC<ButtonProps> = ({blended, size, icon, color, disabled, layer, ...props}) => {
+const Button: FC<ButtonProps> = ({icon, ...props}) => {
     return (
-        <StyledButton $layer={layer} $size={size} $color={color} $blended={blended} {...props}>
+        <StyledButton {...props}>
             {icon}
             {props.children}
         </StyledButton>

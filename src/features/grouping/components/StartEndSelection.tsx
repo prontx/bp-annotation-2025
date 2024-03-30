@@ -37,7 +37,7 @@ const StartEndSelectionContainer = styled.div`
     }
 `
 
-const StartEndSelection: FC<StartEndSelectionProps> = ({layer, startSegmentID, setStartSegmentID, endSegmentID, setEndSegmentID}) => {
+const StartEndSelection: FC<StartEndSelectionProps> = ({$layer, startSegmentID, setStartSegmentID, endSegmentID, setEndSegmentID}) => {
     const dispatch = useAppDispatch()
     const [selecting, setSelecting] = useState<"start"|"end"|null>(null)
     const isSelecting = useSelector(selectIsSelecting)
@@ -67,11 +67,11 @@ const StartEndSelection: FC<StartEndSelectionProps> = ({layer, startSegmentID, s
 
     return (
     <StartEndSelectionContainer>
-        <Button size="s" icon={<EditIcon style={{width: "24px"}}/>} layer={layer} onClick={(e) => handleBeginSelecting(e, "start")}>
+        <Button $size="s" icon={<EditIcon style={{width: "24px"}}/>} $layer={$layer} onClick={(e) => handleBeginSelecting(e, "start")}>
             {(startSegmentID && startTime) ? timeToFormatedString(startTime) : "Zvolit začátek"}
         </Button>
         <span className="separator">–</span>
-        <Button size="s" icon={<EditIcon style={{width: "24px"}}/>} layer={layer} onClick={(e) => handleBeginSelecting(e, "end")}>
+        <Button $size="s" icon={<EditIcon style={{width: "24px"}}/>} $layer={$layer} onClick={(e) => handleBeginSelecting(e, "end")}>
             {(endSegmentID && endTime) ? timeToFormatedString(endTime) : "Zvolit konec"}
         </Button>
     </StartEndSelectionContainer>

@@ -24,7 +24,7 @@ const StyledTag = styled.div`
 `
 
 const Capsule = styled.div<Layer>`
-    background: ${({theme, layer}) => theme.layers[layer].background};
+    background: ${({theme, $layer}) => theme.layers[$layer].background};
     line-height: 1rem;
     display: flex;
     border-radius: 24px;
@@ -57,15 +57,15 @@ const Capsule = styled.div<Layer>`
         height: 18px;
         width: 18px;
         margin-right: -6px;
-        background: ${({theme, layer}) => theme.layers[layer+1].background};
+        background: ${({theme, $layer}) => theme.layers[$layer+1].background};
 
         &:hover {
             color: ${({theme}) => theme.textPrimary};
-            background: ${({theme, layer}) => theme.layers[layer].hover};
+            background: ${({theme, $layer}) => theme.layers[$layer].hover};
         }
 
         &:active {
-            background: ${({theme, layer}) => theme.layers[layer].active};
+            background: ${({theme, $layer}) => theme.layers[$layer].active};
         }
         
         svg {
@@ -76,16 +76,16 @@ const Capsule = styled.div<Layer>`
     }
 `
 
-const Tag: FC<TagProps> = ({layer, deleteCallback, tags, ...props}) => {
+const Tag: FC<TagProps> = ({$layer, deleteCallback, tags, ...props}) => {
     const [tagText, sub1, sub2] = tags
     
     return (
         <StyledTag {...props}>
-            <Capsule layer={layer} className={`text ${!sub1 && "top"}`}>
+            <Capsule $layer={$layer} className={`text ${!sub1 && "top"}`}>
                 {tagText}
-                {sub1 && <Capsule layer={layer+1} className={`text ${!sub2 && "top"}`}>
+                {sub1 && <Capsule $layer={$layer+1} className={`text ${!sub2 && "top"}`}>
                     {sub1}
-                    {sub2 && <Capsule layer={layer+2} className="text top">
+                    {sub2 && <Capsule $layer={$layer+2} className="text top">
                         {sub2}
                         {deleteCallback && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
                     </Capsule>}

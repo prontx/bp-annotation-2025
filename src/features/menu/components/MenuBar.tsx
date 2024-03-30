@@ -17,7 +17,7 @@ const MenuBarContainer = styled.div<Layer>`
     grid-template-columns: auto 1fr;
     gap: 0 16px;
     padding: 8px 16px;
-    background: ${({theme, layer}) => theme.layers[layer].background};
+    background: ${({theme, $layer}) => theme.layers[$layer].background};
 
     img {
         grid-area: logo;
@@ -41,46 +41,46 @@ const MenuItemsContainer = styled.div`
     }
 `
 
-const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({layer, ...props}) => {
+const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({$layer, ...props}) => {
     return (
-        <MenuBarContainer layer={layer} {...props}>
+        <MenuBarContainer $layer={$layer} {...props}>
             <img src="/src/assets/logo-spokendata-inverse.png" alt="SpokenData" />
             <h1>ATCO Lorem Ipsum Dolor 42</h1>
             <MenuItemsContainer>
                 <Menu>
-                    <MenuButton layer={layer}>File</MenuButton>
-                    <MenuPopover layer={layer+1}>
-                        <MenuItems layer={layer+1}>
+                    <MenuButton $layer={$layer}>File</MenuButton>
+                    <MenuPopover $layer={$layer+1}>
+                        <MenuItems $layer={$layer+1}>
                             <MenuItem onSelect={() => {}}>Undo</MenuItem>
                             <MenuItem onSelect={() => {}}>Redo</MenuItem>
                         </MenuItems>
-                        <MenuItems layer={layer+1}>
+                        <MenuItems $layer={$layer+1}>
                             <MenuItem onSelect={() => {}}>Auto Save</MenuItem>
                             <MenuItem onSelect={() => {}}>Save</MenuItem>
                             <MenuItem onSelect={() => {}}>Export</MenuItem>
                         </MenuItems>
-                        <MenuItems layer={layer+1}>
+                        <MenuItems $layer={$layer+1}>
                             <MenuItem onSelect={() => {}}>Close as DONE</MenuItem>
                             <MenuItem onSelect={() => {}}>Close as REFUSED</MenuItem>
                         </MenuItems>
-                        <MenuItems layer={layer+1}>
+                        <MenuItems $layer={$layer+1}>
                             <MenuItem onSelect={() => {}}>Shortcuts</MenuItem>
                         </MenuItems>
                     </MenuPopover>
                 </Menu>
                 <Menu>
-                    <MenuButton layer={layer}>Playback</MenuButton>
-                    <MenuPopover layer={layer+1}>
-                        <MenuItems layer={layer+1}>
+                    <MenuButton $layer={$layer}>Playback</MenuButton>
+                    <MenuPopover $layer={$layer+1}>
+                        <MenuItems $layer={$layer+1}>
                             <MenuItem onSelect={() => {}}>Pre-play [s]</MenuItem>
                             <MenuItem onSelect={() => {}}>Time Shift [s]</MenuItem>
                         </MenuItems>
                     </MenuPopover>
                 </Menu>
                 <Menu>
-                    <MenuButton layer={layer}>View</MenuButton>
-                    <MenuPopover layer={layer+1}>
-                        <MenuItems layer={layer+1}>
+                    <MenuButton $layer={$layer}>View</MenuButton>
+                    <MenuPopover $layer={$layer+1}>
+                        <MenuItems $layer={$layer+1}>
                             <MenuItem onSelect={() => {}}>Job Details</MenuItem>
                             <MenuItem onSelect={() => {}}>Speaker Labels</MenuItem>
                             <MenuItem onSelect={() => {}}>Sorted Waypoint-Callsign pairs</MenuItem>
@@ -88,9 +88,9 @@ const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({layer, ...p
                     </MenuPopover>
                 </Menu>
                 <Menu>
-                    <MenuButton layer={layer}>Help</MenuButton>
-                    <MenuPopover layer={layer+1}>
-                        <MenuItems layer={layer+1}>
+                    <MenuButton $layer={$layer}>Help</MenuButton>
+                    <MenuPopover $layer={$layer+1}>
+                        <MenuItems $layer={$layer+1}>
                             <MenuItem onSelect={() => {}}>Cheat Sheet</MenuItem>
                             <MenuItem onSelect={() => {}}>Annotation Manual</MenuItem>
                             <MenuItem onSelect={() => {}}>Some Other Manual</MenuItem>
@@ -98,7 +98,7 @@ const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({layer, ...p
                     </MenuPopover>
                 </Menu>
                 <Menu>
-                    <MenuButton layer={layer}>Open in old editor</MenuButton>
+                    <MenuButton $layer={$layer}>Open in old editor</MenuButton>
                 </Menu>
             </MenuItemsContainer>
         </MenuBarContainer>

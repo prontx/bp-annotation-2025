@@ -11,18 +11,18 @@ import { MenuButton as BaseMenuButton, MenuButtonProps } from "@reach/menu-butto
 const StyledMenuButton = styled(BaseMenuButton)<Layer>`
     ${clickableBaseStyles}
 
-    background-color: ${({theme, layer}) => theme.layers[layer].background};
+    background-color: ${({theme, $layer}) => theme.layers[$layer].background};
     color: ${({theme}) => theme.textSecondary};
     padding: 4px 8px;
     font-size: 1rem;
 
     &:hover, &:focus, &.expanded {
-        background-color: ${({theme, layer}) => theme.layers[layer].hover};
+        background-color: ${({theme, $layer}) => theme.layers[$layer].hover};
         color: ${({theme}) => theme.textPrimary};
     }
 
     &:active {
-        background-color: ${({theme, layer}) => theme.layers[layer].active};
+        background-color: ${({theme, $layer}) => theme.layers[$layer].active};
         color: ${({theme}) => theme.textPrimary};
     }
     

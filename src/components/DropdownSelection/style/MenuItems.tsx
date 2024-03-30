@@ -12,7 +12,7 @@ export const MenuItems = styled(BaseMenuItems)<Layer>`
     [data-reach-menu-item] {
         ${clickableBaseStyles}
 
-        background-color: ${({theme, layer}) => theme.layers[layer].background};
+        background-color: ${({theme, $layer}) => theme.layers[$layer].background};
         color: ${({theme}) => theme.textSecondary};
         padding: 4px 8px;
         font-size: 1rem;
@@ -20,7 +20,7 @@ export const MenuItems = styled(BaseMenuItems)<Layer>`
         align-items: center;
         
         &[data-selected] {
-            background-color: ${({theme, layer}) => theme.layers[layer].active};
+            background-color: ${({theme, $layer}) => theme.layers[$layer].active};
             color: ${({theme}) => theme.textPrimary};
         }
 

@@ -65,7 +65,7 @@ const AppLayout = styled.div`
 `
 
 const ScrollBox = styled.div<Layer>`
-    background: ${({theme, layer}) => theme.layers[layer].background};
+    background: ${({theme, $layer}) => theme.layers[$layer].background};
     border-radius: 8px 8px 0 0;
     min-height: 100%;
     overflow-y: scroll;
@@ -81,15 +81,15 @@ function App() {
     return (<>
         <BaseStyle />
         <AppLayout>
-            <MenuBar className="menuBar" layer={0}/>
-            <Waveform waveformRegionsRef={waveformRegionsRef} className="waveform" layer={1}/>
-            <Controls className="controls" layer={1}/>
-            <ScrollBox className="sideBar" layer={1}>
+            <MenuBar className="menuBar" $layer={0}/>
+            <Waveform waveformRegionsRef={waveformRegionsRef} className="waveform" $layer={1}/>
+            <Controls className="controls" $layer={1}/>
+            <ScrollBox className="sideBar" $layer={1}>
             </ScrollBox>
-            <ScrollBox className="segments" layer={2}>
-                <SegmentList waveformRegionsRef={waveformRegionsRef} layer={2}/>
+            <ScrollBox className="segments" $layer={2}>
+                <SegmentList waveformRegionsRef={waveformRegionsRef} $layer={2}/>
             </ScrollBox>
-            <GroupList className="groups" layer={1}>
+            <GroupList className="groups" $layer={1}>
             </GroupList>
         </AppLayout>
     </>)

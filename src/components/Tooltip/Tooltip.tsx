@@ -41,9 +41,9 @@ const StyledTooltip = styled.div<TooltipProps>`
     }
 `
 
-const Tooltip: FC<TooltipProps & any> = ({layer, label, ...props}) => { // TODO: fix any
+const Tooltip: FC<TooltipProps & any> = ({$layer, label, ...props}) => { // TODO: fix any
     return (
-        <StyledTooltip layer={layer} label={label}>
+        <StyledTooltip $layer={$layer} label={label}>
             {props.children}
         </StyledTooltip>
     )

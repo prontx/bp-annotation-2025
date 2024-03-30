@@ -21,10 +21,10 @@ interface SegmentLayoutProps extends Layer {
 }
 
 const SegmentLayout = styled.div<Layer>`
-    background: ${({theme, layer}) => theme.layers[layer].background};
+    background: ${({theme, $layer}) => theme.layers[$layer].background};
 `
 
-const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, layer}) => {
+const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer}) => {
     const segmentIDs = useSelector(selectSegmentIDs)
 
     const updateWaveformRegion = (regionID: string, options: SegmentUpdateOptions) => {
@@ -33,8 +33,8 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, layer}) => {
     }
     
     return (
-        <SegmentLayout layer={layer}>
-            {segmentIDs && segmentIDs.map(id => <Segment regionUpdateCallback={updateWaveformRegion} regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()} className="segment" key={id} segmentID={id} layer={layer} />)}
+        <SegmentLayout $layer={$layer}>
+            {segmentIDs && segmentIDs.map(id => <Segment regionUpdateCallback={updateWaveformRegion} regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()} className="segment" key={id} segmentID={id} $layer={$layer} />)}
         </SegmentLayout>
     )
 }

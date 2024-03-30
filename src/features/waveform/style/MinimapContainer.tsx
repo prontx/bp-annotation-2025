@@ -2,13 +2,13 @@ import styled from "styled-components";
 import Layer from "../../../types/Layer";
 
 const MinimapContainer = styled.div<Layer>`
-    background: ${({theme, layer}) => theme.layers[layer].background};
+    background: ${({theme, $layer}) => theme.layers[$layer].background};
     margin-bottom: 16px;
     
     #minimap {
         padding: 0 4px;
         border-radius: 4px;
-        background: ${({theme, layer}) => theme.layers[layer+1].background};
+        background: ${({theme, $layer}) => theme.layers[$layer+1].background};
         height: 20px;
     }
 

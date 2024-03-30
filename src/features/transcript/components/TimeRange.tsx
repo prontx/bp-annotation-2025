@@ -13,17 +13,17 @@ interface TimeRangeProps extends Layer {
     changeHandler: (change: {start?: number, end?: number}) => void
 }
 
-const TimeRange: FC<TimeRangeProps> = ({layer, start, end, changeHandler}) => {
+const TimeRange: FC<TimeRangeProps> = ({$layer, start, end, changeHandler}) => {
     return (
         <>
             <SubtleInput
-                layer={layer}
+                $layer={$layer}
                 time={start}
                 globalStateUpdateCallback={(newStart: number) => changeHandler({start: newStart})}
             />
             –
             <SubtleInput
-                layer={layer}
+                $layer={$layer}
                 time={end}
                 globalStateUpdateCallback={(newEnd: number) => changeHandler({end: newEnd})}
             />

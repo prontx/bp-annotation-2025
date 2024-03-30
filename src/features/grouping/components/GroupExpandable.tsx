@@ -38,18 +38,18 @@ const GroupBodyContainer = styled.div`
     }
 `
 
-const GroupExpandable: FC<GroupExpandableProps> = ({layer, groupID, ...props}) => {
+const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, ...props}) => {
     const data = useSelector((state: RootState) => selectGroupByID(state, groupID))
     if (!data)
         return null
     const [startTime, endTime] = useSelector((state: RootState) => selectGroupStartEndByIDs(state, data.startSegmentID, data.endSegmentID))
 
     return (
-        <Expandable title={data.title} layer={layer} {...props}>
+        <Expandable title={data.title} $layer={$layer} {...props}>
             <GroupBodyContainer><>
                 <p>{timeToFormatedString(startTime)} – {timeToFormatedString(endTime)}</p>
-                <Tag tags={data.tags} layer={layer}></Tag>
-                {data.childrenIDs.map(id => <GroupExpandable groupID={id} layer={layer}/>)}
+                <Tag tags={data.tags} $layer={$layer}></Tag>
+                {data.childrenIDs.map(id => <GroupExpandable groupID={id} $layer={$layer}/>)}
             </></GroupBodyContainer>
         </Expandable>
     )

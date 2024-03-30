@@ -11,7 +11,7 @@ export const ComboboxList = styled(BaseComboboxList)<Layer>`
     [data-reach-combobox-option] {
         ${clickableBaseStyles}
 
-        background-color: ${({theme, layer}) => theme.layers[layer].background};
+        background-color: ${({theme, $layer}) => theme.layers[$layer].background};
         color: ${({theme}) => theme.textSecondary};
         padding: 2px 4px;
         font-size: 1rem;
@@ -19,7 +19,7 @@ export const ComboboxList = styled(BaseComboboxList)<Layer>`
         align-items: center;
 
         &[data-highlighted], &:hover {
-            background-color: ${({theme, layer}) => theme.layers[layer].active};
+            background-color: ${({theme, $layer}) => theme.layers[$layer].active};
             color: ${({theme}) => theme.textPrimary};
         }
     }

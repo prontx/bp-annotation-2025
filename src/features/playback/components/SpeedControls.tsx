@@ -16,7 +16,7 @@ const SpeedControlsContainer = styled.div`
     gap: 16px;
 `
 
-const SpeedControls : FC<Layer> = ({layer}) => {
+const SpeedControls : FC<Layer> = ({$layer}) => {
     const dispatch = useAppDispatch()
     const speed  = useSelector(selectSpeed)
 
@@ -27,7 +27,7 @@ const SpeedControls : FC<Layer> = ({layer}) => {
     return (
         <SpeedControlsContainer>
             <p>Speed:</p>
-            <DropdownSelection layer={layer} variant="speed" onSelection={handleSpeedChange} initialState={speed} options={[1, 0.9, 0.8, 0.7, 0.6, 0.5]}/>
+            <DropdownSelection $layer={$layer} variant="speed" onSelection={handleSpeedChange} initialState={speed} options={[1, 0.9, 0.8, 0.7, 0.6, 0.5]}/>
         </SpeedControlsContainer>
     );
 }

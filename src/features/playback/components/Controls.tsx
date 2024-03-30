@@ -15,17 +15,17 @@ const ControlsContainer = styled.div<Layer>`
     height: 48px;
     padding: 8px 16px;
     border-radius: 0 0 8px 8px;
-    background: ${({theme, layer}) => theme.layers[layer].background};
+    background: ${({theme, $layer}) => theme.layers[$layer].background};
 `
 
-const Controls : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({layer, ...props}) => {
+const Controls : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({$layer, ...props}) => {
     useWatchPlayingTo()
     
     return (
-        <ControlsContainer layer={layer} {...props}>
-            <SpeedControls layer={layer+1}/>
-            <ZoomControls layer={layer+1} />
-            <PlaybackControls layer={layer+1} />
+        <ControlsContainer $layer={$layer} {...props}>
+            <SpeedControls $layer={$layer+1}/>
+            <ZoomControls $layer={$layer+1} />
+            <PlaybackControls $layer={$layer+1} />
             <VolumeControls />
         </ControlsContainer>
     );

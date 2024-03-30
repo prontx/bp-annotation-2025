@@ -16,7 +16,7 @@ interface SubtleInputProps extends Layer, React.DetailedHTMLProps<React.InputHTM
     globalStateUpdateCallback: (value: number) => void
 }
 
-const CustomInput: FC<SubtleInputProps> = ({layer, time, globalStateUpdateCallback, ...props}) => {
+const CustomInput: FC<SubtleInputProps> = ({$layer, time, globalStateUpdateCallback, ...props}) => {
     const [isFocused, setIsFocused] = useState(false)
     const [timeString, setTimeString] = useState(timeToFormatedString(time))
 
@@ -57,11 +57,11 @@ const SubtleInput = styled(CustomInput)`
     padding: 2px 4px;
     display: inline;
     width: 8ch;
-    background: ${({theme, layer}) => theme.layers[layer-1].background};
+    background: ${({theme, $layer}) => theme.layers[$layer-1].background};
     
     &:hover, &:focus {
-        background: ${({theme, layer}) => theme.layers[layer].background};
-        outline: 2px solid ${({theme, layer}) => theme.layers[layer].active};
+        background: ${({theme, $layer}) => theme.layers[$layer].background};
+        outline: 2px solid ${({theme, $layer}) => theme.layers[$layer].active};
         color: ${({theme}) => theme.textPrimary};
     }
 `

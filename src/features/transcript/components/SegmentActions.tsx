@@ -22,16 +22,16 @@ const SegmentActionsLayout = styled.div<Layer>`
     position: relative;
 `
 
-const SegmentActions: FC<SegmentActionsProps> = ({layer, deleteHandler, mergeHandler, ...props}) => {
+const SegmentActions: FC<SegmentActionsProps> = ({$layer, deleteHandler, mergeHandler, ...props}) => {
     return (
-        <SegmentActionsLayout layer={layer} {...props}>
-            <Tooltip label="Merge down" layer={layer+1}>
-                <Button layer={layer} onClick={mergeHandler}>
+        <SegmentActionsLayout $layer={$layer} {...props}>
+            <Tooltip label="Merge down" $layer={$layer+1}>
+                <Button $layer={$layer} onClick={mergeHandler}>
                     <KeyboardDoubleArrowDownRoundedIcon />
                 </Button>
             </Tooltip>
-            <Tooltip label="Delete segment" layer={layer+1}>
-                <Button blended color="danger" layer={layer} onClick={deleteHandler}>
+            <Tooltip label="Delete segment" $layer={$layer+1}>
+                <Button $blended $color="danger" $layer={$layer} onClick={deleteHandler}>
                     <DeleteOutlineRoundedIcon />
                 </Button>
             </Tooltip>

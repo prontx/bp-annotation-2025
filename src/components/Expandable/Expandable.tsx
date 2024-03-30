@@ -14,7 +14,7 @@ import { ExpandableProps } from "./types/ExpandableProps"
 
 
 const ExpandableContainer = styled.div<Layer>`
-    border: 2px solid ${({theme, layer}) => theme.layers[layer+1].background};
+    border: 2px solid ${({theme, $layer}) => theme.layers[$layer+1].background};
     border-radius: 4px;
 
     & .body {
@@ -26,17 +26,17 @@ const ExpandableHeader = styled.div<Layer>`
     ${clickableBaseStyles};
     border-radius: 2px;
 
-    background: ${({theme, layer}) => theme.layers[layer+1].background};
+    background: ${({theme, $layer}) => theme.layers[$layer+1].background};
     padding: 4px 8px;
     display: flex;
     align-items: center;
     
     &:hover {
-        background: ${({theme, layer}) => theme.layers[layer+1].hover};
+        background: ${({theme, $layer}) => theme.layers[$layer+1].hover};
     }
 
     &:active {
-        background: ${({theme, layer}) => theme.layers[layer+1].active};
+        background: ${({theme, $layer}) => theme.layers[$layer+1].active};
     }
     
     & p {
@@ -45,12 +45,12 @@ const ExpandableHeader = styled.div<Layer>`
     }
 `
 
-const Expandable: FC<ExpandableProps> = ({layer, ...props}) => {
+const Expandable: FC<ExpandableProps> = ({$layer, ...props}) => {
     const [ open, setOpen ] = useState(false)
 
     return (
-        <ExpandableContainer layer={layer}>
-            <ExpandableHeader layer={layer} onClick={() => setOpen(!open)}>
+        <ExpandableContainer $layer={$layer}>
+            <ExpandableHeader $layer={$layer} onClick={() => setOpen(!open)}>
                 <p>{props.title}</p>
                 {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ExpandableHeader>

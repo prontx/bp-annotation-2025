@@ -20,7 +20,7 @@ interface DropdownSelectionProps extends React.HTMLAttributes<typeof Menu>, Laye
     options: number[]
 }
 
-const DropdownSelection: FC<DropdownSelectionProps> = ({layer, onSelection, options, ...props}) => {
+const DropdownSelection: FC<DropdownSelectionProps> = ({$layer, onSelection, options, ...props}) => {
     const [ value, setValue ] = useState(props.initialState)
     const [ choices, setChoices ] = useState(options.filter(option => option !== value))
 
@@ -33,9 +33,9 @@ const DropdownSelection: FC<DropdownSelectionProps> = ({layer, onSelection, opti
     if (props.variant === "speed") {
         return (
             <Menu {...props}>
-                <MenuButton layer={layer}>{value+"x"}<span className="dropdownArrow" aria-hidden>▾</span></MenuButton>
-                <MenuPopover layer={layer} position={positionMatchWidth}>
-                    <MenuItems layer={layer}>
+                <MenuButton $layer={$layer}>{value+"x"}<span className="dropdownArrow" aria-hidden>▾</span></MenuButton>
+                <MenuPopover $layer={$layer} position={positionMatchWidth}>
+                    <MenuItems $layer={$layer}>
                         {choices.map((choice) => <MenuItem key={choice} onSelect={() => handleSelect(choice)}>{choice+"x"}</MenuItem>)}
                     </MenuItems>
                 </MenuPopover>
@@ -44,9 +44,9 @@ const DropdownSelection: FC<DropdownSelectionProps> = ({layer, onSelection, opti
     } else if (props.variant === "speaker") {
         return (
             <Menu {...props}>
-                <MenuButton layer={layer} className="speaker">{value}<span className="dropdownArrow" aria-hidden>▾</span></MenuButton>
-                <MenuPopover layer={layer} position={positionMatchWidth}>
-                    <MenuItems layer={layer}>
+                <MenuButton $layer={$layer} className="speaker">{value}<span className="dropdownArrow" aria-hidden>▾</span></MenuButton>
+                <MenuPopover $layer={$layer} position={positionMatchWidth}>
+                    <MenuItems $layer={$layer}>
                         {choices.map((choice) => (
                             <MenuItem key={choice}
                                 onSelect={() => handleSelect(choice)}

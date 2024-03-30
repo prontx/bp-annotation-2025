@@ -28,7 +28,7 @@ interface TagSelectionProps extends Layer {
     onSelection: (tags: string[]) => void,
 } // TODO: fix any
 
-const TagSelection: FC<TagSelectionProps> = ({layer, options, onSelection}) => {
+const TagSelection: FC<TagSelectionProps> = ({$layer, options, onSelection}) => {
     const [term, setTerm] = useState("");
     const results = options || [];
 
@@ -40,10 +40,10 @@ const TagSelection: FC<TagSelectionProps> = ({layer, options, onSelection}) => {
 
     return (<>
         <Combobox aria-label="Metadata" openOnFocus>
-            <ComboboxInput layer={layer+1} value={term} onChange={handleChange} selectOnClick placeholder="Prohledávat metadata" />
-                <ComboboxPopover layer={layer+1}>
+            <ComboboxInput $layer={$layer+1} value={term} onChange={handleChange} selectOnClick placeholder="Prohledávat metadata" />
+                <ComboboxPopover $layer={$layer+1}>
                     {results.map(res => (
-                        <ComboboxList key={res.name} layer={layer+1}>
+                        <ComboboxList key={res.name} $layer={$layer+1}>
                             <ComboboxOption value={res.name} onClick={() => onSelection([res.name])}/>
                             {res.subcategories && res.subcategories.map(sub => <Fragment key={sub.name}>
                                 <ComboboxOption value={sub.name} style={{paddingLeft: "16px"}} onClick={() => onSelection([res.name, sub.name])}/>

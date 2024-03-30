@@ -24,7 +24,7 @@ interface WaveformProps extends React.HTMLAttributes<HTMLDivElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
 }
 
-const Waveform : FC<WaveformProps> = ({layer, waveformRegionsRef, ...props}) => {
+const Waveform : FC<WaveformProps> = ({$layer, waveformRegionsRef, ...props}) => {
     const wavesurfer = useRef<WaveSurfer | null>(null)
 
     // setup and load waveform with plugins
@@ -38,8 +38,8 @@ const Waveform : FC<WaveformProps> = ({layer, waveformRegionsRef, ...props}) => 
     useSetVolume(wavesurfer)
     useSetZoom(wavesurfer)
 
-    return <WaveformContainer layer={layer} {...props}>
-        <MinimapContainer layer={layer}>
+    return <WaveformContainer $layer={$layer} {...props}>
+        <MinimapContainer $layer={$layer}>
             <div id="minimap"></div>
         </MinimapContainer>
         <div id="waveform"></div>

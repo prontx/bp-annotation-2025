@@ -26,7 +26,7 @@ const ZoomControlsContainer = styled.div`
     }
 `
 
-const ZoomControls : FC<Layer> = ({layer}) => {
+const ZoomControls : FC<Layer> = ({$layer}) => {
     const dispatch = useAppDispatch()
 
     // TODO: fix icons
@@ -34,10 +34,10 @@ const ZoomControls : FC<Layer> = ({layer}) => {
     return (
         <ZoomControlsContainer>
             <p>Zoom:</p>
-            <Button layer={layer} onClick={ () => dispatch(zoomIn()) }>
+            <Button $layer={$layer} onClick={ () => dispatch(zoomIn()) }>
                 <ZoomInRoundedIcon />
             </Button>
-            <Button layer={layer} onClick={ () => dispatch(zoomOut()) }>
+            <Button $layer={$layer} onClick={ () => dispatch(zoomOut()) }>
                 <ZoomOutRoundedIcon />
             </Button>
         </ZoomControlsContainer>
