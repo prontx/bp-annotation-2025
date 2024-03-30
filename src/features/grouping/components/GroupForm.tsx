@@ -37,8 +37,8 @@ const GroupFormContainer = styled.form<Layer>`
     }
 
     & .error {
-        font-size: 14px;
-        color: red;
+        font-size: ${({theme}) => theme.text_s};
+        color: ${({theme}) => theme.textDanger};
         font-weight: 600;
     }
 `
@@ -46,7 +46,7 @@ const GroupFormContainer = styled.form<Layer>`
 const GroupTitleInput = styled.input<Layer>`
     width: 100%;
     padding: 4px 8px;
-    font-size: 19px;
+    font-size: ${({theme}) => theme.heading_m};
     font-weight: 600;
     color: ${({theme}) => theme.textSecondary};
     margin-right: auto;

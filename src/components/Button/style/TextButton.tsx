@@ -8,7 +8,9 @@ export const TextButton = styled.button<Layer>`
     background-color: ${({theme, layer}) => theme.layers[layer].background};
     color: ${({theme}) => theme.textSecondary};
     padding: 4px 8px;
-    font-size: 1rem;
+    font-size: ${({theme}) => theme.text_s};
+    text-transform: uppercase;
+    font-weight: bold;
 
     &:hover, &:focus {
         background-color: ${({theme, layer}) => theme.layers[layer].hover};

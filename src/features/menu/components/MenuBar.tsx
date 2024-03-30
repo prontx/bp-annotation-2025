@@ -26,7 +26,7 @@ const MenuBarContainer = styled.div<Layer>`
     }
 
     h1 {
-        font-size: 14px;
+        font-size: ${({theme}) => theme.text_s};
         font-weight: normal;
         margin-left: 8px;
     }

@@ -56,7 +56,7 @@ const SubtleInput = styled(CustomInput)`
     color: currentColor;
     padding: 2px 4px;
     display: inline;
-    width: 80px;
+    width: 8ch;
     background: ${({theme, layer}) => theme.layers[layer-1].background};
     
     &:hover, &:focus {

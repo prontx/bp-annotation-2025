@@ -1,93 +1,119 @@
-// Author: Jakub Dugovič
-// 
-// Acknowledgements:
-// grayscale and hover colors taken from IBM Carbon Design System
-// speaker and label color palettes created using Munsell Color System
+// @ts-ignore
+import { black, white, blackHover, whiteHover, gray, grayHover, red, redHover} from "@carbon/colors"
 
-const GRAY10  = "#f4f4f4";
-const GRAY20  = "#e0e0e0";
-const GRAY30  = "#c6c6c6";
-const GRAY40  = "#a8a8a8";
-const GRAY50  = "#8d8d8d";
-const GRAY60  = "#6f6f6f";
-const GRAY70  = "#525252";
-const GRAY80  = "#393939";
-const GRAY90  = "#262626";
-const GRAY100 = "#161616";
-
-const WHITEHOVER = "#e8e8e8";
-const BLACKHOVER = "#212121";
-const GRAY10HOVER = "#e8e8e8";
-const GRAY20HOVER = "#d2d2d2";
-const GRAY30HOVER = "#b5b5b5";
-const GRAY40HOVER = "#999999";
-const GRAY50HOVER = "#7a7a7a";
-const GRAY60HOVER = "#5f5f5f";
-const GRAY70HOVER = "#636363";
-const GRAY80HOVER = "#484848";
-const GRAY90HOVER = "#343434";
-const GRAY100HOVER = "#292929";
 
 export const theme = {
-    white: "#ffffff",
-    black: "#000000",
+    white: white,
+    whiteHover: whiteHover,
     
-    gray10: GRAY10,
-    gray20: GRAY20,
-    gray30: GRAY30,
-    gray40: GRAY40,
-    gray50: GRAY50,
-    gray60: GRAY60,
-    gray70: GRAY70,
-    gray80: GRAY80,
-    gray90: GRAY90,
-    gray100: GRAY100,
-    
-    whiteHover: WHITEHOVER,
-    blackHover: BLACKHOVER,
-    gray10Hover: GRAY10HOVER,
-    gray20Hover: GRAY20HOVER,
-    gray30Hover: GRAY30HOVER,
-    gray40Hover: GRAY40HOVER,
-    gray50Hover: GRAY50HOVER,
-    gray60Hover: GRAY60HOVER,
-    gray70Hover: GRAY70HOVER,
-    gray80Hover: GRAY80HOVER,
-    gray90Hover: GRAY90HOVER,
-    gray100Hover: GRAY100HOVER,
+    black: black,
+    blackHover: blackHover,
 
-    textPrimary: GRAY10,
-    textSecondary: GRAY30,
+    gray10: gray[10],
+    gray20: gray[20],
+    gray30: gray[30],
+    gray40: gray[40],
+    gray50: gray[50],
+    gray60: gray[60],
+    gray70: gray[70],
+    gray80: gray[80],
+    gray90: gray[90],
+    gray100: gray[100],
+
+    grayHover10: grayHover[10],
+    grayHover20: grayHover[20],
+    grayHover30: grayHover[30],
+    grayHover40: grayHover[40],
+    grayHover50: grayHover[50],
+    grayHover60: grayHover[60],
+    grayHover70: grayHover[70],
+    grayHover80: grayHover[80],
+    grayHover90: grayHover[90],
+    grayHover100: grayHover[100],
+
+    red10: red[10],
+    red20: red[20],
+    red30: red[30],
+    red40: red[40],
+    red50: red[50],
+    red60: red[60],
+    red70: red[70],
+    red80: red[80],
+    red90: red[90],
+    red100: red[100],
+
+    redHover10: redHover[10],
+    redHover20: redHover[20],
+    redHover30: redHover[30],
+    redHover40: redHover[40],
+    redHover50: redHover[50],
+    redHover60: redHover[60],
+    redHover70: redHover[70],
+    redHover80: redHover[80],
+    redHover90: redHover[90],
+    redHover100: redHover[100],
+
+    textPrimary: gray[10],
+    textSecondary: gray[30],
+    textDanger: red[40],
 
     layers: [
         {
-            background: GRAY100,
-            hover: GRAY100HOVER,
-            active: GRAY90
+            background: gray[100],
+            hover: grayHover[100],
+            active: gray[90],
         },{
-            background: GRAY90,
-            hover: GRAY90HOVER,
-            active: GRAY80
+            background: gray[90],
+            hover: grayHover[90],
+            active: gray[80],
         },{
-            background: GRAY80,
-            hover: GRAY80HOVER,
-            active: GRAY70
+            background: gray[80],
+            hover: grayHover[80],
+            active: gray[70],
         },{
-            background: GRAY70,
-            hover: GRAY70HOVER,
-            active: GRAY60
+            background: gray[70],
+            hover: grayHover[70],
+            active: gray[60],
         },{
-            background: GRAY60,
-            hover: GRAY60HOVER,
-            active: GRAY50
+            background: gray[60],
+            hover: grayHover[60],
+            active: gray[50],
         },{
-            background: GRAY50,
-            hover: GRAY50HOVER,
-            active: GRAY40
-        }
+            background: gray[50],
+            hover: grayHover[50],
+            active: gray[40],
+        },{
+            background: gray[40],
+            hover: grayHover[40],
+            active: gray[30],
+        },{
+            background: gray[30],
+            hover: grayHover[30],
+            active: gray[20],
+        },{
+            background: gray[20],
+            hover: grayHover[20],
+            active: gray[10],
+        },{
+            background: gray[10],
+            hover: grayHover[10],
+            active: white,
+        },
     ],
 
     speakerColors: ["#8FBA69", "#45BCCC", "#CA9FCA", "#E59C77", "#54BFA3", "#8DB0DE", "#E399A2", "#C5AC50"],
 
-    labelColors: ["#00804F", "#697600", "#9C631B", "#AB555C", "#905D91", "#3673A5"]
+    labelColors: ["#00804F", "#697600", "#9C631B", "#AB555C", "#905D91", "#3673A5"],
+
+    /* Text and heading sizes adopted from GOV.UK Design System
+    * https://design-system.service.gov.uk/styles/type-scale/
+    */
+    text_xs: "14px",
+    text_s: "16px",
+    text_m: "19px",
+    text_l: "24px",
+    heading_s: "19px",
+    heading_m: "24px",
+    heading_l: "36px",
+    heading_xl: "48px",
 }

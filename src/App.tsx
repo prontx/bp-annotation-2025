@@ -11,7 +11,7 @@ import GroupList from "./features/grouping/components/GroupList"
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
 
 // styles
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 
 // hooks
 import { useFetchJob } from "./features/job/hooks/useFetchJob"
@@ -20,6 +20,17 @@ import { useFetchTranscript } from "./features/transcript/hooks/useFetchTranscri
 // types
 import Layer from "./types/Layer";
 
+
+const BaseStyle = createGlobalStyle`
+    body {
+        font-family: Inter, system-ui, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+        font-size: ${({theme}) => theme.text_m};
+
+        color: ${({theme}) => theme.textSecondary};
+        background: ${({theme}) => theme.gray100};
+    }
+`
 
 const AppLayout = styled.div`
     width: 100vw;
@@ -67,18 +78,21 @@ function App() {
     useFetchTranscript()
     const waveformRegionsRef = useRef<RegionsPlugin>(RegionsPlugin.create())
 
-    return <AppLayout>
-        <MenuBar className="menuBar" layer={0}/>
-        <Waveform waveformRegionsRef={waveformRegionsRef} className="waveform" layer={1}/>
-        <Controls className="controls" layer={1}/>
-        <ScrollBox className="sideBar" layer={1}>
-        </ScrollBox>
-        <ScrollBox className="segments" layer={2}>
-            <SegmentList waveformRegionsRef={waveformRegionsRef} layer={2}/>
-        </ScrollBox>
-        <GroupList className="groups" layer={1}>
-        </GroupList>
-    </AppLayout>
+    return (<>
+        <BaseStyle />
+        <AppLayout>
+            <MenuBar className="menuBar" layer={0}/>
+            <Waveform waveformRegionsRef={waveformRegionsRef} className="waveform" layer={1}/>
+            <Controls className="controls" layer={1}/>
+            <ScrollBox className="sideBar" layer={1}>
+            </ScrollBox>
+            <ScrollBox className="segments" layer={2}>
+                <SegmentList waveformRegionsRef={waveformRegionsRef} layer={2}/>
+            </ScrollBox>
+            <GroupList className="groups" layer={1}>
+            </GroupList>
+        </AppLayout>
+    </>)
 }
 
 export default App

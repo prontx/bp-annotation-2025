@@ -34,7 +34,7 @@ const StyledTooltip = styled.div<TooltipProps>`
             left: 50%;
             transform: translate(-50%, 100%);
             pointer-events: none;
-            font-size: 14px;
+            font-size: ${({theme}) => theme.text_s};
             bottom: -8px;
             box-shadow: 0 0 4px 0 ${({theme}) => theme.gray100};
         }

@@ -10,10 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
+    "@carbon/colors": "^11.21.0",
+    "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.13",
-    "@mui/material": "^5.14.13",
+    "@mui/material": "^5.15.14",
     "@reach/combobox": "^0.18.0",
     "@reach/menu-button": "^0.18.0",
     "@reach/slider": "^0.18.0",
