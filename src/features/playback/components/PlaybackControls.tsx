@@ -49,23 +49,23 @@ const PlaybackControls : FC<Layer> = ({layer}) => {
     
     return (
         <PlaybackControlsContainer>
-            <Button layer={layer} variant="icon" onClick={() => dispatch(setTime({value: 0, changedBy: "controlsButton"}))}>
+            <Button layer={layer} onClick={() => dispatch(setTime({value: 0, changedBy: "controlsButton"}))}>
                 <FastRewindRoundedIcon />
             </Button>
-            <Button layer={layer} variant="icon" onClick={() => dispatch(skipBy({value: -1, changedBy: "controlsButton"}))}>
+            <Button layer={layer} onClick={() => dispatch(skipBy({value: -1, changedBy: "controlsButton"}))}>
                 <SkipPreviousRoundedIcon />
             </Button>
             { isPlaying
-                ? <Button layer={layer} variant="icon" onClick={() => dispatch(pause())}>
+                ? <Button layer={layer} onClick={() => dispatch(pause())}>
                     <PauseRoundedIcon />
                 </Button>
-                : <Button layer={layer} variant="icon" onClick={() => dispatch(play())}>
+                : <Button layer={layer} onClick={() => dispatch(play())}>
                     <PlayArrowRoundedIcon />
                 </Button> }
-            <Button layer={layer} variant="icon" onClick={() => dispatch(skipBy({value: 1, changedBy: "controlsButton"}))}>
+            <Button layer={layer} onClick={() => dispatch(skipBy({value: 1, changedBy: "controlsButton"}))}>
                 <SkipNextRoundedIcon />
             </Button>
-            <Button layer={layer} variant="icon" onClick={() => dispatch(setTime({value: length, changedBy: "controlsButton"}))}>
+            <Button layer={layer} onClick={() => dispatch(setTime({value: length, changedBy: "controlsButton"}))}>
                 <FastForwardRoundedIcon />
             </Button>
             <p>

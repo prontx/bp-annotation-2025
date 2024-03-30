@@ -112,7 +112,7 @@ const Segment: FC<SegmentProps> = ({segmentID, layer, regionUpdateCallback, regi
                 {/* <TagArea tags={segment.segment_tags} placeholder="" layer={layer} span={1} onTagAdd={() => {}} onTagDelete={() => {}} /> */}
             </div>
             <div style={{marginRight: "auto", display: "flex"}}>
-                <Button variant="icon" layer={layer} onClick={handlePlay} style={{margin: "0 4px auto 4px"}}>
+                <Button layer={layer} onClick={handlePlay} style={{margin: "0 4px auto 4px"}}>
                     <PlayArrowRoundedIcon />
                 </Button>
                 <p>{segmentWords2String(data.words) /* TODO, FIXME: use text editor with tag support etc. */}</p>

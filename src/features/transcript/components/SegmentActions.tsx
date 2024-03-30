@@ -26,12 +26,12 @@ const SegmentActions: FC<SegmentActionsProps> = ({layer, deleteHandler, mergeHan
     return (
         <SegmentActionsLayout layer={layer} {...props}>
             <Tooltip label="Merge down" layer={layer+1}>
-                <Button variant="icon" layer={layer} onClick={mergeHandler}>
+                <Button layer={layer} onClick={mergeHandler}>
                     <KeyboardDoubleArrowDownRoundedIcon />
                 </Button>
             </Tooltip>
             <Tooltip label="Delete segment" layer={layer+1}>
-                <Button variant="icon" layer={layer} onClick={deleteHandler}>
+                <Button blended color="danger" layer={layer} onClick={deleteHandler}>
                     <DeleteOutlineRoundedIcon />
                 </Button>
             </Tooltip>

@@ -126,9 +126,8 @@ const GroupForm: FC<GroupFormProps> = ({layer, groupID, closeFn, ...props}) => {
                     : <TagSelection options={metadata} layer={layer} onSelection={setTags} />}
                 {error && <p className="error">{error}</p>}
                 <GroupFormActions>
-                    <Button variant="text" layer={layer+1} type="submit">Vytvořit</Button>
-                    {/* FIXME: cancel button color: 'danger', call dispatch(resetSelecting()) */}
-                    <Button variant="text" layer={layer+1} onClick={handleCancelation}>Zrušit</Button>
+                    <Button size="l" layer={layer+1} type="submit">Vytvořit</Button>
+                    <Button size="l" color="danger" layer={layer+1} onClick={handleCancelation}>Zrušit</Button>
                 </GroupFormActions>
             </div>
         </GroupFormContainer>

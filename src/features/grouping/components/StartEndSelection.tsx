@@ -2,6 +2,7 @@ import { FC, Dispatch, SetStateAction, useState, useEffect, SyntheticEvent } fro
 
 // components
 import Button from "../../../components/Button/Button"
+import EditIcon from '@mui/icons-material/Edit';
 
 // style
 import styled from "styled-components"
@@ -29,6 +30,7 @@ interface StartEndSelectionProps extends Layer {
 
 const StartEndSelectionContainer = styled.div`
     display: flex;
+    align-items: center;
 
     & .separator {
         margin: 0 4px;
@@ -65,13 +67,13 @@ const StartEndSelection: FC<StartEndSelectionProps> = ({layer, startSegmentID, s
 
     return (
     <StartEndSelectionContainer>
-        {(startSegmentID && startTime)
-            ? <p>{timeToFormatedString(startTime)}</p>
-            : <Button variant={"text"} layer={layer} onClick={(e) => handleBeginSelecting(e, "start")}>Zvolit začátek</Button>}
+        <Button size="s" icon={<EditIcon style={{width: "24px"}}/>} layer={layer} onClick={(e) => handleBeginSelecting(e, "start")}>
+            {(startSegmentID && startTime) ? timeToFormatedString(startTime) : "Zvolit začátek"}
+        </Button>
         <span className="separator">–</span>
-        {(endSegmentID && endTime)
-            ? <p>{timeToFormatedString(endTime)}</p>
-            : <Button variant={"text"} layer={layer} onClick={(e) => handleBeginSelecting(e, "end")}>Zvolit konec</Button>}
+        <Button size="s" icon={<EditIcon style={{width: "24px"}}/>} layer={layer} onClick={(e) => handleBeginSelecting(e, "end")}>
+            {(endSegmentID && endTime) ? timeToFormatedString(endTime) : "Zvolit konec"}
+        </Button>
     </StartEndSelectionContainer>
     )
 }

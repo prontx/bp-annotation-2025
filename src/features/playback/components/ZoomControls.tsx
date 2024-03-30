@@ -34,10 +34,10 @@ const ZoomControls : FC<Layer> = ({layer}) => {
     return (
         <ZoomControlsContainer>
             <p>Zoom:</p>
-            <Button layer={layer} variant="icon" onClick={ () => dispatch(zoomIn()) }>
+            <Button layer={layer} onClick={ () => dispatch(zoomIn()) }>
                 <ZoomInRoundedIcon />
             </Button>
-            <Button layer={layer} variant="icon" onClick={ () => dispatch(zoomOut()) }>
+            <Button layer={layer} onClick={ () => dispatch(zoomOut()) }>
                 <ZoomOutRoundedIcon />
             </Button>
         </ZoomControlsContainer>
