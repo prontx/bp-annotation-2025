@@ -27,7 +27,12 @@ const SpeedControls : FC<Layer> = ({$layer}) => {
     return (
         <SpeedControlsContainer>
             <p>Speed:</p>
-            <DropdownSelection $layer={$layer} variant="speed" onSelection={handleSpeedChange} initialState={speed} options={[1, 0.9, 0.8, 0.7, 0.6, 0.5]}/>
+            <DropdownSelection<number>
+                $layer={$layer}
+                onSelection={handleSpeedChange}
+                initialState={speed}
+                options={[1, 0.9, 0.8, 0.7, 0.6, 0.5]}
+            />
         </SpeedControlsContainer>
     );
 }

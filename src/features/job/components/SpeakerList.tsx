@@ -2,7 +2,7 @@ import { FC } from "react"
 
 // components
 import NamedContainer from "../../../components/NamedContainer"
-import SpeakerTag from "../../../components/SpeakerTag"
+import SpeakerTag from "../../../components/SpeakerItem"
 
 // redux
 import { useSelector } from "react-redux"

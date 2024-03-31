@@ -5,7 +5,7 @@ import Button from "../../../components/Button"
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import SegmentActions from "./SegmentActions";
 import DropdownSelection from "../../../components/DropdownSelection/DropdownSelection"
-import Tag from "../../../components/Tag";
+// import Tag from "../../../components/Tag";
 import TimeRange from "./TimeRange";
 
 // redux
@@ -14,6 +14,7 @@ import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playSegment } from "../../playback/redux/playbackSlice";
 import { selectIsSelecting, selectSegment } from "../../grouping/redux/groupingSlice";
+import { selectSpeakers } from "../../job/redux/jobSlice";
 
 // utils
 import { segmentWords2String } from "../../../utils/segmentWords2String";
@@ -26,6 +27,7 @@ import type Layer from "../../../types/Layer"
 import type { Segment } from "../types/Segment";
 import type { RootState } from "../../../redux/store";
 import type { SegmentUpdateOptions } from "../../transcript/types/SegmentActionPayload";
+import { SpeakerTag } from "../types/Tag";
 
 
 interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
@@ -70,6 +72,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
     
     const dispatch = useAppDispatch()
     const isSelecting = useSelector(selectIsSelecting)
+    const speakers = useSelector(selectSpeakers)
     
     const handleTimeRangeChange = (change: {start?: number, end?: number}) => {
         dispatch(updateSegment({type: "id", key: segmentID, change: change, callback: regionUpdateCallback}))
@@ -100,11 +103,30 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
     // TODO: implement group visualisation on the side
 
     return (
-        <SegmentLayout $layer={$layer} {...props} className={isSelecting ? "selecting" : ""} onClick={isSelecting ? (e) => handleSelectingSegment(e) : () => {}}>
+        <SegmentLayout
+            $layer={$layer}
+            {...props}
+            className={isSelecting ? "selecting" : ""}
+            onClick={isSelecting ? (e) => handleSelectingSegment(e) : () => {}}
+        >
             <div style={{display: "flex", gap: "8px", marginRight: "auto", alignItems: "center"}}>
-                <DropdownSelection $layer={$layer+1} variant="speaker" onSelection={() => {}} initialState={0} options={[1, 2, 3]} />
-                <TimeRange start={data.start} end={data.end} $layer={$layer+1} changeHandler={handleTimeRangeChange}></TimeRange>
-                <SegmentActions $layer={$layer} deleteHandler={handleDeletion} mergeHandler={handleMerge} />
+                <DropdownSelection<SpeakerTag>
+                    $layer={$layer+1}
+                    onSelection={() => {/*FIXME*/}}
+                    initialState={speakers.find(speaker => speaker.id === data.speaker)}
+                    options={speakers}
+                />
+                <TimeRange
+                    start={data.start}
+                    end={data.end}
+                    $layer={$layer+1}
+                    changeHandler={handleTimeRangeChange}
+                />
+                <SegmentActions
+                    $layer={$layer}
+                    deleteHandler={handleDeletion}
+                    mergeHandler={handleMerge}
+                />
             </div>
             <div>
                 {/* TODO: tags */}

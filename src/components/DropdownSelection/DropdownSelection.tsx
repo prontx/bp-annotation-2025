@@ -1,8 +1,8 @@
-import { FC, useState } from "react"
+import { useState } from "react"
 
 // components
 import { Menu, MenuItem } from "@reach/menu-button";
-import { positionMatchWidth } from "@reach/popover";
+import SpeakerItem from "../SpeakerItem";
 
 // styles
 import { MenuPopover } from "./style/MenuPopover";
@@ -12,53 +12,60 @@ import "@reach/menu-button/styles.css";
 
 // types
 import Layer from "../../types/Layer";
+import type { SpeakerTag } from "../../features/transcript/types/Tag";
 
-interface DropdownSelectionProps extends React.HTMLAttributes<typeof Menu>, Layer {
-    variant: "speed" | "speaker",
-    onSelection: (value: number) => void,
-    initialState: number,
-    options: number[]
+
+interface DropdownSelectionProps<T> extends React.HTMLAttributes<typeof Menu>, Layer {
+    onSelection: (value: T) => void,
+    initialState?: T,
+    options: T[],
 }
 
-const DropdownSelection: FC<DropdownSelectionProps> = ({$layer, onSelection, options, ...props}) => {
-    const [ value, setValue ] = useState(props.initialState)
-    const [ choices, setChoices ] = useState(options.filter(option => option !== value))
+const DropdownSelection = <T extends number|SpeakerTag,>({$layer, onSelection, options, ...props}: DropdownSelectionProps<T>) => {
+    const [ value, setValue ] = useState<T|undefined>(props.initialState)
+    const [ choices, setChoices ] = useState<T[]>(options.filter(option => {
+        if (typeof(value) === "undefined"){
+            return false
+        }
+        if (typeof(value) === "number" || typeof(option) === "number"){
+            return option !== value
+        }
+        return value.id !== option.id
+    }))
 
-    const handleSelect = (newValue: number) => {
+    const handleSelect = (newValue: T) => {
         setChoices([...options.filter(option => option !== newValue)])
         setValue(newValue)
         onSelection(newValue)
     }
 
-    if (props.variant === "speed") {
-        return (
-            <Menu {...props}>
-                <MenuButton $layer={$layer}>{value+"x"}<span className="dropdownArrow" aria-hidden>▾</span></MenuButton>
-                <MenuPopover $layer={$layer} position={positionMatchWidth}>
-                    <MenuItems $layer={$layer}>
-                        {choices.map((choice) => <MenuItem key={choice} onSelect={() => handleSelect(choice)}>{choice+"x"}</MenuItem>)}
-                    </MenuItems>
-                </MenuPopover>
-            </Menu>
-        )
-    } else if (props.variant === "speaker") {
-        return (
-            <Menu {...props}>
-                <MenuButton $layer={$layer} className="speaker">{value}<span className="dropdownArrow" aria-hidden>▾</span></MenuButton>
-                <MenuPopover $layer={$layer} position={positionMatchWidth}>
-                    <MenuItems $layer={$layer}>
-                        {choices.map((choice) => (
-                            <MenuItem key={choice}
-                                onSelect={() => handleSelect(choice)}
-                                className="speaker">{choice}</MenuItem>
-                        ))}
-                    </MenuItems>
-                </MenuPopover>
-            </Menu>
-        )
-    } else {
-        return null
-    }
+    return (
+        <Menu {...props}>
+            <MenuButton $layer={$layer}>
+                {(typeof(value) === "number")
+                    ? value+"x"
+                    : <SpeakerItem speakerID={value?.id || "?"} color={value?.color}>
+                        {value?.label}
+                    </SpeakerItem>
+                }
+                <span className="dropdownArrow" aria-hidden>▾</span>
+            </MenuButton>
+            <MenuPopover $layer={$layer}>
+                <MenuItems $layer={$layer}>
+                    {choices.map((choice) => (
+                        <MenuItem key={(typeof(choice) === "number") ? choice : choice.id} onSelect={() => handleSelect(choice)}>
+                            {(typeof(choice) === "number")
+                                ? choice+"x"
+                                : <SpeakerItem speakerID={choice?.id || "?"} color={choice?.color}>
+                                    {choice?.label}
+                                </SpeakerItem>
+                            }
+                        </MenuItem>
+                    ))}
+                </MenuItems>
+            </MenuPopover>
+        </Menu>
+    )
 }
 
 export default DropdownSelection

@@ -6,12 +6,12 @@ import styled, { css } from "styled-components"
 import { rgba } from "@carbon/colors"
 
 
-interface SpeakerTagProps extends HTMLAttributes<HTMLSpanElement> {
+interface SpeakerItemProps extends HTMLAttributes<HTMLSpanElement> {
     speakerID: string,
     color?: string,
 }
 
-const StyledSpeakerTag = styled.span<{$color: string}>`
+const StyledSpeakerItem = styled.span<{$color: string}>`
     ${({theme, $color}) => css`
         display: flex;
         align-items: center;
@@ -32,15 +32,15 @@ const StyledSpeakerTag = styled.span<{$color: string}>`
     `}
 `
 
-const SpeakerTag: FC<SpeakerTagProps> = ({speakerID, color, ...props}) => {
+const SpeakerItem: FC<SpeakerItemProps> = ({speakerID, color, ...props}) => {
     return (
-        <StyledSpeakerTag $color={color || "#c6c6c6"} {...props}>
+        <StyledSpeakerItem $color={color || "#c6c6c6"} {...props}>
             <span className="icon">
                 {speakerID}
             </span>
             {props.children}
-        </StyledSpeakerTag>
+        </StyledSpeakerItem>
     )
 }
 
-export default SpeakerTag
+export default SpeakerItem

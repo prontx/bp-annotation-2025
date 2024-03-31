@@ -11,6 +11,7 @@ import { MenuButton as BaseMenuButton, MenuButtonProps } from "@reach/menu-butto
 const StyledMenuButton = styled(BaseMenuButton)<Layer>`
     ${clickableBaseStyles}
 
+    display: flex;
     background-color: ${({theme, $layer}) => theme.layers[$layer].background};
     color: ${({theme}) => theme.textSecondary};
     padding: 4px 8px;
@@ -28,21 +29,6 @@ const StyledMenuButton = styled(BaseMenuButton)<Layer>`
     
     .dropdownArrow {
         margin-left: 8px;
-    }
-    
-    &.speaker {
-        display: flex;
-        align-items: center;
-
-        &::before {
-            content: "";
-            display: block;
-            width: 1em;
-            height: 1em;
-            border-radius: 1em;
-            background: #c6c6c6; /*FIXME*/
-            margin-right: 4px;
-        }
     }
 `
 

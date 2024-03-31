@@ -23,15 +23,5 @@ export const MenuItems = styled(BaseMenuItems)<Layer>`
             background-color: ${({theme, $layer}) => theme.layers[$layer].active};
             color: ${({theme}) => theme.textPrimary};
         }
-
-        &.speaker::before {
-            content: "";
-            display: block;
-            width: 1em;
-            height: 1em;
-            border-radius: 1em;
-            background: #c6c6c6; /*FIXME*/
-            margin: 2px 4px 0 0;
-        }
     }
 `
