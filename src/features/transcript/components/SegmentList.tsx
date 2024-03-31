@@ -1,7 +1,11 @@
-import React, { FC } from "react"
+import React, { FC, HTMLAttributes } from "react"
 
 // components
 import Segment from "./Segment"
+
+// styles
+import styled from "styled-components"
+import { scrollableBaseStyles } from "../../../style/scrollableBaseStyles"
 
 // redux
 import { useSelector } from "react-redux"
@@ -12,19 +16,25 @@ import Layer from "../../../types/Layer"
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
 import type { SegmentUpdateOptions } from "../types/SegmentActionPayload"
 
-// styles
-import styled from "styled-components"
 
-
-interface SegmentLayoutProps extends Layer {
+interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
 }
 
-const SegmentLayout = styled.div<Layer>`
+const SegmentLayout = styled.section<Layer>`
+    ${scrollableBaseStyles}
+
     background: ${({theme, $layer}) => theme.layers[$layer].background};
+    padding: 8px;
+    border-radius: 8px 8px 0 0;
+    min-width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 `
 
-const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer}) => {
+const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...props}) => {
     const segmentIDs = useSelector(selectSegmentIDs)
 
     const updateWaveformRegion = (regionID: string, options: SegmentUpdateOptions) => {
@@ -33,8 +43,17 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer}) => {
     }
     
     return (
-        <SegmentLayout $layer={$layer}>
-            {segmentIDs && segmentIDs.map(id => <Segment regionUpdateCallback={updateWaveformRegion} regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()} className="segment" key={id} segmentID={id} $layer={$layer} />)}
+        <SegmentLayout $layer={$layer} {...props}>
+            {segmentIDs && segmentIDs.map(id => (
+                <Segment
+                    key={id}
+                    className="segment"
+                    segmentID={id}
+                    $layer={$layer+1}
+                    regionUpdateCallback={updateWaveformRegion}
+                    regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
+                />
+            ))}
         </SegmentLayout>
     )
 }

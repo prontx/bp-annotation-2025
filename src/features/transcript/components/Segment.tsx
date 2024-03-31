@@ -37,10 +37,10 @@ interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
 const SegmentLayout = styled.div<Layer>`
     display: grid;
     gap: 4px;
-    margin: 0 8px;
-    padding: 8px 0;
-    border-bottom: 1px solid ${({theme, $layer}) => theme.layers[$layer].active};
-    /* align-items: center; */
+    padding: 4px;
+    border-radius: 4px;
+    background: ${({theme, $layer}) => theme.layers[$layer].background};
+
     grid-template-areas:
         "header tags"
         "body tags";

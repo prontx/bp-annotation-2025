@@ -17,7 +17,6 @@ import Layer from "../../../types/Layer"
 
 const GroupListContainer = styled.div<Layer>`
     border-radius: 8px 8px 0 0;
-    margin-right: 8px;
     background: ${({theme, $layer}) => theme.layers[$layer].background};
 `
 

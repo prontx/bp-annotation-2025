@@ -17,9 +17,6 @@ import styled, { createGlobalStyle } from "styled-components";
 import { useFetchJob } from "./features/job/hooks/useFetchJob"
 import { useFetchTranscript } from "./features/transcript/hooks/useFetchTranscript"
 
-// types
-import Layer from "./types/Layer";
-
 
 const BaseStyle = createGlobalStyle`
     body {
@@ -36,43 +33,21 @@ const AppLayout = styled.div`
     width: 100vw;
     height: 100vh;
     display: grid;
-    gap: 0 8px;
+    gap: 8px;
+    padding: 8px 8px 0 8px;
     overflow: hidden;
     grid-template-columns: 1fr 3fr 1fr;
     grid-template-rows: repeat(3, auto) 1fr;
 
-    & .menuBar {
+    .menuBar, .waveform {
         grid-column: 1 / -1;
-    }
-    
-    & .waveform {
-        grid-column: 1 / -1;
-        margin: 0 8px;
     }
     
     & .controls {
         grid-column: 1 / -1;
-        margin: 0 8px 16px 8px;
-    }
-
-    & .sideBar {
-        margin-left: 8px;
-    }
-
-    & .segments {
-        margin: 0;
+        margin: -8px 0 4px 0;
     }
 `
-
-const ScrollBox = styled.div<Layer>`
-    background: ${({theme, $layer}) => theme.layers[$layer].background};
-    border-radius: 8px 8px 0 0;
-    min-height: 100%;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    position: relative;
-`
-
 function App() {
     useFetchJob()
     useFetchTranscript()
@@ -84,11 +59,8 @@ function App() {
             <MenuBar className="menuBar" $layer={0}/>
             <Waveform waveformRegionsRef={waveformRegionsRef} className="waveform" $layer={1}/>
             <Controls className="controls" $layer={1}/>
-            <ScrollBox className="sideBar" $layer={1}>
-            </ScrollBox>
-            <ScrollBox className="segments" $layer={2}>
-                <SegmentList waveformRegionsRef={waveformRegionsRef} $layer={2}/>
-            </ScrollBox>
+            <div></div>
+            <SegmentList className="segments" waveformRegionsRef={waveformRegionsRef} $layer={1}/>
             <GroupList className="groups" $layer={1}>
             </GroupList>
         </AppLayout>
