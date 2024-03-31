@@ -8,7 +8,7 @@ export const useFetchJob = () => {
     const jobStatus = useSelector(selectJobStatus)
 
     useEffect(() => {
-        if (jobStatus === "" || jobStatus === "idle") {
+        if (jobStatus === "idle") {
             dispatch(fetchJob())
         }
     }, [jobStatus, fetchJob])

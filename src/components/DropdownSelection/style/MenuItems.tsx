@@ -30,7 +30,7 @@ export const MenuItems = styled(BaseMenuItems)<Layer>`
             width: 1em;
             height: 1em;
             border-radius: 1em;
-            background: ${({theme}) => theme.speakerColors[0]}  ;
+            background: #c6c6c6; /*FIXME*/
             margin: 2px 4px 0 0;
         }
     }

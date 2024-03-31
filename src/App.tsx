@@ -6,12 +6,14 @@ import Waveform from "./features/waveform/components/Waveform"
 import MenuBar from "./features/menu/components/MenuBar"
 import SegmentList from "./features/transcript/components/SegmentList"
 import GroupList from "./features/grouping/components/GroupList"
+import SpeakerList from "./features/job/components/SpeakerList"
 
 // wavesurfer
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
 
-// styles
+// style
 import styled, { createGlobalStyle } from "styled-components";
+import { scrollableBaseStyles } from "./style/scrollableBaseStyles"
 
 // hooks
 import { useFetchJob } from "./features/job/hooks/useFetchJob"
@@ -48,6 +50,11 @@ const AppLayout = styled.div`
         margin: -8px 0 4px 0;
     }
 `
+
+const SideBar = styled.aside`
+    ${scrollableBaseStyles}
+`
+
 function App() {
     useFetchJob()
     useFetchTranscript()
@@ -59,7 +66,9 @@ function App() {
             <MenuBar className="menuBar" $layer={0}/>
             <Waveform waveformRegionsRef={waveformRegionsRef} className="waveform" $layer={1}/>
             <Controls className="controls" $layer={1}/>
-            <div></div>
+            <SideBar>
+                <SpeakerList $layer={1} />
+            </SideBar>
             <SegmentList className="segments" waveformRegionsRef={waveformRegionsRef} $layer={1}/>
             <GroupList className="groups" $layer={1}>
             </GroupList>

@@ -1,6 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { createAsyncThunk } from '@reduxjs/toolkit'
+
+// testing
 import { mockJobRequest } from '../../../testing/mockAPI'
+
+// style
+import { speakerColors } from '../../../style/tagColors'
 
 // types
 import { Job } from "../types/Job"
@@ -19,7 +24,7 @@ const initialState: Job = {
     description: "",
     category: "",
     transcription: "",
-    status: "",
+    status: "idle",
     status_message: "",
     duration: 0,
     created_at: "",
@@ -66,6 +71,15 @@ export const jobSlice = createSlice({
             state.url = action.payload.url
             state.pipeline = action.payload.pipeline
             state.user_interface = action.payload.user_interface
+            
+            if (!action.payload.user_interface || !action.payload.user_interface.speaker_tags)
+                return
+
+            for (const [index, tag] of action.payload.user_interface?.speaker_tags.entries()){
+                if (!tag.color){
+                    tag.color = speakerColors[index % speakerColors.length]
+                }
+            }
         }).addCase(fetchJob.rejected, (state, action) => {
             state.status = "error"
             state.status_message = action.payload as string
@@ -79,6 +93,6 @@ export const {  } = jobSlice.actions
 export const selectJob = (state: RootState) => state.job
 export const selectJobStatus = (state: RootState) => state.job.status
 export const selectDuration = (state: RootState) => state.job.duration
+export const selectSpeakers = (state: RootState) => state.job.user_interface?.speaker_tags || []
 
 export default jobSlice.reducer
-

@@ -66,9 +66,7 @@ const NamedContainer: FC<NamedContainerProps> = ({name, closeCallback, ...props}
                 <h2>{name}</h2>
                 <CloseIcon onClick={closeCallback} role="button" />
             </header>
-            <div className="body">
-                {props.children}
-            </div>
+            {props.children}
         </StyledNamedContainer>
     )
 }
