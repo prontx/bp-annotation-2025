@@ -1,8 +1,8 @@
 import { FC } from "react"
 
 // components
-import Expandable from "../../../components/Expandable/Expandable"
-import Tag from "../../../components/Tag/Tag"
+import Expandable from "../../../components/Expandable"
+import Tag from "../../../components/Tag"
 
 // styles
 import styled from "styled-components"

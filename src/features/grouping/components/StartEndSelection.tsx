@@ -1,7 +1,7 @@
 import { FC, Dispatch, SetStateAction, useState, useEffect, SyntheticEvent } from "react"
 
 // components
-import Button from "../../../components/Button/Button"
+import Button from "../../../components/Button"
 import EditIcon from '@mui/icons-material/Edit';
 
 // style

@@ -1,9 +1,9 @@
 import { FC, FormEvent, MouseEventHandler, useState } from "react";
 
 // components
-import Button from "../../../components/Button/Button";
+import Button from "../../../components/Button";
 import TagSelection from "../../../components/TagSelection/TagSelection";
-import Tag from "../../../components/Tag/Tag";
+import Tag from "../../../components/Tag";
 import StartEndSelection from "./StartEndSelection";
 
 // style

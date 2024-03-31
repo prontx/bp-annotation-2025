@@ -7,8 +7,8 @@ import CloseIcon from "@mui/icons-material/Close"
 import styled, { css } from "styled-components"
 
 // types
-import Layer from "../../types/Layer"
-import { clickableBaseStyles } from "../../style/clickableBaseStyles"
+import Layer from "../types/Layer"
+import { clickableBaseStyles } from "../style/clickableBaseStyles"
 
 
 interface NamedContainerProps extends HTMLAttributes<HTMLElement>, Layer {

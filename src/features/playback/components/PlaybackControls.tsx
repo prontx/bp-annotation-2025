@@ -17,8 +17,8 @@ import FastRewindRoundedIcon from '@mui/icons-material/FastRewindRounded';
 import Layer from "../../../types/Layer";
 
 // components
-import Button from "../../../components/Button/Button";
-import SubtleInput from "../../../components/SubtleInput/SubtleInput";
+import Button from "../../../components/Button";
+import SubtleInput from "../../../components/SubtleInput";
 
 // utils
 import { timeToFormatedString } from "../../../utils/convertTimeAndFormatedString";

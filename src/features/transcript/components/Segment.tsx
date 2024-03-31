@@ -1,11 +1,11 @@
 import { FC } from "react"
 
 // components
-import Button from "../../../components/Button/Button"
+import Button from "../../../components/Button"
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import SegmentActions from "./SegmentActions";
 import DropdownSelection from "../../../components/DropdownSelection/DropdownSelection"
-import Tag from "../../../components/Tag/Tag";
+import Tag from "../../../components/Tag";
 import TimeRange from "./TimeRange";
 
 // redux

@@ -2,10 +2,10 @@ import { FC, ReactNode } from "react"
 
 // style
 import styled from "styled-components";
-import { clickableBaseStyles } from "../../style/clickableBaseStyles";
+import { clickableBaseStyles } from "../style/clickableBaseStyles";
 
 // types
-import Layer from "../../types/Layer";
+import Layer from "../types/Layer";
 
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, Layer {

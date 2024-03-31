@@ -2,13 +2,13 @@ import { FC, useEffect, useState } from "react";
 
 // style
 import styled from "styled-components";
-import { editableBaseStyles } from "../../style/editableBaseStyles";
+import { editableBaseStyles } from "../style/editableBaseStyles";
 
 // types
-import Layer from "../../types/Layer";
+import Layer from "../types/Layer";
 
 // utils
-import { formatedStringToTime, timeToFormatedString } from "../../utils/convertTimeAndFormatedString";
+import { formatedStringToTime, timeToFormatedString } from "../utils/convertTimeAndFormatedString";
 
 
 interface SubtleInputProps extends Layer, React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {

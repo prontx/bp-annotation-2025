@@ -1,8 +1,8 @@
 import { FC } from "react"
 
 // components
-import NamedContainer from "../../../components/NamedContainer/NamedContainer"
-import SpeakerTag from "../../../components/SpeakerTag/SpeakerTag"
+import NamedContainer from "../../../components/NamedContainer"
+import SpeakerTag from "../../../components/SpeakerTag"
 
 // redux
 import { useSelector } from "react-redux"

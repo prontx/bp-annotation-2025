@@ -1,10 +1,10 @@
 import { FC } from "react";
 
 // components
-import Button from "../../../components/Button/Button";
+import Button from "../../../components/Button";
 import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-import Tooltip from "../../../components/Tooltip/Tooltip";
+import Tooltip from "../../../components/Tooltip";
 
 // styles
 import styled from "styled-components";

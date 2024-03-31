@@ -11,7 +11,7 @@ import ZoomOutRoundedIcon from '@mui/icons-material/ZoomOutRounded';
 import Layer from "../../../types/Layer";
 
 // components
-import Button from "../../../components/Button/Button";
+import Button from "../../../components/Button";
 
 /**
  * A container for the playback controls that positions them.

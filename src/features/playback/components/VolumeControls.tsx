@@ -10,7 +10,7 @@ import VolumeMuteRoundedIcon from '@mui/icons-material/VolumeMuteRounded';
 import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded';
 
 // components
-import Slider from "../../../components/Slider/Slider";
+import Slider from "../../../components/Slider";
 
 const VolumeControlsContainer = styled.div`
     display: flex;

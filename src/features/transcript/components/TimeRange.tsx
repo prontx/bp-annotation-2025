@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 // components
-import SubtleInput from "../../../components/SubtleInput/SubtleInput";
+import SubtleInput from "../../../components/SubtleInput";
 
 // types
 import type Layer from "../../../types/Layer";

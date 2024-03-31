@@ -1,7 +1,7 @@
 import { FC, useState } from "react"
 
 // components
-import Button from "../../../components/Button/Button"
+import Button from "../../../components/Button"
 import GroupForm from "./GroupForm"
 import AddIcon from '@mui/icons-material/Add';
 

@@ -6,12 +6,16 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 // styles
 import styled from "styled-components"
-import { clickableBaseStyles } from "../../style/clickableBaseStyles";
+import { clickableBaseStyles } from "../style/clickableBaseStyles";
 
 // types
-import Layer from "../../types/Layer"
-import { ExpandableProps } from "./types/ExpandableProps"
+import Layer from "../types/Layer"
 
+
+interface ExpandableProps extends React.HTMLAttributes<HTMLDivElement>, Layer {
+    title: string,
+    editing?: boolean
+}
 
 const ExpandableContainer = styled.div<Layer>`
     border: 2px solid ${({theme, $layer}) => theme.layers[$layer+1].background};
