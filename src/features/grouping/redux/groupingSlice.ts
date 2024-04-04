@@ -31,21 +31,43 @@ export const groupingSlice = createSlice({
     name: "groups",
     initialState,
     reducers: {
-        createGroup: (state, action: PayloadAction<GroupCreationPayload>) => {
-            // create new group entity
-            const id = uuid()
+        createOrUpdateGroup: (state, action: PayloadAction<GroupCreationPayload>) => {
+            // create or update a group entity
+            const id = action.payload.id || uuid()
             state.groups.entities[id] = {
                 id: id,
                 ...action.payload,
-                childrenIDs: [],
+                childrenIDs: action.payload.id ? state.groups.entities[id].childrenIDs : [],
             }
             
-            // insert key
-            // TODO: add nesting -- top-level keys are in state.groups.keys, rest in entity.childrenIDs
-            state.groups.keys.push(id)
+            if (!action.payload.id){ // insert key
+                if (!action.payload.parentID){
+                    state.groups.keys.push(id)
+                } else {
+                    state.groups.entities[action.payload.parentID].childrenIDs.push(id)
+                }
+            }
+        },
+        deleteGroup: (state, action: PayloadAction<{id: string, parentID?: string}>) => {
+            const {id, parentID} = action.payload
+
+            // remove reference from parent or top level groupID list
+            if (parentID){
+                const parent = state.groups.entities[parentID]
+                const idx = parent.childrenIDs.findIndex(childID => childID === id)
+                parent.childrenIDs.splice(idx, 1)
+            } else {
+                const idx = state.groups.keys.findIndex(groupID => groupID === id)
+                state.groups.keys.splice(idx, 1)
+            }
             
-            // FIXME: set `parentID`
-            // FIXME: what if parent is created after its child?
+            // cascade delete
+            const toDelete: string[] = [id]
+            for (let i = 0; i < toDelete.length; i++){
+                const group = state.groups.entities[toDelete[i]]
+                toDelete.concat(group.childrenIDs)
+            }
+            toDelete.forEach(deleteID => delete state.groups.entities[deleteID])
         },
         beginSelecting: (state) => {
             state.isSelecting = true
@@ -60,11 +82,14 @@ export const groupingSlice = createSlice({
     },
 })
 
-export const { createGroup, beginSelecting, selectSegment, resetSelecting } = groupingSlice.actions
+export const { createOrUpdateGroup, deleteGroup, beginSelecting, selectSegment, resetSelecting } = groupingSlice.actions
 
 export const selectGroups = (state: RootState) => state.grouping.groups
 export const selectGroupIDs = (state: RootState) => state.grouping.groups.keys
-export const selectGroupByID = (state: RootState, id: string) => state.grouping.groups.entities[id]
+export const selectGroupByID = (state: RootState, id?: string) => {
+    if (!id)
+        return undefined
+    return state.grouping.groups.entities[id]}
 export const selectIsSelecting = (state: RootState) => state.grouping.isSelecting
 export const selectSelectedSegmentID = (state: RootState) => state.grouping.selectedSegmentID
 

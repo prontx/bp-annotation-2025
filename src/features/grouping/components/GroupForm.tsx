@@ -1,17 +1,20 @@
-import { FC, FormEvent, MouseEventHandler, useState } from "react";
+import { FC, FormEvent, MouseEventHandler, useEffect, useState } from "react";
 
 // components
 import Button from "../../../components/Button";
 import TagSelection from "../../../components/TagSelection/TagSelection";
 import Tag from "../../../components/Tag";
 import StartEndSelection from "./StartEndSelection";
+import AddIcon from '@mui/icons-material/Add';
 
 // style
 import styled from "styled-components";
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
-import { createGroup, resetSelecting } from "../redux/groupingSlice";
+import { createOrUpdateGroup, resetSelecting, selectGroupByID } from "../redux/groupingSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 // types
 import Layer from "../../../types/Layer";
@@ -22,7 +25,8 @@ import metadata from "../../../testing/metadata.json"
 
 interface GroupFormProps extends Layer, React.HTMLAttributes<HTMLFormElement> {
     groupID?: string,
-    closeFn: () => void,
+    parentID?: string,
+    submitCallback?: () => void,
 }
 
 const GroupFormContainer = styled.form<Layer>`
@@ -74,13 +78,26 @@ const GroupFormActions = styled.div`
     }
 `
 
-const GroupForm: FC<GroupFormProps> = ({$layer, groupID, closeFn, ...props}) => {
+const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, submitCallback, ...props}) => {
     const dispatch = useAppDispatch()
+    const [isEditing, setIsEditing] = useState(false)
     const [title, setTitle] = useState("")
     const [error, setError] = useState("")
     const [startSegmentID, setStartSegmentID] = useState("")
     const [endSegmentID, setEndSegmentID] = useState("")
     const [tags, setTags] = useState<string[]>([])
+    const group = useSelector((state: RootState) => selectGroupByID(state, groupID))
+    
+    useEffect(() => { // load existing data if editing, skip if creating
+        if (!group)
+            return
+
+        setIsEditing(true)
+        setTitle(group.title)
+        setStartSegmentID(group.startSegmentID)
+        setEndSegmentID(group.endSegmentID)
+        setTags(group.tags)
+    }, [groupID])
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -89,19 +106,45 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, closeFn, ...props}) => 
             return
         }
 
-        dispatch(createGroup({
+        dispatch(createOrUpdateGroup({
+            id: groupID,
             title: title,
             startSegmentID: startSegmentID,
             endSegmentID: endSegmentID,
+            parentID: parentID,
             tags: tags,
         }))
-        closeFn()
+
+        setIsEditing(false)
+        setTitle("")
+        setError("")
+        setStartSegmentID("")
+        setEndSegmentID("")
+        setTags([])
+
+        if (submitCallback)
+            submitCallback()
     }
 
     const handleCancelation: MouseEventHandler<HTMLButtonElement> = (e) => {
         e.stopPropagation() // prevent form submission
         dispatch(resetSelecting())
-        closeFn()
+        setIsEditing(false)
+        if (submitCallback)
+            submitCallback()
+    }
+
+    if (!isEditing) {
+        return (
+            <Button
+                icon={<AddIcon />}
+                $layer={$layer+1}
+                style={{width: "100%", padding: "8px"}}
+                onClick={() => setIsEditing(true)}
+            >
+            Přidat obsahová metadata
+            </Button>
+        )
     }
 
     return (
@@ -123,10 +166,10 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, closeFn, ...props}) => 
                 />
                 {tags.length > 0
                     ? <Tag tags={tags} $layer={$layer+1} deleteCallback={() => setTags([])} />
-                    : <TagSelection options={metadata} $layer={$layer} onSelection={setTags} />}
+                    : <TagSelection options={metadata} $layer={$layer} onSelection={setTags} /> /*FIXME: show only a subset of tags if this is a child form*/}
                 {error && <p className="error">{error}</p>}
                 <GroupFormActions>
-                    <Button $size="l" $layer={$layer+1} type="submit">Vytvořit</Button>
+                    <Button $size="l" $layer={$layer+1} type="submit">{groupID ? "Uložit" : "Vytvořit"}</Button>
                     <Button $size="l" $color="danger" $layer={$layer+1} onClick={handleCancelation}>Zrušit</Button>
                 </GroupFormActions>
             </div>

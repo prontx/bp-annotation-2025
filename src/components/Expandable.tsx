@@ -20,6 +20,7 @@ interface ExpandableProps extends React.HTMLAttributes<HTMLDivElement>, Layer {
 const ExpandableContainer = styled.div<Layer>`
     border: 2px solid ${({theme, $layer}) => theme.layers[$layer+1].background};
     border-radius: 4px;
+    width: 100%;
 
     & .body {
         padding: 4px;

@@ -1,16 +1,19 @@
-import { FC } from "react"
+import { FC, useState } from "react"
 
 // components
 import Expandable from "../../../components/Expandable"
 import Tag from "../../../components/Tag"
+import GroupForm from "./GroupForm"
+import Button from "../../../components/Button"
 
 // styles
 import styled from "styled-components"
 
 // redux
 import { useSelector } from "react-redux"
-import { selectGroupByID } from "../redux/groupingSlice"
+import { deleteGroup, selectGroupByID } from "../redux/groupingSlice"
 import { selectGroupStartEndByIDs } from "../../transcript/redux/transcriptSlice"
+import { useAppDispatch } from "../../../redux/hooks"
 
 // types
 import Layer from "../../../types/Layer"
@@ -29,12 +32,18 @@ const GroupBodyContainer = styled.div`
     flex-direction: column;
     gap: 8px;
 
-    & p {
+    & > p {
         margin: 0 4px;
     }
+`
 
-    & > div {
-        margin-right: auto;
+const GroupExpandableActions = styled.div`
+    display: flex;
+    gap: 8px;
+    margin: 4px 8px;
+
+    & > :first-child {
+        margin-left: auto;
     }
 `
 
@@ -42,14 +51,25 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, ...props}) 
     const data = useSelector((state: RootState) => selectGroupByID(state, groupID))
     if (!data)
         return null
+
+    const dispatch = useAppDispatch()
+    const [isEditing, setIsEditing] = useState(false)
     const [startTime, endTime] = useSelector((state: RootState) => selectGroupStartEndByIDs(state, data.startSegmentID, data.endSegmentID))
+
+    if (isEditing)
+        return <GroupForm $layer={$layer} groupID={groupID} submitCallback={() => setIsEditing(false)} />
 
     return (
         <Expandable title={data.title} $layer={$layer} {...props}>
             <GroupBodyContainer><>
                 <p>{timeToFormatedString(startTime)} – {timeToFormatedString(endTime)}</p>
                 <Tag tags={data.tags} $layer={$layer}></Tag>
-                {data.childrenIDs.map(id => <GroupExpandable groupID={id} $layer={$layer}/>)}
+                {data.childrenIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer}/>)}
+                <GroupForm $layer={$layer} parentID={groupID} />{/*FIXME: don't show if there are no subtags*/}
+                <GroupExpandableActions>
+                    <Button $size="l" $layer={$layer+1} onClick={() => {setIsEditing(true)}}>Upravit</Button>
+                    <Button $size="l" $color="danger" $layer={$layer+1} onClick={() => dispatch(deleteGroup({id: groupID, parentID:data.parentID}))}>Smazat</Button>
+                </GroupExpandableActions>
             </></GroupBodyContainer>
         </Expandable>
     )
