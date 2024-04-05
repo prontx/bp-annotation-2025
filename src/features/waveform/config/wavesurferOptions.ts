@@ -16,8 +16,6 @@ export const wavesurferOptions : WaveSurferOptions = {
     autoCenter: false,
     container: '#waveform',
     height: 80,
-    url: 'http://localhost:5173/src/testing/test_audio.mp3',
-    duration: 936.94,
     peaks: testData,
 }
 

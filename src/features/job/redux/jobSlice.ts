@@ -94,5 +94,6 @@ export const selectJob = (state: RootState) => state.job
 export const selectJobStatus = (state: RootState) => state.job.status
 export const selectDuration = (state: RootState) => state.job.duration
 export const selectSpeakers = (state: RootState) => state.job.user_interface?.speaker_tags || []
+export const selectAudioURL = (state: RootState) => state.job.url.mp3
 
 export default jobSlice.reducer
