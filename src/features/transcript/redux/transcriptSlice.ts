@@ -3,20 +3,28 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 // types
-import type { Transcript, TranscriptLoadingParams } from "../types/Transcript"
+import type { SegmentStorage, Transcript, TranscriptLoadingParams } from "../types/Transcript"
 import type { RootState } from '../../../redux/store'
 import type { SegmentUpdatePayload, SegmentCreationPayload } from '../types/SegmentActionPayload';
 
 // utils
 import { v4 as uuid } from 'uuid';
+import axios from "../../../utils/getAxios"
 
 // testing
-import { mockTranscriptRequest } from '../../../testing/mockAPI'
+import { JOB_ID } from '../../../testing/test.config';
 
 
-export const fetchTranscript = createAsyncThunk("transcript", async (): Promise<TranscriptLoadingParams> => {
-    const data: TranscriptLoadingParams = await mockTranscriptRequest()
-    return data
+export const fetchTranscript = createAsyncThunk("transcript", async (_, { rejectWithValue }) => {
+    try {
+        const { data } = await axios.get<TranscriptLoadingParams>(`${JOB_ID}/transcript`)
+        return data
+    } catch (err) {
+        if (!(err instanceof Error && "response" in err && err.response instanceof Object && "data" in err.response)){
+            throw {code: 400, message: "Unknown error."}
+        }
+        throw rejectWithValue(err.response.data);
+    }
 })
 
 const initialState: Transcript = {
@@ -108,18 +116,17 @@ export const transcriptSlice = createSlice({
         builder.addCase(fetchTranscript.pending, (state, _) => {
             state.status = "loading"
         }).addCase(fetchTranscript.fulfilled, (state, action) => { // load segments from API response
-            state.status = "success"
-            state.id = action.payload.id,
-            state.source = action.payload.source,
-            state.created_at = action.payload.created_at
-            state.speaker_tags = action.payload.speaker_tags
-            state.text_tags = action.payload.text_tags
-            state.segment_tags = action.payload.segment_tags
+            const transformedSegments: SegmentStorage = {
+                keys: [],
+                region2ID: {},
+                entities: {},
+            }
             action.payload.segments?.forEach(segment => {
                 const id = uuid()
-                state.segments.keys.push(id)
-                state.segments.entities[id] = segment
+                transformedSegments.keys.push(id)
+                transformedSegments.entities[id] = segment
             })
+            return {...state, status: "success", ...action.payload, segments: transformedSegments}
         }).addCase(fetchTranscript.rejected, (state, _) => {
             state.status = "error"
             // TODO: handle error message

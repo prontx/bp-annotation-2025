@@ -20,6 +20,7 @@
     "@reach/slider": "^0.18.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/uuid": "^9.0.8",
+    "axios": "^1.6.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",

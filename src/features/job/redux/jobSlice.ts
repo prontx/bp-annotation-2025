@@ -1,20 +1,32 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
-// testing
-import { mockJobRequest } from '../../../testing/mockAPI'
-
 // style
 import { speakerColors } from '../../../style/tagColors'
 
 // types
 import { Job } from "../types/Job"
 import { RootState } from '../../../redux/store'
+import { SpeakerTag } from '../../transcript/types/Tag'
+import { APIErrorResponse } from '../../../types/APIErrorResponse'
+
+// utils
+import axios from "../../../utils/getAxios"
+
+// testing
+import { JOB_ID } from '../../../testing/test.config'
 
 
-export const fetchJob = createAsyncThunk("job", async (): Promise<Job> => {
-    const data = await mockJobRequest()
-    return data
+export const fetchJob = createAsyncThunk("job", async (_, { rejectWithValue }) => {
+    try {
+        const { data } = await axios.get<Job>(JOB_ID)
+        return data
+    } catch (err) {
+        if (!(err instanceof Error && "response" in err && err.response instanceof Object && "data" in err.response)){
+            throw {code: 400, message: "Unknown error."}
+        }
+        throw rejectWithValue(err.response.data);
+    }
 })
 
 // initial state of the slice
@@ -55,35 +67,23 @@ export const jobSlice = createSlice({
         builder.addCase(fetchJob.pending, (state, _) => {
             state.status = "loading"
         }).addCase(fetchJob.fulfilled, (state, action) => {
-            state.id = action.payload.id
-            state.title = action.payload.title
-            state.description = action.payload.description
-            state.category = action.payload.category
-            state.transcription = action.payload.transcription
-            state.status = action.payload.status
-            state.status_message = action.payload.status_message
-            state.duration = action.payload.duration
-            state.created_at = action.payload.created_at
-            state.recorded_at = action.payload.recorded_at
-            state.processed_at = action.payload.processed_at
-            state.updated_at = action.payload.updated_at
-            state.accessed_at = action.payload.accessed_at
-            state.url = action.payload.url
-            state.pipeline = action.payload.pipeline
-            state.user_interface = action.payload.user_interface
-            
-            if (!action.payload.user_interface || !action.payload.user_interface.speaker_tags)
-                return
-
-            for (const [index, tag] of action.payload.user_interface?.speaker_tags.entries()){
+            const transformedTags: SpeakerTag[] = []
+            for (const [index, tag] of action.payload.user_interface?.speaker_tags?.entries() || []){
+                if (!tag.label)
+                    continue
+                
                 if (!tag.color){
                     tag.color = speakerColors[index % speakerColors.length]
                 }
+                transformedTags.push(tag)
             }
+            if (action.payload.user_interface){
+                action.payload.user_interface.speaker_tags = transformedTags
+            }
+            return {...state, ...action.payload}
         }).addCase(fetchJob.rejected, (state, action) => {
             state.status = "error"
-            state.status_message = action.payload as string
-            // TODO: check if action.payload is error message or some object
+            state.status_message = (action.payload as APIErrorResponse).message
         })
     }
 })
