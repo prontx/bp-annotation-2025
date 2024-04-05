@@ -14,10 +14,12 @@ import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playSegment } from "../../playback/redux/playbackSlice";
 import { selectIsSelecting, selectSegment } from "../../grouping/redux/groupingSlice";
-import { selectSpeakers } from "../../job/redux/jobSlice";
+import { selectSpeaker2Color, selectSpeakers } from "../../job/redux/jobSlice";
 
 // utils
 import { segmentWords2String } from "../../../utils/segmentWords2String";
+// @ts-ignore
+import { rgba } from "@carbon/colors"
 
 // styles
 import styled from "styled-components";
@@ -73,6 +75,21 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
     const dispatch = useAppDispatch()
     const isSelecting = useSelector(selectIsSelecting)
     const speakers = useSelector(selectSpeakers)
+    const speaker2color = useSelector(selectSpeaker2Color)
+    
+    const handleSpeakerChange = (newTag: SpeakerTag) => {
+        dispatch(updateSegment({
+            type: "id",
+            key: segmentID,
+            change: {speaker: newTag.id},
+            callback: (regionID, _) => {
+                regionUpdateCallback(regionID, {
+                    start: data.start,
+                    color: rgba(speaker2color[newTag.id] || "#c6c6c6", 0.4),
+                })
+            }
+        }))
+    }
     
     const handleTimeRangeChange = (change: {start?: number, end?: number}) => {
         dispatch(updateSegment({type: "id", key: segmentID, change: change, callback: regionUpdateCallback}))
@@ -112,7 +129,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
             <div style={{display: "flex", gap: "8px", marginRight: "auto", alignItems: "center"}}>
                 <DropdownSelection<SpeakerTag>
                     $layer={$layer+1}
-                    onSelection={() => {/*FIXME*/}}
+                    onSelection={handleSpeakerChange}
                     initialState={speakers.find(speaker => speaker.id === data.speaker)}
                     options={speakers}
                 />

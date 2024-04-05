@@ -5,16 +5,22 @@ import { useAppDispatch } from "../../../redux/hooks";
 import { playSegment } from "../../playback/redux/playbackSlice";
 import { useSelector } from "react-redux";
 import { createSegment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
+import { selectSpeaker2Color } from "../../job/redux/jobSlice";
 
 // wavesurfer
 import WaveSurfer from "wavesurfer.js";
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
+
+// utils
+// @ts-ignore
+import { rgba } from "@carbon/colors"
 
 
 const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                         waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
     const dispatch = useAppDispatch()
     const segments = useSelector(selectSegments)
+    const speaker2color = useSelector(selectSpeaker2Color)
 
     useEffect(() => {
         if (!wavesurfer.current || !segments.keys)
@@ -28,7 +34,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                 const region = waveformRegionsRef.current.addRegion({
                     start: segment.start,
                     end: segment.end,
-                    color: "rgba(128, 128, 255, 0.4)" // TODO: set color by speaker
+                    color: rgba(speaker2color[segment.speaker] || "#c6c6c6", 0.4)
                 })
                 dispatch(updateSegment({type: "id", key: key, change: {regionID: region.id}}))
             })
@@ -36,6 +42,10 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
 
         const subscriptions = [
             waveformRegionsRef.current.on('region-created', (region) => {
+                region.setOptions({
+                    start: region.start,
+                    color: rgba(speaker2color["A"] || "#c6c6c6", 0.4),
+                })
                 dispatch(createSegment({
                     regionID: region.id,
                     start: region.start,

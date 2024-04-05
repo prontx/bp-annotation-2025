@@ -95,5 +95,16 @@ export const selectJobStatus = (state: RootState) => state.job.status
 export const selectDuration = (state: RootState) => state.job.duration
 export const selectSpeakers = (state: RootState) => state.job.user_interface?.speaker_tags || []
 export const selectAudioURL = (state: RootState) => state.job.url.mp3
+export const selectSpeaker2Color = (state: RootState) => {
+    let mapping: Record<string, string> = {}
+    if (!state.job.user_interface || ! state.job.user_interface.speaker_tags)
+        return mapping
+    state.job.user_interface.speaker_tags.forEach(tag => {
+        if (tag.color){
+            mapping[tag.id] = tag.color
+        }
+    })
+    return mapping
+}
 
 export default jobSlice.reducer
