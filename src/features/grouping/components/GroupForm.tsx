@@ -18,14 +18,13 @@ import { RootState } from "../../../redux/store";
 
 // types
 import Layer from "../../../types/Layer";
-
-// test data
-import metadata from "../../../testing/metadata.json"
+import { selectTagSubcategories } from "../../job/redux/jobSlice";
 
 
 interface GroupFormProps extends Layer, React.HTMLAttributes<HTMLFormElement> {
     groupID?: string,
     parentID?: string,
+    parentTags?: string[],
     submitCallback?: () => void,
 }
 
@@ -78,7 +77,7 @@ const GroupFormActions = styled.div`
     }
 `
 
-const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, submitCallback, ...props}) => {
+const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, submitCallback, ...props}) => {
     const dispatch = useAppDispatch()
     const [isEditing, setIsEditing] = useState(false)
     const [title, setTitle] = useState("")
@@ -87,6 +86,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, submitCallbac
     const [endSegmentID, setEndSegmentID] = useState("")
     const [tags, setTags] = useState<string[]>([])
     const group = useSelector((state: RootState) => selectGroupByID(state, groupID))
+    const tagSubcategories = useSelector((state: RootState) => selectTagSubcategories(state, parentTags))
     
     useEffect(() => { // load existing data if editing, skip if creating
         if (!group)
@@ -126,6 +126,10 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, submitCallbac
             submitCallback()
     }
 
+    const handleTagSelection = (newTags: string[]) => {
+        setTags([...(parentTags || []), ...newTags])
+    }
+
     const handleCancelation: MouseEventHandler<HTMLButtonElement> = (e) => {
         e.stopPropagation() // prevent form submission
         dispatch(resetSelecting())
@@ -133,6 +137,9 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, submitCallbac
         if (submitCallback)
             submitCallback()
     }
+
+    if (!tagSubcategories)
+        return null
 
     if (!isEditing) {
         return (
@@ -166,7 +173,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, submitCallbac
                 />
                 {tags.length > 0
                     ? <Tag tags={tags} $layer={$layer+1} deleteCallback={() => setTags([])} />
-                    : <TagSelection options={metadata} $layer={$layer} onSelection={setTags} /> /*FIXME: show only a subset of tags if this is a child form*/}
+                    : <TagSelection options={tagSubcategories} $layer={$layer} onSelection={handleTagSelection} />}
                 {error && <p className="error">{error}</p>}
                 <GroupFormActions>
                     <Button $size="l" $layer={$layer+1} type="submit">{groupID ? "Uložit" : "Vytvořit"}</Button>

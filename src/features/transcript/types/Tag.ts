@@ -16,3 +16,8 @@ export interface TextTag {
     title: string,
     color?: string
 }
+
+export interface GroupTag {
+    name: string,
+    subcategories?: GroupTag[],
+}

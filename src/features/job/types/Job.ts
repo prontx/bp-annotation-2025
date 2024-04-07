@@ -1,4 +1,4 @@
-import { SegmentTag, SpeakerTag, TextTag } from "../../transcript/types/Tag"
+import { GroupTag, SegmentTag, SpeakerTag, TextTag } from "../../transcript/types/Tag"
 
 interface DocumentTag {
     id: string,
@@ -22,6 +22,7 @@ interface JobUserInterface {
     speaker_tags?: SpeakerTag[],
     segment_tags?: SegmentTag[],
     text_tags?: TextTag[],
+    group_tags?: GroupTag[],
     links?: Link[],
     views?: View[]
 }

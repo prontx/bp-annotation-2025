@@ -7,7 +7,7 @@ import { speakerColors } from '../../../style/tagColors'
 // types
 import { Job } from "../types/Job"
 import { RootState } from '../../../redux/store'
-import { SpeakerTag } from '../../transcript/types/Tag'
+import { GroupTag, SpeakerTag } from '../../transcript/types/Tag'
 import { APIErrorResponse } from '../../../types/APIErrorResponse'
 
 // utils
@@ -15,6 +15,7 @@ import axios from "../../../utils/getAxios"
 
 // testing
 import { JOB_ID } from '../../../testing/test.config'
+import test_groups from "../../../testing/metadata.json"
 
 
 export const fetchJob = createAsyncThunk("job", async (_, { rejectWithValue }) => {
@@ -67,6 +68,8 @@ export const jobSlice = createSlice({
         builder.addCase(fetchJob.pending, (state, _) => {
             state.status = "loading"
         }).addCase(fetchJob.fulfilled, (state, action) => {
+            // @ts-ignore FIXME
+            action.payload.user_interface.group_tags = test_groups
             const transformedTags: SpeakerTag[] = []
             for (const [index, tag] of action.payload.user_interface?.speaker_tags?.entries() || []){
                 if (!tag.label)
@@ -105,6 +108,21 @@ export const selectSpeaker2Color = (state: RootState) => {
         }
     })
     return mapping
+}
+export const selectTagSubcategories = (state: RootState, tag?: string[]) => {
+    if (!state.job.user_interface || !state.job.user_interface.group_tags)
+        return undefined
+    
+    let result: GroupTag[] | undefined = state.job.user_interface.group_tags
+    for (let i = 0; tag && i < tag.length; i++){
+        for (let j = 0; result && j < result.length; j++){
+            if (result[j].name === tag[i]){
+                result = result[j].subcategories
+                break
+            }
+        }
+    }
+    return result
 }
 
 export default jobSlice.reducer

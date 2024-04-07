@@ -11,6 +11,7 @@ import "@reach/combobox/styles.css"
 
 // types
 import Layer from "../../types/Layer"
+import { GroupTag } from "../../features/transcript/types/Tag"
 
 
 // Adapted from https://stackoverflow.com/a/37511463 by Lewis Diamond
@@ -18,15 +19,10 @@ export const removeDiacritics = (s: string): string => {
     return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
-interface Category {
-    name: string,
-    subcategories?: Category[],
-}
-
 interface TagSelectionProps extends Layer {
-    options?: Category[],
+    options?: GroupTag[],
     onSelection: (tags: string[]) => void,
-} // TODO: fix any
+}
 
 const TagSelection: FC<TagSelectionProps> = ({$layer, options, onSelection}) => {
     const [term, setTerm] = useState("");

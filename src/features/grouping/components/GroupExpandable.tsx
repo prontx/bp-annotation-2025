@@ -25,6 +25,7 @@ import { timeToFormatedString } from "../../../utils/convertTimeAndFormatedStrin
 
 interface GroupExpandableProps extends React.HTMLAttributes<HTMLDivElement>, Layer {
     groupID: string,
+    parentTags?: string[],
 }
 
 const GroupBodyContainer = styled.div`
@@ -47,7 +48,7 @@ const GroupExpandableActions = styled.div`
     }
 `
 
-const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, ...props}) => {
+const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags, ...props}) => {
     const data = useSelector((state: RootState) => selectGroupByID(state, groupID))
     if (!data)
         return null
@@ -57,15 +58,15 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, ...props}) 
     const [startTime, endTime] = useSelector((state: RootState) => selectGroupStartEndByIDs(state, data.startSegmentID, data.endSegmentID))
 
     if (isEditing)
-        return <GroupForm $layer={$layer} groupID={groupID} submitCallback={() => setIsEditing(false)} />
+        return <GroupForm $layer={$layer} groupID={groupID} parentTags={parentTags} submitCallback={() => setIsEditing(false)} />
 
     return (
         <Expandable title={data.title} $layer={$layer} {...props}>
             <GroupBodyContainer><>
                 <p>{timeToFormatedString(startTime)} – {timeToFormatedString(endTime)}</p>
                 <Tag tags={data.tags} $layer={$layer}></Tag>
-                {data.childrenIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer}/>)}
-                <GroupForm $layer={$layer} parentID={groupID} />{/*FIXME: don't show if there are no subtags*/}
+                {data.childrenIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer} parentTags={data.tags}/>)}
+                <GroupForm $layer={$layer} parentID={groupID} parentTags={data.tags} />
                 <GroupExpandableActions>
                     <Button $size="l" $layer={$layer+1} onClick={() => {setIsEditing(true)}}>Upravit</Button>
                     <Button $size="l" $color="danger" $layer={$layer+1} onClick={() => dispatch(deleteGroup({id: groupID, parentID:data.parentID}))}>Smazat</Button>
