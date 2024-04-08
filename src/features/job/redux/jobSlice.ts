@@ -7,7 +7,7 @@ import { speakerColors } from '../../../style/tagColors'
 // types
 import { Job } from "../types/Job"
 import { RootState } from '../../../redux/store'
-import { GroupTag, SpeakerTag } from '../../transcript/types/Tag'
+import { SpeakerTag } from '../../transcript/types/Tag'
 import { APIErrorResponse } from '../../../types/APIErrorResponse'
 
 // utils
@@ -109,20 +109,10 @@ export const selectSpeaker2Color = (state: RootState) => {
     })
     return mapping
 }
-export const selectTagSubcategories = (state: RootState, tag?: string[]) => {
-    if (!state.job.user_interface || !state.job.user_interface.group_tags)
+export const selectGroupTags = (state: RootState) => {
+    if (!state.job.user_interface)
         return undefined
-    
-    let result: GroupTag[] | undefined = state.job.user_interface.group_tags
-    for (let i = 0; tag && i < tag.length; i++){
-        for (let j = 0; result && j < result.length; j++){
-            if (result[j].name === tag[i]){
-                result = result[j].subcategories
-                break
-            }
-        }
-    }
-    return result
+    return state.job.user_interface.group_tags
 }
 
 export default jobSlice.reducer

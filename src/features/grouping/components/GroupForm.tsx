@@ -18,7 +18,6 @@ import { RootState } from "../../../redux/store";
 
 // types
 import Layer from "../../../types/Layer";
-import { selectTagSubcategories } from "../../job/redux/jobSlice";
 
 
 interface GroupFormProps extends Layer, React.HTMLAttributes<HTMLFormElement> {
@@ -86,7 +85,6 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     const [endSegmentID, setEndSegmentID] = useState("")
     const [tags, setTags] = useState<string[]>([])
     const group = useSelector((state: RootState) => selectGroupByID(state, groupID))
-    const tagSubcategories = useSelector((state: RootState) => selectTagSubcategories(state, parentTags))
     
     useEffect(() => { // load existing data if editing, skip if creating
         if (!group)
@@ -127,7 +125,14 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     }
 
     const handleTagSelection = (newTags: string[]) => {
-        setTags([...(parentTags || []), ...newTags])
+        let merged: string[] = newTags
+        for (let i = 0; parentTags && i < parentTags.length; i++){
+            if (i >= newTags.length || parentTags[i] !== newTags[i]){
+                break
+            }
+            merged.shift()
+        }
+        setTags(merged)
     }
 
     const handleCancelation: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -137,9 +142,6 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         if (submitCallback)
             submitCallback()
     }
-
-    if (!tagSubcategories)
-        return null
 
     if (!isEditing) {
         return (
@@ -173,7 +175,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
                 />
                 {tags.length > 0
                     ? <Tag tags={tags} $layer={$layer+1} deleteCallback={() => setTags([])} />
-                    : <TagSelection options={tagSubcategories} $layer={$layer} onSelection={handleTagSelection} />}
+                    : <TagSelection $layer={$layer} onSelection={handleTagSelection} />}
                 {error && <p className="error">{error}</p>}
                 <GroupFormActions>
                     <Button $size="l" $layer={$layer+1} type="submit">{groupID ? "Uložit" : "Vytvořit"}</Button>

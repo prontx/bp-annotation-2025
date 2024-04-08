@@ -10,18 +10,21 @@ import ComboboxOptionSet from "./components/ComboboxOptionSet"
 // style
 import "@reach/combobox/styles.css"
 
+// redux
+import { useSelector } from "react-redux"
+import { selectGroupTags } from "../../features/job/redux/jobSlice"
+
 // types
 import Layer from "../../types/Layer"
-import { GroupTag } from "../../features/transcript/types/Tag"
 
 
 interface TagSelectionProps extends Layer {
-    options?: GroupTag[],
     onSelection: (tags: string[]) => void,
 }
 
-const TagSelection: FC<TagSelectionProps> = ({$layer, options, onSelection}) => {
-    const [term, setTerm] = useState("");
+const TagSelection: FC<TagSelectionProps> = ({$layer, onSelection}) => {
+    const [term, setTerm] = useState("")
+    const groupTags = useSelector(selectGroupTags)
 
     return (<>
         <Combobox aria-label="Metadata" openOnFocus>
@@ -32,7 +35,7 @@ const TagSelection: FC<TagSelectionProps> = ({$layer, options, onSelection}) => 
                             term={term}
                             onSelection={onSelection}
                             parentTags={[]}
-                            options={options}
+                            options={groupTags}
                             depth={0}
                         />
                     </ComboboxList>
