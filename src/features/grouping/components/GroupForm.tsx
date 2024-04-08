@@ -174,7 +174,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
                     setEndSegmentID={setEndSegmentID}
                 />
                 {tags.length > 0
-                    ? <Tag tags={tags} $layer={$layer+1} deleteCallback={() => setTags([])} />
+                    ? <Tag tags={tags} $layer={$layer+1} deleteCallback={() => setTags(tags.slice(0, -1))} />
                     : <TagSelection $layer={$layer} onSelection={handleTagSelection} />}
                 {error && <p className="error">{error}</p>}
                 <GroupFormActions>

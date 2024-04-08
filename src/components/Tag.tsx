@@ -1,98 +1,59 @@
 import { FC } from "react"
 
 // components
-import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import ClearRoundedIcon from "@mui/icons-material/ClearRounded"
+
+// style
+import styled, { css } from "styled-components"
+import { clickableBaseStyles } from "../style/clickableBaseStyles"
 
 // types
 import Layer from "../types/Layer"
 
-// styles
-import styled from "styled-components"
 
-
-interface TagProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
-    deleteCallback?: (tag: string) => void,
-    tags: string[],
+interface TagProps extends Layer, React.HTMLAttributes<HTMLSpanElement> {
+    tags: string[]|undefined,
+    deleteCallback?: () => void,
 }
 
-const StyledTag = styled.div`
-    display: inline-flex;
-    border-radius: 1rem;
-    padding: 0 8px;
-    height: 24px;
-    align-items: center;
-`
+const StyledTag = styled.span<Layer>` ${({theme, $layer}) => css`
+    display: inline;
+    margin-right: auto;
+    padding: 0 4px;
+    background: ${theme.layers[$layer].background};
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px ${theme.layers[$layer].background};
+`}`
 
-const Capsule = styled.div<Layer>`
-    background: ${({theme, $layer}) => theme.layers[$layer].background};
-    line-height: 1rem;
-    display: flex;
-    border-radius: 24px;
-    padding: 2px 2px 2px 8px;
-    align-items: center;
-    gap: 4px;
-
-    &.top {
-        padding-right: 8px;
-    }
-
-    & .deleteIcon {
-        display: none;
-        height: 20px;
-        cursor: pointer;
-        border-radius: 10px;
-        margin-left: 2px;
-        padding: 2px;
-        color: ${({theme}) => theme.textSecondary};
-    }
+const DeleteIcon = styled(ClearRoundedIcon)<Layer>` ${({theme, $layer}) => css`
+    ${clickableBaseStyles}
+    display: inline-block;
+    height: calc(1rem + 2px) !important;
+    width: calc(1rem + 2px) !important;
+    padding: 1px;
+    margin-bottom: -4px;
+    position: relative;
+    background: ${theme.layers[$layer].background};
 
     &:hover {
-        .deleteIcon {
-            display: block;
-        }
+        color: ${theme.textPrimary};
+        background: ${theme.layers[$layer].hover};
     }
 
-    .deleteIcon {
-        right: 12px;
-        height: 18px;
-        width: 18px;
-        margin-right: -6px;
-        background: ${({theme, $layer}) => theme.layers[$layer+1].background};
-
-        &:hover {
-            color: ${({theme}) => theme.textPrimary};
-            background: ${({theme, $layer}) => theme.layers[$layer].hover};
-        }
-
-        &:active {
-            background: ${({theme, $layer}) => theme.layers[$layer].active};
-        }
-        
-        svg {
-            width: 16px;
-            height: 16px;
-            transform: translate(-1px, -1px)
-        }
+    &:active {
+        background: ${theme.layers[$layer].active};
     }
-`
+`}`
 
-const Tag: FC<TagProps> = ({$layer, deleteCallback, tags, ...props}) => {
-    const [tagText, sub1, sub2] = tags
-    
+const Tag: FC<TagProps> = ({$layer, tags, deleteCallback, ...props}) => {
+    if (!tags || tags.length == 0)
+        return null
+
     return (
-        <StyledTag {...props}>
-            <Capsule $layer={$layer} className={`text ${!sub1 && "top"}`}>
-                {tagText}
-                {sub1 && <Capsule $layer={$layer+1} className={`text ${!sub2 && "top"}`}>
-                    {sub1}
-                    {sub2 && <Capsule $layer={$layer+2} className="text top">
-                        {sub2}
-                        {deleteCallback && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
-                    </Capsule>}
-                    {(deleteCallback && !sub2) && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
-                </Capsule>}
-                {(deleteCallback && !sub1) && <span className="deleteIcon" onClick={() => deleteCallback(tagText)}><ClearRoundedIcon /></span>}
-            </Capsule>
+        <StyledTag $layer={$layer} style={tags.length === 1 ? {whiteSpace: "nowrap"} : {}} {...props}>
+            <span style={{marginRight: "8px", whiteSpace: "normal"}}>{(tags.length > 0) && tags[0]}</span>
+            {(deleteCallback && tags.length == 1) && <DeleteIcon $layer={$layer+1} onClick={deleteCallback} />}
+            <Tag tags={tags.filter((_, i) => i !== 0)} $layer={$layer+1} deleteCallback={deleteCallback} />
         </StyledTag>
     )
 }
