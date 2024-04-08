@@ -139,6 +139,11 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         e.stopPropagation() // prevent form submission
         dispatch(resetSelecting())
         setIsEditing(false)
+        setTitle("")
+        setError("")
+        setStartSegmentID("")
+        setEndSegmentID("")
+        setTags([])
         if (submitCallback)
             submitCallback()
     }
