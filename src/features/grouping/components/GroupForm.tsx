@@ -12,7 +12,7 @@ import styled from "styled-components";
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
-import { createOrUpdateGroup, resetSelecting, selectGroupByID } from "../redux/groupingSlice";
+import { createOrUpdateGroup, resetEditing, resetSelecting, selectGroupByID, setStartEndParentSegmentIDs } from "../redux/groupingSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 
@@ -113,6 +113,8 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
             tags: tags,
         }))
 
+        dispatch(resetEditing())
+
         setIsEditing(false)
         setTitle("")
         setError("")
@@ -138,6 +140,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     const handleCancelation: MouseEventHandler<HTMLButtonElement> = (e) => {
         e.stopPropagation() // prevent form submission
         dispatch(resetSelecting())
+        dispatch(resetEditing())
         setIsEditing(false)
         setTitle("")
         setError("")
@@ -148,13 +151,18 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
             submitCallback()
     }
 
+    const handleEditingStart = () => {
+        dispatch(setStartEndParentSegmentIDs(parentID))
+        setIsEditing(true)
+    }
+
     if (!isEditing) {
         return (
             <Button
                 icon={<AddIcon />}
                 $layer={$layer+1}
                 style={{width: "100%", padding: "8px"}}
-                onClick={() => setIsEditing(true)}
+                onClick={handleEditingStart}
             >
             Přidat obsahová metadata
             </Button>

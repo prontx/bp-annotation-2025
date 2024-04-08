@@ -11,7 +11,7 @@ import styled from "styled-components"
 
 // redux
 import { useSelector } from "react-redux"
-import { deleteGroup, selectGroupByID } from "../redux/groupingSlice"
+import { deleteGroup, selectGroupByID, setStartEndParentSegmentIDs } from "../redux/groupingSlice"
 import { selectGroupStartEndByIDs } from "../../transcript/redux/transcriptSlice"
 import { useAppDispatch } from "../../../redux/hooks"
 
@@ -57,6 +57,11 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
     const [isEditing, setIsEditing] = useState(false)
     const [startTime, endTime] = useSelector((state: RootState) => selectGroupStartEndByIDs(state, data.startSegmentID, data.endSegmentID))
 
+    const handleEditing = () => {
+        dispatch(setStartEndParentSegmentIDs(data.parentID))
+        setIsEditing(true)
+    }
+
     if (isEditing)
         return <GroupForm $layer={$layer} groupID={groupID} parentTags={parentTags} submitCallback={() => setIsEditing(false)} />
 
@@ -68,7 +73,7 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
                 {data.childrenIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer} parentTags={data.tags}/>)}
                 <GroupForm $layer={$layer} parentID={groupID} parentTags={data.tags} />
                 <GroupExpandableActions>
-                    <Button $size="l" $layer={$layer+1} onClick={() => {setIsEditing(true)}}>Upravit</Button>
+                    <Button $size="l" $layer={$layer+1} onClick={handleEditing}>Upravit</Button>
                     <Button $size="l" $color="danger" $layer={$layer+1} onClick={() => dispatch(deleteGroup({id: groupID, parentID:data.parentID}))}>Smazat</Button>
                 </GroupExpandableActions>
             </></GroupBodyContainer>

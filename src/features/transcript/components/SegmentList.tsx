@@ -7,14 +7,13 @@ import Segment from "./Segment"
 import styled from "styled-components"
 import { scrollableBaseStyles } from "../../../style/scrollableBaseStyles"
 
-// redux
-import { useSelector } from "react-redux"
-import { selectSegmentIDs } from "../redux/transcriptSlice"
-
 // types
 import Layer from "../../../types/Layer"
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
 import type { SegmentUpdateOptions } from "../types/SegmentActionPayload"
+
+// hooks
+import { useSelectSegmentIDs } from "../hooks/useSelectSegmentIDs"
 
 
 interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
@@ -35,7 +34,7 @@ const SegmentLayout = styled.section<Layer>`
 `
 
 const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...props}) => {
-    const segmentIDs = useSelector(selectSegmentIDs)
+    const segmentIDs = useSelectSegmentIDs()
 
     const updateWaveformRegion = (regionID: string, options: SegmentUpdateOptions) => {
         const region = waveformRegionsRef.current.getRegions().find(region => region.id === regionID)
@@ -44,7 +43,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     
     return (
         <SegmentLayout $layer={$layer} {...props}>
-            {segmentIDs && segmentIDs.map(id => (
+            {segmentIDs.map(id => (
                 <Segment
                     key={id}
                     className="segment"

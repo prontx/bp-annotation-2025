@@ -13,6 +13,8 @@ import { v4 as uuid } from 'uuid';
 interface GroupingState {
     isSelecting: boolean,
     selectedSegmentID: string,
+    parentStartSegmentID: string,
+    parentEndSegmentID: string,
     groups: Lookup<Group>,
     segment2Group: Record<string, string>
 }
@@ -20,6 +22,8 @@ interface GroupingState {
 const initialState: GroupingState = {
     isSelecting: false,
     selectedSegmentID: "",
+    parentStartSegmentID: "",
+    parentEndSegmentID: "",
     groups: {
         keys: [],
         entities: {}
@@ -79,10 +83,20 @@ export const groupingSlice = createSlice({
             state.selectedSegmentID = ""
             state.isSelecting = false
         },
+        setStartEndParentSegmentIDs: (state, action: PayloadAction<string|undefined>) => {
+            if (!action.payload)
+                return
+            state.parentStartSegmentID = state.groups.entities[action.payload].startSegmentID
+            state.parentEndSegmentID = state.groups.entities[action.payload].endSegmentID
+        }, 
+        resetEditing: (state) => {
+            state.parentStartSegmentID = ""
+            state.parentEndSegmentID = ""
+        }
     },
 })
 
-export const { createOrUpdateGroup, deleteGroup, beginSelecting, selectSegment, resetSelecting } = groupingSlice.actions
+export const { createOrUpdateGroup, deleteGroup, beginSelecting, selectSegment, resetSelecting, setStartEndParentSegmentIDs, resetEditing } = groupingSlice.actions
 
 export const selectGroups = (state: RootState) => state.grouping.groups
 export const selectGroupIDs = (state: RootState) => state.grouping.groups.keys
@@ -92,5 +106,6 @@ export const selectGroupByID = (state: RootState, id?: string) => {
     return state.grouping.groups.entities[id]}
 export const selectIsSelecting = (state: RootState) => state.grouping.isSelecting
 export const selectSelectedSegmentID = (state: RootState) => state.grouping.selectedSegmentID
+export const selectStartEndParentSegmentID = (state: RootState) => [state.grouping.parentStartSegmentID, state.grouping.parentEndSegmentID]
 
 export default groupingSlice.reducer
