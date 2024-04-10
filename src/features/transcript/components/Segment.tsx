@@ -39,8 +39,6 @@ interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
 }
 
 const SegmentLayout = styled.div<Layer>`
-    display: grid;
-    gap: 4px;
     padding: 4px;
     border-radius: 4px;
     background: ${({theme, $layer}) => theme.layers[$layer].background};
@@ -48,10 +46,6 @@ const SegmentLayout = styled.div<Layer>`
     grid-template-areas:
         "header tags"
         "body tags";
-    
-    & button {
-        margin: auto;
-    }
     
     &.selecting {
         & > * {
@@ -68,10 +62,6 @@ const SegmentLayout = styled.div<Layer>`
 
 const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, regionsReloadCallback, ...props}) => {
     const data = useSelector((state: RootState) => selectSegmentByID(state, segmentID))
-
-    if (!data)
-        return null
-    
     const dispatch = useAppDispatch()
     const isSelecting = useSelector(selectIsSelecting)
     const speakers = useSelector(selectSpeakers)
@@ -95,15 +85,6 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
         dispatch(updateSegment({type: "id", key: segmentID, change: change, callback: regionUpdateCallback}))
     }
 
-    const handleDeletion = () => {
-        dispatch(deleteSegment({id: segmentID, callback: regionsReloadCallback}))
-    }
-    
-    const handleMerge = () => {
-        console.log("> merge segment from Segment")
-        dispatch(mergeSegment({id: segmentID}))
-    }
-
     const handlePlay = () => {
         dispatch(playSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
     }
@@ -119,6 +100,9 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
     // TODO: implement segment tags
     // TODO: implement group visualisation on the side
 
+    if (!data)
+        return null
+    
     return (
         <SegmentLayout
             $layer={$layer}
@@ -126,7 +110,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
             className={isSelecting ? "selecting" : ""}
             onClick={isSelecting ? (e) => handleSelectingSegment(e) : () => {}}
         >
-            <div style={{display: "flex", gap: "8px", marginRight: "auto", alignItems: "center"}}>
+            <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
                 <DropdownSelection<SpeakerTag>
                     $layer={$layer+1}
                     onSelection={handleSpeakerChange}
@@ -140,16 +124,17 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
                     changeHandler={handleTimeRangeChange}
                 />
                 <SegmentActions
+                    style={{marginLeft: "auto"}}
                     $layer={$layer}
-                    deleteHandler={handleDeletion}
-                    mergeHandler={handleMerge}
+                    deleteHandler={() => dispatch(deleteSegment({id: segmentID, callback: regionsReloadCallback}))}
+                    mergeHandler={() => dispatch(mergeSegment({id: segmentID}))}
                 />
             </div>
-            <div>
-                {/* TODO: tags */}
-                {/* TODO: get tag display text based on tag text */}
-                {/* <TagArea tags={segment.segment_tags} placeholder="" $layer={$layer} span={1} onTagAdd={() => {}} onTagDelete={() => {}} /> */}
-            </div>
+            {/* <div>
+                TODO: tags
+                TODO: get tag display text based on tag text
+                <TagArea tags={segment.segment_tags} placeholder="" $layer={$layer} span={1} onTagAdd={() => {}} onTagDelete={() => {}} />
+            </div> */}
             <div style={{marginRight: "auto", display: "flex"}}>
                 <Button $layer={$layer} onClick={handlePlay} style={{margin: "0 4px auto 4px"}}>
                     <PlayArrowRoundedIcon />

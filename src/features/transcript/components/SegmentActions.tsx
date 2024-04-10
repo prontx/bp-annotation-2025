@@ -1,41 +1,32 @@
 import { FC } from "react";
 
 // components
-import Button from "../../../components/Button";
-import KeyboardDoubleArrowDownRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowDownRounded';
-import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-import Tooltip from "../../../components/Tooltip";
-
-// styles
-import styled from "styled-components";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { MenuButton } from "../../../components/DropdownSelection/style/MenuButton";
+import { MenuPopover } from "../../../components/DropdownSelection/style/MenuPopover";
+import { MenuItems } from "../../../components/DropdownSelection/style/MenuItems";
+import { Menu, MenuItem } from "@reach/menu-button";
 
 // types
 import type Layer from "../../../types/Layer";
+
 
 interface SegmentActionsProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
     deleteHandler: () => void, 
     mergeHandler: () => void 
 }
 
-const SegmentActionsLayout = styled.div<Layer>`
-    display: flex;
-    position: relative;
-`
-
 const SegmentActions: FC<SegmentActionsProps> = ({$layer, deleteHandler, mergeHandler, ...props}) => {
     return (
-        <SegmentActionsLayout $layer={$layer} {...props}>
-            <Tooltip label="Merge down" $layer={$layer+1}>
-                <Button $layer={$layer} onClick={mergeHandler}>
-                    <KeyboardDoubleArrowDownRoundedIcon />
-                </Button>
-            </Tooltip>
-            <Tooltip label="Delete segment" $layer={$layer+1}>
-                <Button $blended $color="danger" $layer={$layer} onClick={deleteHandler}>
-                    <DeleteOutlineRoundedIcon />
-                </Button>
-            </Tooltip>
-        </SegmentActionsLayout>
+        <Menu>
+            <MenuButton $layer={$layer} {...props}><MoreHorizIcon /></MenuButton>
+            <MenuPopover $layer={$layer+1}>
+                <MenuItems $layer={$layer+1}>
+                    <MenuItem onSelect={mergeHandler}>Sloučit dolů</MenuItem>
+                    <MenuItem onSelect={deleteHandler}>Smazat</MenuItem>
+                </MenuItems>
+            </MenuPopover>
+        </Menu>
     )
 }
 
