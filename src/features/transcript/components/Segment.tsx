@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying } from "../../playback/redux/playbackSlice";
-import { selectIsSelecting, selectSegment } from "../../grouping/redux/groupingSlice";
+import { selectSelecting, chooseSegment } from "../../grouping/redux/groupingSlice";
 import { selectSpeaker2Color, selectSpeakers } from "../../job/redux/jobSlice";
 
 // utils
@@ -65,7 +65,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
     const dispatch = useAppDispatch()
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const isAudioPlaying = useSelector(selectIsPlaying)
-    const isSelecting = useSelector(selectIsSelecting)
+    const selecting = useSelector(selectSelecting)
     const speakers = useSelector(selectSpeakers)
     const speaker2color = useSelector(selectSpeaker2Color)
 
@@ -97,15 +97,6 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
         dispatch(playPauseSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
     }
 
-    const handleSelectingSegment = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault()
-        if (!isSelecting)
-            return
-        
-        dispatch(selectSegment(segmentID))
-    }
-
-    // TODO: implement segment tags
     // TODO: implement group visualisation on the side
 
     if (!data)
@@ -115,8 +106,8 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
         <SegmentLayout
             $layer={$layer}
             {...props}
-            className={isSelecting ? "selecting" : ""}
-            onClick={isSelecting ? (e) => handleSelectingSegment(e) : () => {}}
+            className={selecting ? "selecting" : ""}
+            onClick={selecting ? () => dispatch(chooseSegment({id: segmentID})) : undefined}
         >
             <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
                 <DropdownSelection<SpeakerTag>
@@ -138,11 +129,6 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
                     mergeHandler={() => dispatch(mergeSegment({id: segmentID}))}
                 />
             </div>
-            {/* <div>
-                TODO: tags
-                TODO: get tag display text based on tag text
-                <TagArea tags={segment.segment_tags} placeholder="" $layer={$layer} span={1} onTagAdd={() => {}} onTagDelete={() => {}} />
-            </div> */}
             <div style={{marginRight: "auto", display: "flex"}}>
                 <Button
                     $layer={$layer}

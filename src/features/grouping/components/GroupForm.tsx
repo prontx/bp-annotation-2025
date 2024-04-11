@@ -12,7 +12,7 @@ import styled, { css } from "styled-components";
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
-import { createOrUpdateGroup, resetEditing, resetSelecting, selectGroupByID, setStartEndParentSegmentIDs } from "../redux/groupingSlice";
+import { createOrUpdateGroup, resetEditing, resetSelecting, selectGroupByID, chooseSegment, selectStartEndSegmentIDs, setStartEndParentSegmentIDs } from "../redux/groupingSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 
@@ -105,8 +105,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     const [isEditing, setIsEditing] = useState(false)
     const [title, setTitle] = useState("")
     const [error, setError] = useState("")
-    const [startSegmentID, setStartSegmentID] = useState("")
-    const [endSegmentID, setEndSegmentID] = useState("")
+    const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
     const [publish, setPublish] = useState(false)
     const [tags, setTags] = useState<string[]>([])
     const group = useSelector((state: RootState) => selectGroupByID(state, groupID))
@@ -117,8 +116,8 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
 
         setIsEditing(true)
         setTitle(group.title)
-        setStartSegmentID(group.startSegmentID)
-        setEndSegmentID(group.endSegmentID)
+        dispatch(chooseSegment({id: group.startSegmentID, type: "start"}))
+        dispatch(chooseSegment({id: group.endSegmentID, type: "end"}))
         setPublish(group.publish)
         setTags(group.tags)
     }, [group])
@@ -127,8 +126,6 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         setIsEditing(false)
         setTitle("")
         setError("")
-        setStartSegmentID("")
-        setEndSegmentID("")
         setPublish(false)
         setTags([])
     }
@@ -205,13 +202,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
                 onChange={(e) => setTitle(e.target.value)}
             />
             <div className="body">
-                <StartEndSelection
-                    $layer={$layer+1}
-                    startSegmentID={startSegmentID}
-                    setStartSegmentID={setStartSegmentID}
-                    endSegmentID={endSegmentID}
-                    setEndSegmentID={setEndSegmentID}
-                />
+                <StartEndSelection $layer={$layer+1} />
                 <StyledCheckbox $layer={$layer}>
                     <input type="checkbox" id="checkbox" name="checkbox" checked={publish} onChange={e => setPublish(e.target.checked)}/>
                     <label htmlFor="checkbox">zveřejnit</label>

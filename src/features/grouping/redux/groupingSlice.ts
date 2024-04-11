@@ -11,8 +11,11 @@ import { v4 as uuid } from 'uuid';
 
 
 interface GroupingState {
-    isSelecting: boolean,
-    selectedSegmentID: string,
+    selecting: "start"|"end"|null,
+    selected: {
+        startSegmentID: string,
+        endSegmentID: string,
+    },
     parentStartSegmentID: string,
     parentEndSegmentID: string,
     groups: Lookup<Group>,
@@ -20,8 +23,11 @@ interface GroupingState {
 }
 
 const initialState: GroupingState = {
-    isSelecting: false,
-    selectedSegmentID: "",
+    selecting: null,
+    selected: {
+        startSegmentID: "",
+        endSegmentID: "",
+    },
     parentStartSegmentID: "",
     parentEndSegmentID: "",
     groups: {
@@ -73,15 +79,26 @@ export const groupingSlice = createSlice({
             }
             toDelete.forEach(deleteID => delete state.groups.entities[deleteID])
         },
-        beginSelecting: (state) => {
-            state.isSelecting = true
+        beginSelecting: (state, action: PayloadAction<"start"|"end"|null>) => {
+            state.selecting = action.payload
         },
-        selectSegment: (state, action: PayloadAction<string>) => {
-            state.selectedSegmentID = action.payload
+        chooseSegment: (state, action: PayloadAction<{id: string, type?: "start"|"end"}>) => {
+            if (state.selecting === "start" || action.payload.type === "start"){
+                state.selected.startSegmentID = action.payload.id
+            } else if (state.selecting === "end" || action.payload.type === "end"){
+                state.selected.endSegmentID = action.payload.id
+            }
+
+            if (state.selecting == "start" && !state.selected.endSegmentID){
+                state.selecting = "end"
+            } else {
+                state.selecting = null
+            }
         },
         resetSelecting: (state) => {
-            state.selectedSegmentID = ""
-            state.isSelecting = false
+            state.selected.startSegmentID = ""
+            state.selected.endSegmentID = ""
+            state.selecting = null
         },
         setStartEndParentSegmentIDs: (state, action: PayloadAction<string|undefined>) => {
             if (!action.payload)
@@ -96,7 +113,7 @@ export const groupingSlice = createSlice({
     },
 })
 
-export const { createOrUpdateGroup, deleteGroup, beginSelecting, selectSegment, resetSelecting, setStartEndParentSegmentIDs, resetEditing } = groupingSlice.actions
+export const { createOrUpdateGroup, deleteGroup, beginSelecting, chooseSegment, resetSelecting, setStartEndParentSegmentIDs, resetEditing } = groupingSlice.actions
 
 export const selectGroups = (state: RootState) => state.grouping.groups
 export const selectGroupIDs = (state: RootState) => state.grouping.groups.keys
@@ -104,8 +121,8 @@ export const selectGroupByID = (state: RootState, id?: string) => {
     if (!id)
         return undefined
     return state.grouping.groups.entities[id]}
-export const selectIsSelecting = (state: RootState) => state.grouping.isSelecting
-export const selectSelectedSegmentID = (state: RootState) => state.grouping.selectedSegmentID
+export const selectSelecting = (state: RootState) => state.grouping.selecting
+export const selectStartEndSegmentIDs = (state: RootState) => state.grouping.selected
 export const selectStartEndParentSegmentID = (state: RootState) => [state.grouping.parentStartSegmentID, state.grouping.parentEndSegmentID]
 
 export default groupingSlice.reducer
