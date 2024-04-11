@@ -3,6 +3,7 @@ export interface Group {
     title: string,
     startSegmentID: string,
     endSegmentID: string,
+    publish: boolean,
     tags: string[],
     parentID?: string,
     childrenIDs: string[]

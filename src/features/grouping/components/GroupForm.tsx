@@ -77,6 +77,29 @@ const GroupFormActions = styled.div`
     }
 `
 
+const StyledCheckbox = styled.div<Layer>` ${({theme}) => css`
+    & > * {
+        cursor: pointer;
+    }
+
+    input[type="checkbox"]{
+        border: none;
+        outline: none;
+        border-radius: 2px;
+        width: 1rem;
+        height: 1rem;
+        accent-color: ${theme.layers[3]["primary"].active};
+    }
+
+    :hover, :focus, :active {
+        color: ${theme.textPrimary}
+    }
+
+    label {
+        margin-left: 4px;
+    }
+`}`
+
 const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, submitCallback, ...props}) => {
     const dispatch = useAppDispatch()
     const [isEditing, setIsEditing] = useState(false)
@@ -84,6 +107,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     const [error, setError] = useState("")
     const [startSegmentID, setStartSegmentID] = useState("")
     const [endSegmentID, setEndSegmentID] = useState("")
+    const [publish, setPublish] = useState(false)
     const [tags, setTags] = useState<string[]>([])
     const group = useSelector((state: RootState) => selectGroupByID(state, groupID))
     
@@ -95,6 +119,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         setTitle(group.title)
         setStartSegmentID(group.startSegmentID)
         setEndSegmentID(group.endSegmentID)
+        setPublish(group.publish)
         setTags(group.tags)
     }, [group])
 
@@ -104,6 +129,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         setError("")
         setStartSegmentID("")
         setEndSegmentID("")
+        setPublish(false)
         setTags([])
     }
 
@@ -119,6 +145,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
             title: title,
             startSegmentID: startSegmentID,
             endSegmentID: endSegmentID,
+            publish: publish,
             parentID: parentID,
             tags: tags,
         }))
@@ -185,6 +212,10 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
                     endSegmentID={endSegmentID}
                     setEndSegmentID={setEndSegmentID}
                 />
+                <StyledCheckbox $layer={$layer}>
+                    <input type="checkbox" id="checkbox" name="checkbox" checked={publish} onChange={e => setPublish(e.target.checked)}/>
+                    <label htmlFor="checkbox">zveřejnit</label>
+                </StyledCheckbox>
                 {tags.length > 0
                     ? <Tag tags={tags} $layer={$layer+1} deleteCallback={() => setTags(tags.slice(0, -1))} />
                     : <TagSelection $layer={$layer} onSelection={handleTagSelection} />}

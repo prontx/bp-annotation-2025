@@ -68,7 +68,7 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
     return (
         <Expandable title={data.title} $layer={$layer} {...props}>
             <GroupBodyContainer><>
-                <p>{timeToFormatedString(startTime)} – {timeToFormatedString(endTime)}</p>
+                <p>{timeToFormatedString(startTime)} – {timeToFormatedString(endTime)}{data.publish && ", zveřejnit"}</p>
                 <Tag tags={data.tags} $layer={$layer} />
                 {data.childrenIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer} parentTags={data.tags}/>)}
                 <GroupForm $layer={$layer} parentID={groupID} parentTags={data.tags} />
