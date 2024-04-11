@@ -11,7 +11,6 @@ export const wavesurferOptions : WaveSurferOptions = {
     cursorColor: '#ff0000',
     cursorWidth: 2,
     interact: true,
-    hideScrollbar: true,
     autoScroll: true,
     autoCenter: false,
     container: '#waveform',
