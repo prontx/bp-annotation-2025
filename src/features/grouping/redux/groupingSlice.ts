@@ -11,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 
 
 interface GroupingState {
+    isEditing: boolean,
     selecting: "start"|"end"|null,
     selected: {
         startSegmentID: string,
@@ -23,6 +24,7 @@ interface GroupingState {
 }
 
 const initialState: GroupingState = {
+    isEditing: false,
     selecting: null,
     selected: {
         startSegmentID: "",
@@ -100,20 +102,26 @@ export const groupingSlice = createSlice({
             state.selected.endSegmentID = ""
             state.selecting = null
         },
-        setStartEndParentSegmentIDs: (state, action: PayloadAction<string|undefined>) => {
-            if (!action.payload)
-                return
-            state.parentStartSegmentID = state.groups.entities[action.payload].startSegmentID
-            state.parentEndSegmentID = state.groups.entities[action.payload].endSegmentID
-        }, 
-        resetEditing: (state) => {
+        startEditing: (state, action: PayloadAction<string|undefined>) => {
+            console.log("> editing start")
+            state.isEditing = true
+            state.parentStartSegmentID = action.payload ? state.groups.entities[action.payload].startSegmentID : ""
+            state.parentEndSegmentID = action.payload ? state.groups.entities[action.payload].endSegmentID : ""
+        },
+        endEditing: (state) => {
+            console.log("> editing end")
+            state.isEditing = false
             state.parentStartSegmentID = ""
             state.parentEndSegmentID = ""
+            state.selecting = null
+            state.selected.startSegmentID = ""
+            state.selected.endSegmentID = ""
+
         }
     },
 })
 
-export const { createOrUpdateGroup, deleteGroup, beginSelecting, chooseSegment, resetSelecting, setStartEndParentSegmentIDs, resetEditing } = groupingSlice.actions
+export const { createOrUpdateGroup, deleteGroup, beginSelecting, chooseSegment, resetSelecting, startEditing, endEditing } = groupingSlice.actions
 
 export const selectGroups = (state: RootState) => state.grouping.groups
 export const selectGroupIDs = (state: RootState) => state.grouping.groups.keys
@@ -122,7 +130,15 @@ export const selectGroupByID = (state: RootState, id?: string) => {
         return undefined
     return state.grouping.groups.entities[id]}
 export const selectSelecting = (state: RootState) => state.grouping.selecting
-export const selectStartEndSegmentIDs = (state: RootState) => state.grouping.selected
+export const selectStartEndSegmentIDs = (state: RootState) => {
+    if (state.grouping.selecting === "start"){
+        return {startSegmentID: "", endSegmentID: state.grouping.selected.endSegmentID}
+    } else if (state.grouping.selecting === "end"){
+        return {startSegmentID: state.grouping.selected.startSegmentID, endSegmentID: ""}
+    }
+    return state.grouping.selected
+}
 export const selectStartEndParentSegmentID = (state: RootState) => [state.grouping.parentStartSegmentID, state.grouping.parentEndSegmentID]
+export const selectIsEditing = (state: RootState) => state.grouping.isEditing
 
 export default groupingSlice.reducer

@@ -139,7 +139,19 @@ export const { createSegment, updateSegment, deleteSegment, mergeSegment } = tra
 export const selectTranscript = (state: RootState) => state.transcript
 export const selectTranscriptStatus = (state: RootState) => state.transcript.status
 export const selectSegments = (state: RootState) => state.transcript.segments
-export const selectSegmentIDs = (state: RootState) => state.transcript.segments.keys
+export const selectSegmentIDs = (state: RootState) => {
+    let startIdx = 0
+    let endIdx = state.transcript.segments.keys.length
+    if (state.grouping.parentStartSegmentID)
+        startIdx = state.transcript.segments.keys.findIndex(id => id === state.grouping.parentStartSegmentID)
+    if (state.grouping.parentEndSegmentID)
+        endIdx = state.transcript.segments.keys.findIndex(id => id === state.grouping.parentEndSegmentID) + 1
+    if (startIdx < 0)
+        startIdx = 0
+    if (endIdx < 0)
+        endIdx = state.transcript.segments.keys.length
+    return state.transcript.segments.keys.slice(startIdx, endIdx)
+}
 export const selectSegmentByID = (state: RootState, id: string) => state.transcript.segments.entities[id]
 export const selectSegmentStartByID = (state: RootState, id: string) => {
     if (!id)

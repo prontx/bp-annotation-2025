@@ -12,7 +12,7 @@ import styled, { css } from "styled-components";
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
-import { createOrUpdateGroup, resetEditing, resetSelecting, selectGroupByID, chooseSegment, selectStartEndSegmentIDs, setStartEndParentSegmentIDs } from "../redux/groupingSlice";
+import { createOrUpdateGroup, endEditing, selectGroupByID, chooseSegment, selectStartEndSegmentIDs, startEditing } from "../redux/groupingSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 
@@ -102,7 +102,7 @@ const StyledCheckbox = styled.div<Layer>` ${({theme}) => css`
 
 const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, submitCallback, ...props}) => {
     const dispatch = useAppDispatch()
-    const [isEditing, setIsEditing] = useState(false)
+    const [editing, setEditing] = useState(!!submitCallback)
     const [title, setTitle] = useState("")
     const [error, setError] = useState("")
     const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
@@ -114,7 +114,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         if (!group)
             return
 
-        setIsEditing(true)
+        dispatch(startEditing(group.parentID))
         setTitle(group.title)
         dispatch(chooseSegment({id: group.startSegmentID, type: "start"}))
         dispatch(chooseSegment({id: group.endSegmentID, type: "end"}))
@@ -123,11 +123,11 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     }, [group])
 
     const resetState = () => {
-        setIsEditing(false)
         setTitle("")
         setError("")
         setPublish(false)
         setTags([])
+        setEditing(false)
     }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -147,9 +147,8 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
             tags: tags,
         }))
 
-        dispatch(resetEditing())
+        dispatch(endEditing())
         resetState()
-
         if (submitCallback)
             submitCallback()
     }
@@ -167,19 +166,18 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
 
     const handleCancelation: MouseEventHandler<HTMLButtonElement> = (e) => {
         e.stopPropagation() // prevent form submission
-        dispatch(resetSelecting())
-        dispatch(resetEditing())
+        dispatch(endEditing())
         resetState()
         if (submitCallback)
             submitCallback()
     }
 
     const handleEditingStart = () => {
-        dispatch(setStartEndParentSegmentIDs(parentID))
-        setIsEditing(true)
+        setEditing(true)
+        dispatch(startEditing(parentID))
     }
 
-    if (!isEditing) {
+    if (!editing) {
         return (
             <Button
                 icon={<AddIcon />}

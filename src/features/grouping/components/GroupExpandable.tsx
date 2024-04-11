@@ -11,7 +11,7 @@ import styled from "styled-components"
 
 // redux
 import { useSelector } from "react-redux"
-import { deleteGroup, selectGroupByID, setStartEndParentSegmentIDs } from "../redux/groupingSlice"
+import { deleteGroup, selectGroupByID, startEditing } from "../redux/groupingSlice"
 import { selectGroupStartEndByIDs } from "../../transcript/redux/transcriptSlice"
 import { useAppDispatch } from "../../../redux/hooks"
 
@@ -58,7 +58,7 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
     const [startTime, endTime] = useSelector((state: RootState) => selectGroupStartEndByIDs(state, data.startSegmentID, data.endSegmentID))
 
     const handleEditing = () => {
-        dispatch(setStartEndParentSegmentIDs(data.parentID))
+        dispatch(startEditing(data.parentID))
         setIsEditing(true)
     }
 

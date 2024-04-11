@@ -13,8 +13,8 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying } from "../../playback/redux/playbackSlice";
-import { selectSelecting, chooseSegment } from "../../grouping/redux/groupingSlice";
 import { selectSpeaker2Color, selectSpeakers } from "../../job/redux/jobSlice";
+import { selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
 
 // utils
 import { segmentWords2String } from "../../../utils/segmentWords2String";
@@ -22,7 +22,7 @@ import { segmentWords2String } from "../../../utils/segmentWords2String";
 import { rgba } from "@carbon/colors"
 
 // styles
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 // types
 import type Layer from "../../../types/Layer"
@@ -38,36 +38,43 @@ interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
     regionsReloadCallback: () => void
 }
 
-const SegmentLayout = styled.div<Layer>`
+const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     padding: 4px;
     border-radius: 4px;
-    background: ${({theme, $layer}) => theme.layers[$layer].background};
-
-    grid-template-areas:
-        "header tags"
-        "body tags";
+    background: ${theme.layers[$layer].background};
     
-    &.selecting {
-        & > * {
+    &.selecting:hover {
+        cursor: pointer;
+        background: ${theme.layers[$layer].hover};
+        outline: 2px solid ${theme.layers[$layer]["primary"].active};
+        
+        * {
             pointer-events: none;
-            background: transparent;
-        }
-        &:hover {
-            border-radius: 4px;
-            cursor: pointer;
-            background: ${({theme, $layer}) => theme.layers[$layer].hover}
+            background: none;
         }
     }
-`
+    
+    &.selected {
+        outline: 2px solid ${theme.layers[$layer]["primary"].active};
+    }
 
-const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, regionsReloadCallback, ...props}) => {
+    &.ingroup {
+        background: ${theme.layers[$layer].hover};
+
+        * {
+            background: none;
+        }
+    }
+`}`
+
+const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, regionsReloadCallback, className, ...props}) => {
     const data = useSelector((state: RootState) => selectSegmentByID(state, segmentID))
     const dispatch = useAppDispatch()
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const isAudioPlaying = useSelector(selectIsPlaying)
-    const selecting = useSelector(selectSelecting)
     const speakers = useSelector(selectSpeakers)
     const speaker2color = useSelector(selectSpeaker2Color)
+    const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
 
     useEffect(() => {
         if (!isAudioPlaying && isPlaying)
@@ -105,10 +112,8 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
     return (
         <SegmentLayout
             $layer={$layer}
-            {...props}
-            className={selecting ? "selecting" : ""}
-            onClick={selecting ? () => dispatch(chooseSegment({id: segmentID})) : undefined}
-        >
+            className={`${className} ${(segmentID === startSegmentID || segmentID === endSegmentID) ? "selected" : ""}`}
+            {...props}>
             <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
                 <DropdownSelection<SpeakerTag>
                     $layer={$layer+1}
