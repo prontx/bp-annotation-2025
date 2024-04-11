@@ -18,7 +18,7 @@ interface TagProps extends Layer, React.HTMLAttributes<HTMLSpanElement> {
 
 const StyledTag = styled.span<Layer>` ${({theme, $layer}) => css`
     display: inline;
-    margin-right: auto;
+    margin: 0 auto 0 2px;
     padding: 0 4px;
     background: ${theme.layers[$layer].background};
     border-radius: 4px;
