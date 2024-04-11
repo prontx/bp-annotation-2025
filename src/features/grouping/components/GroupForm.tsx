@@ -8,7 +8,7 @@ import StartEndSelection from "./StartEndSelection";
 import AddIcon from '@mui/icons-material/Add';
 
 // style
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
@@ -35,7 +35,7 @@ const GroupFormContainer = styled.form<Layer>`
         display: flex;
         flex-direction: column;
         gap: 8px;
-        padding: 4px 8px;
+        padding: 8px;
     }
 
     & .error {
@@ -45,26 +45,27 @@ const GroupFormContainer = styled.form<Layer>`
     }
 `
 
-const GroupTitleInput = styled.input<Layer>`
+const GroupTitleInput = styled.input<Layer>` ${({theme, $layer}) => css`
     width: 100%;
-    padding: 4px 8px;
-    font-size: ${({theme}) => theme.heading_m};
+    padding: 2px 8px;
+    font-size: ${theme.heading_m};
     font-weight: 600;
-    color: ${({theme}) => theme.textSecondary};
+    color: ${theme.textSecondary};
     margin-right: auto;
-    background: ${({theme, $layer}) => theme.layers[$layer].background};
+    background: ${theme.layers[$layer].background};
     border-radius: 2px;
-    border: 2px solid ${({theme, $layer}) => theme.layers[$layer].active};
-    outline: none;
+    border: none;
+    outline: 2px solid ${theme.layers[$layer].active};
     
     &:hover {
-        background: ${({theme, $layer}) => theme.layers[$layer].hover};
+        background: ${theme.layers[$layer].hover};
     }
     
     &:active, &:focus {
-        background: ${({theme, $layer}) => theme.layers[$layer].active};
+        background: ${theme.layers[$layer].active};
+        outline-color: ${theme.layers[$layer]["primary"].active};
     }
-`
+`}`
 
 const GroupFormActions = styled.div`
     display: flex;
@@ -95,7 +96,16 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         setStartSegmentID(group.startSegmentID)
         setEndSegmentID(group.endSegmentID)
         setTags(group.tags)
-    }, [groupID])
+    }, [group])
+
+    const resetState = () => {
+        setIsEditing(false)
+        setTitle("")
+        setError("")
+        setStartSegmentID("")
+        setEndSegmentID("")
+        setTags([])
+    }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -114,13 +124,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         }))
 
         dispatch(resetEditing())
-
-        setIsEditing(false)
-        setTitle("")
-        setError("")
-        setStartSegmentID("")
-        setEndSegmentID("")
-        setTags([])
+        resetState()
 
         if (submitCallback)
             submitCallback()
@@ -141,12 +145,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         e.stopPropagation() // prevent form submission
         dispatch(resetSelecting())
         dispatch(resetEditing())
-        setIsEditing(false)
-        setTitle("")
-        setError("")
-        setStartSegmentID("")
-        setEndSegmentID("")
-        setTags([])
+        resetState()
         if (submitCallback)
             submitCallback()
     }

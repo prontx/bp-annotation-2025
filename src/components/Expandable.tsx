@@ -51,7 +51,7 @@ const ExpandableHeader = styled.div<Layer>`
 `
 
 const Expandable: FC<ExpandableProps> = ({$layer, ...props}) => {
-    const [ open, setOpen ] = useState(false)
+    const [ open, setOpen ] = useState(true)
 
     return (
         <ExpandableContainer $layer={$layer}>

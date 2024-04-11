@@ -31,9 +31,16 @@ interface StartEndSelectionProps extends Layer {
 const StartEndSelectionContainer = styled.div`
     display: flex;
     align-items: center;
+    height: 2.5rem;
 
     & .separator {
         margin: 0 4px;
+        flex: 0 1 0;
+    }
+
+    & button {
+        flex: 1 0 25%;
+        height: 100%;
     }
 `
 
@@ -67,12 +74,32 @@ const StartEndSelection: FC<StartEndSelectionProps> = ({$layer, startSegmentID, 
 
     return (
     <StartEndSelectionContainer>
-        <Button $size="s" icon={<EditIcon style={{width: "24px"}}/>} $layer={$layer} onClick={(e) => handleBeginSelecting(e, "start")}>
-            {(startSegmentID && startTime) ? timeToFormatedString(startTime) : "Zvolit začátek"}
+        <Button
+            $size="s"
+            icon={<EditIcon style={{width: "24px"}}/>}
+            $layer={$layer}
+            onClick={(e) => handleBeginSelecting(e, "start")}
+            $color={selecting === "start" ? "primary" : undefined}
+        >
+            {(selecting === "start")
+                ? "Výběr..."
+                : (startSegmentID && startTime)
+                ? timeToFormatedString(startTime)
+                : "Zvolit začátek"}
         </Button>
         <span className="separator">–</span>
-        <Button $size="s" icon={<EditIcon style={{width: "24px"}}/>} $layer={$layer} onClick={(e) => handleBeginSelecting(e, "end")}>
-            {(endSegmentID && endTime) ? timeToFormatedString(endTime) : "Zvolit konec"}
+        <Button
+            $size="s"
+            icon={<EditIcon style={{width: "24px"}}/>}
+            $layer={$layer}
+            onClick={(e) => handleBeginSelecting(e, "end")}
+            $color={selecting === "end" ? "primary" : undefined}
+        >
+            {(selecting === "end") 
+                ? "Výběr..."
+                : (endSegmentID && endTime)
+                ? timeToFormatedString(endTime)
+                : "Zvolit konec"}
         </Button>
     </StartEndSelectionContainer>
     )
