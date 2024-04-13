@@ -2,10 +2,9 @@ import { FC, FormEvent, MouseEventHandler, useEffect, useState } from "react";
 
 // components
 import Button from "../../../components/Button";
-import TagSelection from "../../../components/TagSelection/TagSelection";
-import Tag from "../../../components/Tag";
 import StartEndSelection from "./StartEndSelection";
 import AddIcon from '@mui/icons-material/Add';
+import TagSet from "./TagSet.tsx.tsx";
 
 // style
 import styled, { css } from "styled-components";
@@ -18,12 +17,16 @@ import { RootState } from "../../../redux/store";
 
 // types
 import Layer from "../../../types/Layer";
+import { GroupTag } from "../../transcript/types/Tag.ts";
+
+// utils
+import { addTag, deleteTag, tagNotInTags } from "../utils/tagManipulations.ts";
 
 
 interface GroupFormProps extends Layer, React.HTMLAttributes<HTMLFormElement> {
     groupID?: string,
     parentID?: string,
-    parentTags?: string[],
+    parentTags?: GroupTag[],
     submitCallback?: () => void,
 }
 
@@ -107,7 +110,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     const [error, setError] = useState("")
     const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
     const [publish, setPublish] = useState(false)
-    const [tags, setTags] = useState<string[]>([])
+    const [tags, setTags] = useState<GroupTag[]>([])
     const group = useSelector((state: RootState) => selectGroupByID(state, groupID))
     
     useEffect(() => { // load existing data if editing, skip if creating
@@ -121,6 +124,10 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         setPublish(group.publish)
         setTags(group.tags)
     }, [group])
+
+    // useEffect(() => {
+    //     // TODO: on parentTag change, remove tags that might have been added and would be duplicate
+    // }, [parentTags])
 
     const resetState = () => {
         setTitle("")
@@ -153,15 +160,14 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
             submitCallback()
     }
 
-    const handleTagSelection = (newTags: string[]) => {
-        let merged: string[] = newTags
-        for (let i = 0; parentTags && i < parentTags.length; i++){
-            if (i >= newTags.length || parentTags[i] !== newTags[i]){
-                break
-            }
-            merged.shift()
+    const handleTagAdd = (newTag: string[]) => {
+        if (tagNotInTags(newTag, parentTags)){
+            setTags(addTag([...tags], newTag))
         }
-        setTags(merged)
+    }
+
+    const handleTagDelete = (i: number, tag: string) => {
+        setTags(deleteTag([...tags], i, tag))
     }
 
     const handleCancelation: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -205,9 +211,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
                     <input type="checkbox" id="checkbox" name="checkbox" checked={publish} onChange={e => setPublish(e.target.checked)}/>
                     <label htmlFor="checkbox">zveřejnit</label>
                 </StyledCheckbox>
-                {tags.length > 0
-                    ? <Tag tags={tags} $layer={$layer+1} deleteCallback={() => setTags(tags.slice(0, -1))} />
-                    : <TagSelection $layer={$layer} onSelection={handleTagSelection} />}
+                <TagSet tags={tags} $layer={$layer+1} editable addHandler={handleTagAdd} deleteHandler={handleTagDelete} />
                 {error && <p className="error">{error}</p>}
                 <GroupFormActions>
                     <Button $size="l" $layer={$layer+1} type="submit">{groupID ? "Uložit" : "Vytvořit"}</Button>

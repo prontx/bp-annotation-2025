@@ -2,7 +2,7 @@ import { FC, useState } from "react"
 
 // components
 import Expandable from "../../../components/Expandable"
-import Tag from "../../../components/Tag"
+import TagSet from "./TagSet.tsx.tsx"
 import GroupForm from "./GroupForm"
 import Button from "../../../components/Button"
 
@@ -21,11 +21,12 @@ import { RootState } from "../../../redux/store"
 
 // utils
 import { timeToFormatedString } from "../../../utils/convertTimeAndFormatedString"
+import { GroupTag } from "../../transcript/types/Tag.ts"
 
 
 interface GroupExpandableProps extends React.HTMLAttributes<HTMLDivElement>, Layer {
     groupID: string,
-    parentTags?: string[],
+    parentTags?: GroupTag[],
 }
 
 const GroupBodyContainer = styled.div`
@@ -63,13 +64,13 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
     }
 
     if (isEditing)
-        return <GroupForm $layer={$layer} groupID={groupID} parentTags={parentTags} submitCallback={() => setIsEditing(false)} />
+        return <GroupForm $layer={$layer} groupID={groupID} submitCallback={() => setIsEditing(false)} />
 
     return (
         <Expandable title={data.title} $layer={$layer} {...props}>
             <GroupBodyContainer><>
                 <p>{timeToFormatedString(startTime)} – {timeToFormatedString(endTime)}{data.publish && ", zveřejnit"}</p>
-                <Tag tags={data.tags} $layer={$layer} />
+                <TagSet tags={data.tags} $layer={$layer} />
                 {data.childrenIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer} parentTags={data.tags}/>)}
                 <GroupForm $layer={$layer} parentID={groupID} parentTags={data.tags} />
                 <GroupExpandableActions>

@@ -103,13 +103,11 @@ export const groupingSlice = createSlice({
             state.selecting = null
         },
         startEditing: (state, action: PayloadAction<string|undefined>) => {
-            console.log("> editing start")
             state.isEditing = true
             state.parentStartSegmentID = action.payload ? state.groups.entities[action.payload].startSegmentID : ""
             state.parentEndSegmentID = action.payload ? state.groups.entities[action.payload].endSegmentID : ""
         },
         endEditing: (state) => {
-            console.log("> editing end")
             state.isEditing = false
             state.parentStartSegmentID = ""
             state.parentEndSegmentID = ""

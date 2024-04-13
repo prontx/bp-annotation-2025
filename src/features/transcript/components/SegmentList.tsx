@@ -70,7 +70,6 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     }, [segmentIDs, selecting, isEditing, hoverIdx, startSegmentID, endSegmentID])
 
     useEffect(() => {
-        console.log(selecting, isEditing)
         if (!selecting && !isEditing){
             setStartIdx(-1)
             setEndIdx(-1)
