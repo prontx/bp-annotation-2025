@@ -36,9 +36,9 @@ const GroupList: FC<Layer & React.HTMLAttributes<HTMLDivElement>> = ({$layer, ..
 
     return (
         <GroupListContainer $layer={$layer} {...props}>
-            {groupIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer+1}/>)}
+            {groupIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer}/>)}
             {(groupTags !== undefined)
-                ? <GroupForm $layer={$layer} />
+                ? <GroupForm $layer={$layer+1} />
                 : "Nepodařilo se načíst metadata."
             }
         </GroupListContainer>

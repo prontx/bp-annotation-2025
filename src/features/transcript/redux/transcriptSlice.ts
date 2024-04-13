@@ -163,7 +163,9 @@ export const selectSegmentEndByID = (state: RootState, id: string) => {
         return undefined
     return state.transcript.segments.entities[id].end
 }
-export const selectGroupStartEndByIDs = (state: RootState, startID: string, endID: string) => {
+export const selectGroupStartEndByIDs = (state: RootState, startID: string|undefined, endID: string|undefined) => {
+    if (!startID || !endID)
+        return [-1, -1]
     return [state.transcript.segments.entities[startID].start, state.transcript.segments.entities[endID].end]
     // FIXME: can entities[ID] called from groups return undefined anyhow?
 }

@@ -48,7 +48,12 @@ const StyledButton = styled.button<Omit<ButtonProps, "icon">>`${({theme, $layer,
         svg {
             fill: ${theme.textPrimary};
         }
-    }  
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
 `}`
 
 const Button: FC<ButtonProps> = ({icon, ...props}) => {

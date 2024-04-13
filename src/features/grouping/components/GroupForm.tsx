@@ -11,7 +11,7 @@ import styled, { css } from "styled-components";
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
-import { createOrUpdateGroup, endEditing, selectGroupByID, chooseSegment, selectStartEndSegmentIDs, startEditing } from "../redux/groupingSlice";
+import { createOrUpdateGroup, endEditing, selectGroupByID, chooseSegment, selectStartEndSegmentIDs, startEditing, selectIsEditing } from "../redux/groupingSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 
@@ -31,7 +31,8 @@ interface GroupFormProps extends Layer, React.HTMLAttributes<HTMLFormElement> {
 }
 
 const GroupFormContainer = styled.form<Layer>`
-    border: 2px solid ${({theme, $layer}) => theme.layers[$layer+1].background};
+    border: 2px solid ${({theme, $layer}) => theme.layers[$layer].active};
+    background: ${({theme, $layer}) => theme.layers[$layer].background};
     border-radius: 4px;
 
     & .body {
@@ -105,6 +106,7 @@ const StyledCheckbox = styled.div<Layer>` ${({theme}) => css`
 
 const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, submitCallback, ...props}) => {
     const dispatch = useAppDispatch()
+    const globalEditing = useSelector(selectIsEditing)
     const [editing, setEditing] = useState(!!submitCallback)
     const [title, setTitle] = useState<string|undefined>("")
     const [error, setError] = useState("")
@@ -187,9 +189,10 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         return (
             <Button
                 icon={<AddIcon />}
-                $layer={$layer+1}
+                $layer={$layer}
                 style={{width: "100%", padding: "8px"}}
                 onClick={handleEditingStart}
+                disabled={globalEditing}
             >
             Přidat obsahová metadata
             </Button>
@@ -199,7 +202,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     return (
         <GroupFormContainer $layer={$layer} onSubmit={handleSubmit} {...props}>
             <GroupTitleInput
-                $layer={$layer+1}
+                $layer={$layer}
                 type="text"
                 value={title}
                 placeholder="Zadat název"
