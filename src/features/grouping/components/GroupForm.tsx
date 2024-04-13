@@ -106,7 +106,7 @@ const StyledCheckbox = styled.div<Layer>` ${({theme}) => css`
 const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, submitCallback, ...props}) => {
     const dispatch = useAppDispatch()
     const [editing, setEditing] = useState(!!submitCallback)
-    const [title, setTitle] = useState("")
+    const [title, setTitle] = useState<string|undefined>("")
     const [error, setError] = useState("")
     const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
     const [publish, setPublish] = useState(false)
@@ -139,8 +139,8 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (!(title && startSegmentID && endSegmentID && tags.length > 0)){
-            setError("Všechna pole jsou povinná!")
+        if (!(startSegmentID && endSegmentID && tags.length > 0)){
+            setError("Chybí povinná pole!")
             return
         }
 
@@ -167,7 +167,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     }
 
     const handleTagDelete = (i: number, tag: string) => {
-        setTags(deleteTag([...tags], i, tag))
+        setTags(deleteTag(tags, i, tag))
     }
 
     const handleCancelation: MouseEventHandler<HTMLButtonElement> = (e) => {

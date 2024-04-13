@@ -5,7 +5,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 // styles
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import { clickableBaseStyles } from "../style/clickableBaseStyles";
 
 // types
@@ -13,7 +13,7 @@ import Layer from "../types/Layer"
 
 
 interface ExpandableProps extends React.HTMLAttributes<HTMLDivElement>, Layer {
-    title: string,
+    title?: string,
     editing?: boolean
 }
 
@@ -27,28 +27,29 @@ const ExpandableContainer = styled.div<Layer>`
     }
 `
 
-const ExpandableHeader = styled.div<Layer>`
+const ExpandableHeader = styled.div<Layer>` ${({theme, $layer}) => css`
     ${clickableBaseStyles};
     border-radius: 2px;
 
-    background: ${({theme, $layer}) => theme.layers[$layer+1].background};
+    background: ${theme.layers[$layer+1].background};
     padding: 4px 8px;
     display: flex;
     align-items: center;
     
     &:hover {
-        background: ${({theme, $layer}) => theme.layers[$layer+1].hover};
-    }
-
-    &:active {
-        background: ${({theme, $layer}) => theme.layers[$layer+1].active};
+        background: ${theme.layers[$layer+1].hover};
     }
     
-    & p {
+    &:active {
+        background: ${theme.layers[$layer+1].active};
+    }
+    
+    & h2 {
+        font-size: ${theme.heading_m};
         font-weight: 600;
         margin-right: auto;
     }
-`
+`}`
 
 const Expandable: FC<ExpandableProps> = ({$layer, ...props}) => {
     const [ open, setOpen ] = useState(true)
@@ -56,7 +57,7 @@ const Expandable: FC<ExpandableProps> = ({$layer, ...props}) => {
     return (
         <ExpandableContainer $layer={$layer}>
             <ExpandableHeader $layer={$layer} onClick={() => setOpen(!open)}>
-                <p>{props.title}</p>
+                <h2>{props.title}</h2>
                 {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ExpandableHeader>
             {open && <div className="body">

@@ -2,7 +2,7 @@ import { GroupTag } from "../../transcript/types/Tag";
 
 export interface Group {
     id: string,
-    title: string,
+    title?: string,
     startSegmentID: string,
     endSegmentID: string,
     publish: boolean,

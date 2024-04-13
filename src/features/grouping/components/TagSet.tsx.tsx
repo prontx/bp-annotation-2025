@@ -33,6 +33,7 @@ const TagSet: FC<TagSetProps> = ({tags, editable, $layer, addHandler, deleteHand
                     key={tag.name}
                     $layer={$layer}
                     tag={tag}
+                    style={{marginRight: "auto"}}
                     deleteCallback={deleteHandler ? (tag: string) => deleteHandler(i, tag) : undefined}
                 />
             )}
