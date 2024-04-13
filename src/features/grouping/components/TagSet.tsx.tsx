@@ -22,7 +22,7 @@ interface TagSetProps extends Layer, HTMLAttributes<HTMLDivElement> {
 const TagSetLayout = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
 `
 
 const TagSet: FC<TagSetProps> = ({tags, editable, $layer, addHandler, deleteHandler, ...props}) => {

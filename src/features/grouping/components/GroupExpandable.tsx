@@ -64,7 +64,7 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
     }
 
     if (isEditing)
-        return <GroupForm $layer={$layer} groupID={groupID} submitCallback={() => setIsEditing(false)} />
+        return <GroupForm $layer={$layer-1} groupID={groupID} submitCallback={() => setIsEditing(false)} />
 
     return (
         <Expandable title={data.title} $layer={$layer} {...props}>

@@ -6,6 +6,7 @@ import GroupForm from "./GroupForm"
 
 // styles
 import styled from "styled-components"
+import { scrollableBaseStyles } from "../../../style/scrollableBaseStyles"
 
 // redux
 import { useSelector } from "react-redux"
@@ -17,12 +18,16 @@ import Layer from "../../../types/Layer"
 
 
 const GroupListContainer = styled.div<Layer>`
+    ${scrollableBaseStyles}
+
     border-radius: 8px 8px 0 0;
     background: ${({theme, $layer}) => theme.layers[$layer].background};
     padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-width: 100%;
+    padding-bottom: 40vh;
 `
 
 const GroupList: FC<Layer & React.HTMLAttributes<HTMLDivElement>> = ({$layer, ...props}) => {
@@ -31,7 +36,6 @@ const GroupList: FC<Layer & React.HTMLAttributes<HTMLDivElement>> = ({$layer, ..
 
     return (
         <GroupListContainer $layer={$layer} {...props}>
-            {/* TODO: SCROLLING GROUPS LIST */}
             {groupIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer+1}/>)}
             {(groupTags !== undefined)
                 ? <GroupForm $layer={$layer} />
