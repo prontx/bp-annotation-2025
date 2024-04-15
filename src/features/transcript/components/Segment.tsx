@@ -7,6 +7,7 @@ import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
 import SegmentActions from "./SegmentActions";
 import DropdownSelection from "../../../components/DropdownSelection/DropdownSelection"
 import TimeRange from "./TimeRange";
+import SegmentText from "./SegmentText";
 
 // redux
 import { useSelector } from "react-redux";
@@ -17,7 +18,6 @@ import { selectSpeaker2Color, selectSpeakers } from "../../job/redux/jobSlice";
 import { selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
 
 // utils
-import { segmentWords2String } from "../../../utils/segmentWords2String";
 // @ts-ignore
 import { rgba } from "@carbon/colors"
 
@@ -104,6 +104,14 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
         dispatch(playPauseSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
     }
 
+    const handleTextChange = (text: string) => {
+        dispatch(updateSegment({
+            type: "id",
+            key: segmentID,
+            change: {words: text},
+        }))
+    }
+
     // TODO: implement group visualisation on the side
 
     if (!data)
@@ -134,14 +142,17 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
                     mergeHandler={() => dispatch(mergeSegment({id: segmentID}))}
                 />
             </div>
-            <div style={{marginRight: "auto", display: "flex"}}>
+            <div style={{display: "flex"}}>
                 <Button
                     $layer={$layer}
                     onClick={handlePlayPause}
-                    style={{margin: "0 4px auto 4px"}}
                     icon={isPlaying ? <PauseRoundedIcon /> : <PlayArrowRoundedIcon />}
                 />
-                <p>{segmentWords2String(data.words) /* TODO, FIXME: use text editor with tag support etc. */}</p>
+                <SegmentText
+                    words={data.words}
+                    $layer={$layer}
+                    changeHandler={handleTextChange}
+                />
             </div>
         </SegmentLayout>
     )

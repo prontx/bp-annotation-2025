@@ -1,12 +1,18 @@
 import { Word } from "./Word"
 
-
-export interface Segment {
-    regionID?: string,
+interface SegmentCommon {
     start: number,
-    end: number
+    end: number,
     speaker: string,
     language: string|null,
     segment_tags: string[],
-    words: Word[]|null
+}
+
+export interface SegmentLoadingParams extends SegmentCommon {
+    words: Word[]|null,
+}
+
+export interface Segment extends SegmentCommon {
+    regionID?: string,
+    words: string,
 }

@@ -1,6 +1,6 @@
 import { SpeakerTag } from "./Tag"
 import { SegmentTag, TextTag } from "./Tag";
-import { Segment } from "./Segment";
+import { Segment, SegmentLoadingParams } from "./Segment";
 
 interface TranscriptCommon {
     id: string,
@@ -13,7 +13,7 @@ interface TranscriptCommon {
 }
 
 export interface TranscriptLoadingParams extends TranscriptCommon {
-    segments: Segment[] | null
+    segments: SegmentLoadingParams[] | null
 }
 
 export interface SegmentStorage {

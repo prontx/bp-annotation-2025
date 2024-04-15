@@ -6,10 +6,12 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import type { SegmentStorage, Transcript, TranscriptLoadingParams } from "../types/Transcript"
 import type { RootState } from '../../../redux/store'
 import type { SegmentUpdatePayload, SegmentCreationPayload } from '../types/SegmentActionPayload';
+import { Segment } from '../types/Segment';
 
 // utils
 import { v4 as uuid } from 'uuid';
 import axios from "../../../utils/getAxios"
+import { segmentWords2String } from '../../../utils/segmentWords2String';
 
 // testing
 import { JOB_ID } from '../../../testing/test.config';
@@ -57,7 +59,7 @@ export const transcriptSlice = createSlice({
                 speaker: "A",
                 language: null,
                 segment_tags: [],
-                words: null
+                words: "",
             }
             state.segments.region2ID[action.payload.regionID] = id
         },
@@ -121,7 +123,11 @@ export const transcriptSlice = createSlice({
                 region2ID: {},
                 entities: {},
             }
-            action.payload.segments?.forEach(segment => {
+            action.payload.segments?.forEach(segmentRaw => {
+                const segment: Segment = {
+                    ...segmentRaw,
+                    words: segmentWords2String(segmentRaw.words),
+                }
                 const id = uuid()
                 transformedSegments.keys.push(id)
                 transformedSegments.entities[id] = segment
