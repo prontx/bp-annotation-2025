@@ -11,7 +11,6 @@ export const ComboboxInput = styled(BaseComboboxInput)<Layer>` ${({theme, $layer
     width: 100%;
     padding: 4px 8px;
     font-size: 1rem;
-    border: 2px solid ${theme.layers[$layer].active};
     outline: none;
     
     &:hover {

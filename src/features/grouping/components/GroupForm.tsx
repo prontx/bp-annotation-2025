@@ -21,6 +21,7 @@ import { GroupTag } from "../../transcript/types/Tag.ts";
 
 // utils
 import { addTag, deleteTag, tagNotInTags } from "../utils/tagManipulations.ts";
+import { editableBaseStyles } from "../../../style/editableBaseStyles.tsx";
 
 
 interface GroupFormProps extends Layer, React.HTMLAttributes<HTMLFormElement> {
@@ -30,10 +31,10 @@ interface GroupFormProps extends Layer, React.HTMLAttributes<HTMLFormElement> {
     submitCallback?: () => void,
 }
 
-const GroupFormContainer = styled.form<Layer>`
-    border: 2px solid ${({theme, $layer}) => theme.layers[$layer].active};
-    background: ${({theme, $layer}) => theme.layers[$layer].background};
+const GroupFormContainer = styled.form<Layer>` ${({theme, $layer}) => css`
+    background: ${theme.layers[$layer].background};
     border-radius: 4px;
+    border: 2px solid ${theme.layers[$layer].background};
 
     & .body {
         display: flex;
@@ -41,25 +42,25 @@ const GroupFormContainer = styled.form<Layer>`
         gap: 8px;
         padding: 8px;
     }
-
+    
     & .error {
-        font-size: ${({theme}) => theme.text_s};
-        color: ${({theme}) => theme.textDanger};
+        font-size: ${theme.text_s};
+        color: ${theme.textDanger};
         font-weight: 600;
     }
-`
+`}`
 
 const GroupTitleInput = styled.input<Layer>` ${({theme, $layer}) => css`
+    ${editableBaseStyles}
+
     width: 100%;
-    padding: 2px 8px;
+    padding: 8px;
     font-size: ${theme.heading_m};
     font-weight: 600;
     color: ${theme.textSecondary};
     margin-right: auto;
     background: ${theme.layers[$layer].background};
-    border-radius: 2px;
-    border: none;
-    outline: 2px solid ${theme.layers[$layer].active};
+    outline: none;
     
     &:hover {
         background: ${theme.layers[$layer].hover};
@@ -67,7 +68,6 @@ const GroupTitleInput = styled.input<Layer>` ${({theme, $layer}) => css`
     
     &:active, &:focus {
         background: ${theme.layers[$layer].active};
-        outline-color: ${theme.layers[$layer]["primary"].active};
     }
 `}`
 
@@ -202,7 +202,7 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     return (
         <GroupFormContainer $layer={$layer} onSubmit={handleSubmit} {...props}>
             <GroupTitleInput
-                $layer={$layer}
+                $layer={$layer+1}
                 type="text"
                 value={title}
                 placeholder="Zadat název"

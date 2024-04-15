@@ -61,7 +61,7 @@ const SubtleInput = styled(CustomInput)`
     
     &:hover, &:focus {
         background: ${({theme, $layer}) => theme.layers[$layer].background};
-        outline: 2px solid ${({theme, $layer}) => theme.layers[$layer].active};
+        outline: none;
         color: ${({theme}) => theme.textPrimary};
     }
 `
