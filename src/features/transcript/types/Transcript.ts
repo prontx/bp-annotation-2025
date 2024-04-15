@@ -13,15 +13,17 @@ interface TranscriptCommon {
 }
 
 export interface TranscriptLoadingParams extends TranscriptCommon {
-    segments: SegmentLoadingParams[] | null
+    segments: SegmentLoadingParams[] | null,
 }
 
 export interface SegmentStorage {
     keys: string[],
-    region2ID: { [key: string]: string }
-    entities: { [key: string]: Segment }
+    region2ID: { [key: string]: string },
+    entities: { [key: string]: Segment },
 }
 
 export interface Transcript extends TranscriptCommon {
-    segments: SegmentStorage
+    segments: SegmentStorage,
+    specialChar: string,
+    lastFocusedSegment: string,
 }

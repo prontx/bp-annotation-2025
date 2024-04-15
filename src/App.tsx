@@ -7,6 +7,7 @@ import MenuBar from "./features/menu/components/MenuBar"
 import SegmentList from "./features/transcript/components/SegmentList"
 import GroupList from "./features/grouping/components/GroupList"
 import SpeakerList from "./features/job/components/SpeakerList"
+import SpecialChars from "./features/transcript/components/SpecialChars"
 
 // wavesurfer
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
@@ -53,6 +54,9 @@ const AppLayout = styled.div`
 
 const SideBar = styled.aside`
     ${scrollableBaseStyles}
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 `
 
 function App() {
@@ -68,6 +72,7 @@ function App() {
             <Controls className="controls" $layer={1}/>
             <SideBar>
                 <SpeakerList $layer={1} />
+                <SpecialChars $layer={1} />
             </SideBar>
             <SegmentList className="segments" waveformRegionsRef={waveformRegionsRef} $layer={1}/>
             <GroupList className="groups" $layer={1}>

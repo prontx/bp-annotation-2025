@@ -34,6 +34,8 @@ const initialState: Transcript = {
     status: "idle",
     source: "",
     created_at: "",
+    specialChar: "",
+    lastFocusedSegment: "",
     speaker_tags: null,
     segments: {
         keys: [],
@@ -112,7 +114,13 @@ export const transcriptSlice = createSlice({
         },
         mergeSegment: (_, __: PayloadAction<{id: string}>) => {
             // TODO: implement
-        }
+        },
+        setSpecialChar: (state, action: PayloadAction<string>) => {
+            state.specialChar = action.payload
+        },
+        setLastFocusedSegment: (state, action: PayloadAction<string>) => {
+            state.lastFocusedSegment = action.payload
+        },
     },
     extraReducers(builder) {
         builder.addCase(fetchTranscript.pending, (state, _) => {
@@ -140,7 +148,7 @@ export const transcriptSlice = createSlice({
     }
 })
 
-export const { createSegment, updateSegment, deleteSegment, mergeSegment } = transcriptSlice.actions
+export const { createSegment, updateSegment, deleteSegment, mergeSegment, setSpecialChar, setLastFocusedSegment } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript
 export const selectTranscriptStatus = (state: RootState) => state.transcript.status
@@ -175,5 +183,7 @@ export const selectGroupStartEndByIDs = (state: RootState, startID: string|undef
     return [state.transcript.segments.entities[startID].start, state.transcript.segments.entities[endID].end]
     // FIXME: can entities[ID] called from groups return undefined anyhow?
 }
+export const selectSpecialChar = (state: RootState) => state.transcript.specialChar
+export const selectLastFocusedSegment = (state: RootState) => state.transcript.lastFocusedSegment
 
 export default transcriptSlice.reducer

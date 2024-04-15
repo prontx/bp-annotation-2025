@@ -23,7 +23,7 @@ const SpeakerList: FC<Layer> = ({$layer}) => {
     const speakers = useSelector(selectSpeakers)
 
     return (
-        <NamedContainer name="Mluvčí" $layer={$layer} closeCallback={() => {/*FIXME*/}}>
+        <NamedContainer name="Mluvčí" $layer={$layer}>
             <SpeakerListBody className="body">
                 {speakers.map(speaker => (
                     <SpeakerTag key={speaker.id} color={speaker.color} speakerID={speaker.id}>

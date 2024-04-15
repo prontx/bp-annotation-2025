@@ -149,6 +149,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
                     icon={isPlaying ? <PauseRoundedIcon /> : <PlayArrowRoundedIcon />}
                 />
                 <SegmentText
+                    segmentID={segmentID}
                     words={data.words}
                     $layer={$layer}
                     changeHandler={handleTextChange}
