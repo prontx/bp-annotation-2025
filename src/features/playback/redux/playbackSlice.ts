@@ -23,7 +23,7 @@ const initialState: PlaybackState = {
         changedBy: "initial"
     },
     playingTo: null,
-    speed: 1.0,
+    speed: 100,
     volume: 1.0,
     zoom: 4
 }

@@ -8,7 +8,7 @@ const useSetSpeed = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => {
 
     // listen for playback changes
     useEffect(() => {
-        wavesurfer.current?.setPlaybackRate(speed)
+        wavesurfer.current?.setPlaybackRate(speed/100)
     }, [speed])
 }
 
