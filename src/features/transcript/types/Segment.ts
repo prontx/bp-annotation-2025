@@ -13,6 +13,5 @@ export interface SegmentLoadingParams extends SegmentCommon {
 }
 
 export interface Segment extends SegmentCommon {
-    regionID?: string,
     words: string,
 }

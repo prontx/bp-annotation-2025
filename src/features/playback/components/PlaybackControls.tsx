@@ -1,12 +1,9 @@
 import { FC } from "react";
 
-// redux
-import { useSelector } from "react-redux";
-import { useAppDispatch } from "../../../redux/hooks";
-import { play, pause, skipBy, setTime, selectIsPlaying, selectCurrentTimeValue } from "../redux/playbackSlice";
-import { selectDuration } from "../../job/redux/jobSlice";
+// components
+import Button from "../../../components/Button";
 
-// styles
+// style
 import styled from "styled-components";
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
@@ -16,12 +13,15 @@ import FastForwardRoundedIcon from '@mui/icons-material/FastForwardRounded';
 import FastRewindRoundedIcon from '@mui/icons-material/FastRewindRounded';
 import Layer from "../../../types/Layer";
 
-// components
-import Button from "../../../components/Button";
-import SubtleInput from "../../../components/SubtleInput";
+// redux
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../../redux/hooks";
+import { play, pause, skipBy, setTime, selectIsPlaying, selectCurrentTimeValue } from "../redux/playbackSlice";
+import { selectDuration } from "../../job/redux/jobSlice";
 
 // utils
-import { timeToFormatedString } from "../../../utils/convertTimeAndFormatedString";
+import { time2FormatedString } from "../../../utils/time2FormatedString";
+
 
 /**
  * A container for the playback controls that positions them.
@@ -31,7 +31,8 @@ const PlaybackControlsContainer = styled.div`
     align-items: center;
     gap: 8px;
 
-    p {
+    .currentTime {
+        width: 7ch;
         margin-left: 8px;
     }
 `
@@ -68,13 +69,8 @@ const PlaybackControls : FC<Layer> = ({$layer}) => {
             <Button $layer={$layer} onClick={() => dispatch(setTime({value: length, changedBy: "controlsButton"}))}>
                 <FastForwardRoundedIcon />
             </Button>
-            <p>
-                <SubtleInput
-                    $layer={$layer}
-                    time={currentTimeValue}
-                    globalStateUpdateCallback={(newTime: number) => dispatch(setTime({value: newTime, changedBy: "controlsInput"}))}
-                />/ {length ? timeToFormatedString(length) : ""}
-            </p>
+            <span className="currentTime">{time2FormatedString(currentTimeValue)}</span>
+            <span> / {time2FormatedString(length)}</span>
         </PlaybackControlsContainer>
     );
 }

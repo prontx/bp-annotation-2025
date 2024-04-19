@@ -8,7 +8,7 @@ import { editableBaseStyles } from "../style/editableBaseStyles";
 import Layer from "../types/Layer";
 
 // utils
-import { formatedStringToTime, timeToFormatedString } from "../utils/convertTimeAndFormatedString";
+import { formatedStringToTime, time2FormatedString } from "../utils/time2FormatedString";
 
 
 interface SubtleInputProps extends Layer, React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
@@ -18,11 +18,11 @@ interface SubtleInputProps extends Layer, React.DetailedHTMLProps<React.InputHTM
 
 const CustomInput: FC<SubtleInputProps> = ({$layer, time, globalStateUpdateCallback, ...props}) => {
     const [isFocused, setIsFocused] = useState(false)
-    const [timeString, setTimeString] = useState(timeToFormatedString(time))
+    const [timeString, setTimeString] = useState(time2FormatedString(time))
 
     useEffect(() => { // set local time string value on global change
         if (!isFocused){
-            setTimeString(timeToFormatedString(time))
+            setTimeString(time2FormatedString(time))
         }
     }, [time, isFocused])
 
@@ -34,7 +34,7 @@ const CustomInput: FC<SubtleInputProps> = ({$layer, time, globalStateUpdateCallb
         if (!isNaN(newTime)){
             globalStateUpdateCallback(newTime)
         } else {
-            setTimeString(timeToFormatedString(time))
+            setTimeString(time2FormatedString(time))
         }
     }, [isFocused])
 

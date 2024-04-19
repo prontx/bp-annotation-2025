@@ -6,7 +6,6 @@ import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
 import SegmentActions from "./SegmentActions";
 import DropdownSelection from "../../../components/DropdownSelection/DropdownSelection"
-import TimeRange from "./TimeRange";
 import SegmentText from "./SegmentText";
 
 // redux
@@ -14,7 +13,7 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying } from "../../playback/redux/playbackSlice";
-import { selectSpeaker2Color, selectSpeakers } from "../../job/redux/jobSlice";
+import { selectSpeakers } from "../../job/redux/jobSlice";
 import { selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
 
 // utils
@@ -28,13 +27,12 @@ import styled, { css } from "styled-components";
 import type Layer from "../../../types/Layer"
 import type { Segment } from "../types/Segment";
 import type { RootState } from "../../../redux/store";
-import type { SegmentUpdateOptions } from "../../transcript/types/SegmentActionPayload";
 import { SpeakerTag } from "../types/Tag";
+import { time2FormatedString } from "../../../utils/time2FormatedString";
 
 
 interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
     segmentID: string,
-    regionUpdateCallback: (regionID: string, options: SegmentUpdateOptions) => void,
     regionsReloadCallback: () => void
 }
 
@@ -67,13 +65,12 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     }
 `}`
 
-const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, regionsReloadCallback, className, ...props}) => {
+const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, className, ...props}) => {
     const data = useSelector((state: RootState) => selectSegmentByID(state, segmentID))
     const dispatch = useAppDispatch()
     const [isPlaying, setIsPlaying] = useState<boolean>(false)
     const isAudioPlaying = useSelector(selectIsPlaying)
     const speakers = useSelector(selectSpeakers)
-    const speaker2color = useSelector(selectSpeaker2Color)
     const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
 
     useEffect(() => {
@@ -81,24 +78,10 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
             setIsPlaying(false)
     }, [isAudioPlaying])
     
-    const handleSpeakerChange = (newTag: SpeakerTag) => {
-        dispatch(updateSegment({
-            type: "id",
-            key: segmentID,
-            change: {speaker: newTag.id},
-            callback: (regionID, _) => {
-                regionUpdateCallback(regionID, {
-                    start: data.start,
-                    color: rgba(speaker2color[newTag.id] || "#c6c6c6", 0.4),
-                })
-            }
-        }))
+    const handleSpeakerChange = () => {
+        // FIXME: refresh regions
     }
     
-    const handleTimeRangeChange = (change: {start?: number, end?: number}) => {
-        dispatch(updateSegment({type: "id", key: segmentID, change: change, callback: regionUpdateCallback}))
-    }
-
     const handlePlayPause = () => {
         setIsPlaying(!isPlaying)
         dispatch(playPauseSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
@@ -129,12 +112,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionUpdateCallback, reg
                     initialState={speakers.find(speaker => speaker.id === data.speaker)}
                     options={speakers}
                 />
-                <TimeRange
-                    start={data.start}
-                    end={data.end}
-                    $layer={$layer+1}
-                    changeHandler={handleTimeRangeChange}
-                />
+                {time2FormatedString(data.start)} – {time2FormatedString(data.end)}
                 <SegmentActions
                     style={{marginLeft: "auto"}}
                     $layer={$layer}

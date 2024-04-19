@@ -1,6 +1,7 @@
 import { SpeakerTag } from "./Tag"
 import { SegmentTag, TextTag } from "./Tag";
 import { Segment, SegmentLoadingParams } from "./Segment";
+import { Lookup } from "../../../types/Lookup";
 
 interface TranscriptCommon {
     id: string,
@@ -16,14 +17,9 @@ export interface TranscriptLoadingParams extends TranscriptCommon {
     segments: SegmentLoadingParams[] | null,
 }
 
-export interface SegmentStorage {
-    keys: string[],
-    region2ID: { [key: string]: string },
-    entities: { [key: string]: Segment },
-}
-
 export interface Transcript extends TranscriptCommon {
-    segments: SegmentStorage,
+    segments: Lookup<Segment>,
+    region2ID: Record<string, string>,
     specialChar: string,
     lastFocusedSegment: string,
 }

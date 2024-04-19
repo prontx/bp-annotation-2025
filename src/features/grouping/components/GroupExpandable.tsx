@@ -20,7 +20,7 @@ import Layer from "../../../types/Layer"
 import { RootState } from "../../../redux/store"
 
 // utils
-import { timeToFormatedString } from "../../../utils/convertTimeAndFormatedString"
+import { time2FormatedString } from "../../../utils/time2FormatedString.ts"
 import { GroupTag } from "../../transcript/types/Tag.ts"
 
 
@@ -71,7 +71,7 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
     return (
         <Expandable title={data.title} $layer={$layer} {...props}>
             <GroupBodyContainer><>
-                <p>{timeToFormatedString(startTime)} – {timeToFormatedString(endTime)}{data.publish && ", zveřejnit"}</p>
+                <p>{time2FormatedString(startTime)} – {time2FormatedString(endTime)}{data.publish && ", zveřejnit"}</p>
                 <TagSet tags={data.tags} $layer={$layer+1} />
                 {data.childrenIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer} parentTags={data.tags}/>)}
                 <GroupForm $layer={$layer+1} parentID={groupID} parentTags={data.tags} />

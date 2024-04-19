@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useAppDispatch } from "../../../redux/hooks";
 import { playPauseSegment } from "../../playback/redux/playbackSlice";
 import { useSelector } from "react-redux";
-import { createSegment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
+import { createSegment, mapRegion2Segment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
 import { selectSpeaker2Color } from "../../job/redux/jobSlice";
 
 // wavesurfer
@@ -36,7 +36,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                     end: segment.end,
                     color: rgba(speaker2color[segment.speaker] || "#c6c6c6", 0.4)
                 })
-                dispatch(updateSegment({type: "id", key: key, change: {regionID: region.id}}))
+                dispatch(mapRegion2Segment({segmentID: key, regionID: region.id}))
             })
         }
 

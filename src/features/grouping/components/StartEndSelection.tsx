@@ -18,7 +18,7 @@ import Layer from "../../../types/Layer"
 import { RootState } from "../../../redux/store"
 
 // utils
-import { timeToFormatedString } from "../../../utils/convertTimeAndFormatedString"
+import { time2FormatedString } from "../../../utils/time2FormatedString"
 
 
 const StartEndSelectionContainer = styled.div`
@@ -63,7 +63,7 @@ const StartEndSelection: FC<Layer> = ({$layer}) => {
                 {(selecting === "start")
                     ? "Výběr..."
                     : (startSegmentID && startTime)
-                    ? timeToFormatedString(startTime)
+                    ? time2FormatedString(startTime)
                     : "Zvolit začátek"}
             </Button>
             <span className="separator">–</span>
@@ -77,7 +77,7 @@ const StartEndSelection: FC<Layer> = ({$layer}) => {
                 {(selecting === "end") 
                     ? "Výběr..."
                     : (endSegmentID && endTime)
-                    ? timeToFormatedString(endTime)
+                    ? time2FormatedString(endTime)
                     : "Zvolit konec"}
             </Button>
         </StartEndSelectionContainer>

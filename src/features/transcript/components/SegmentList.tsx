@@ -16,7 +16,6 @@ import { selectSegmentIDs } from "../redux/transcriptSlice"
 // types
 import Layer from "../../../types/Layer"
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
-import type { SegmentUpdateOptions } from "../types/SegmentActionPayload"
 
 
 interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
@@ -76,11 +75,6 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
             setHoverIdx(-1)
         }
     }, [selecting, isEditing])
-
-    const updateWaveformRegion = (regionID: string, options: SegmentUpdateOptions) => {
-        const region = waveformRegionsRef.current.getRegions().find(region => region.id === regionID)
-        region?.setOptions(options)
-    }
     
     return (
         <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHover("")}>
@@ -94,7 +88,6 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                     onMouseOver={selecting ? () => setHover(id) : undefined}
                     segmentID={id}
                     $layer={$layer+1}
-                    regionUpdateCallback={updateWaveformRegion}
                     regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
                 />
             )}

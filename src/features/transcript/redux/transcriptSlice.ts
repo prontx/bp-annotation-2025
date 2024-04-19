@@ -3,12 +3,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 // types
-import type { SegmentStorage, Transcript, TranscriptLoadingParams } from "../types/Transcript"
+import type { Transcript, TranscriptLoadingParams } from "../types/Transcript"
 import type { RootState } from '../../../redux/store'
 import type { SegmentUpdatePayload, SegmentCreationPayload } from '../types/SegmentActionPayload'
 import { Segment } from '../types/Segment'
 import { SpeakerTag } from '../types/Tag'
-import { SegmentSnapshot } from '../../history/types/History'
 
 // utils
 import { v4 as uuid } from 'uuid'
@@ -17,6 +16,7 @@ import { segmentWords2String } from '../../../utils/segmentWords2String'
 
 // testing
 import { JOB_ID } from '../../../testing/test.config'
+import { Lookup } from '../../../types/Lookup'
 
 
 export const fetchTranscript = createAsyncThunk("transcript", async (_, { rejectWithValue }) => {
@@ -41,9 +41,9 @@ const initialState: Transcript = {
     speaker_tags: null,
     segments: {
         keys: [],
-        region2ID: {},
-        entities: {}
-    }
+        entities: {},
+    },
+    region2ID: {},
 }
 
 export const transcriptSlice = createSlice({
@@ -65,49 +65,43 @@ export const transcriptSlice = createSlice({
                 segment_tags: [],
                 words: "",
             }
-            state.segments.region2ID[action.payload.regionID] = id
+            state.region2ID[action.payload.regionID] = id
         },
         updateSegment: (state, action: PayloadAction<SegmentUpdatePayload>) => {
-            let {type, key, change, callback} = action.payload
+            let {type, key, change} = action.payload
             let segment = null
 
             // update entity
             if (type === "region"){
-                key = state.segments.region2ID[key]
+                key = state.region2ID[key]
             }
             if (key){
                 segment = state.segments.entities[key]
                 state.segments.entities[key] = {...segment, ...change}
             }
-            
-            // set regionID on region load
-            if (change.regionID){
-                state.segments.region2ID[change.regionID] = key
-            }
 
             // FIXME: update state.segments.keys order by state.segments.entities[key].start (possibly changed)
-
-            // trigger region update on waveform
-            // WARNING: the callbacks must not update the redux state!
-            if (callback && segment && segment.regionID){
-                callback(segment.regionID, {
-                    start: change.start || segment.start,
-                    end: change.end
-                })
-            }
         },
         deleteSegment: (state, action: PayloadAction<{id: string, callback: () => void}>) => {
             const idx = state.segments.keys.findIndex(key => key === action.payload.id)
             if (idx >= 0 && idx < state.segments.keys.length){
                 state.segments.keys.splice(idx, 1)
             }
-            const {regionID} = state.segments.entities[action.payload.id]
-            
+
+            let regionID = ""
+            for (const key in state.region2ID) {
+                const segmentID = state.region2ID[key];
+                if (segmentID === action.payload.id){
+                    regionID = key
+                    break
+                }
+            }
+              
             delete state.segments.entities[action.payload.id]
             
             if (regionID){                
                 // delete regionID from id lookup
-                delete state.segments.region2ID[regionID]
+                delete state.region2ID[regionID]
             }
 
             // reload waveform regions
@@ -117,17 +111,19 @@ export const transcriptSlice = createSlice({
         mergeSegment: (_, __: PayloadAction<{id: string}>) => {
             // TODO: implement
         },
+        mapRegion2Segment: (state, action: PayloadAction<{segmentID: string, regionID: string}>) => {
+            state.region2ID[action.payload.regionID] = action.payload.segmentID
+        },
         setSpecialChar: (state, action: PayloadAction<string>) => {
             state.specialChar = action.payload
         },
         setLastFocusedSegment: (state, action: PayloadAction<string>) => {
             state.lastFocusedSegment = action.payload
         },
-        setSegmentsFromHistory: (state, action: PayloadAction<Omit<SegmentStorage, "region2ID">>) => {
+        setSegmentsFromHistory: (state, action: PayloadAction<Lookup<Segment>>) => {
             // load data from history
             state.segments.entities = action.payload.entities
             state.segments.keys = action.payload.keys
-            state.segments.region2ID = {}
             
             // reset variables
             state.specialChar = ""
@@ -143,9 +139,8 @@ export const transcriptSlice = createSlice({
         builder.addCase(fetchTranscript.pending, (state, _) => {
             state.status = "loading"
         }).addCase(fetchTranscript.fulfilled, (state, action) => { // load segments from API response
-            const transformedSegments: SegmentStorage = {
+            const transformedSegments: Lookup<Segment> = {
                 keys: [],
-                region2ID: {},
                 entities: {},
             }
             action.payload.segments?.forEach(segmentRaw => {
@@ -167,7 +162,7 @@ export const transcriptSlice = createSlice({
     }
 })
 
-export const { createSegment, updateSegment, deleteSegment, mergeSegment, setSpecialChar, setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory } = transcriptSlice.actions
+export const { createSegment, updateSegment, deleteSegment, mergeSegment, mapRegion2Segment, setSpecialChar, setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript
 export const selectTranscriptStatus = (state: RootState) => state.transcript.status
@@ -204,16 +199,5 @@ export const selectGroupStartEndByIDs = (state: RootState, startID: string|undef
 }
 export const selectSpecialChar = (state: RootState) => state.transcript.specialChar
 export const selectLastFocusedSegment = (state: RootState) => state.transcript.lastFocusedSegment
-export const selectSegmentsJSON = (state: RootState) => {
-    let filteredEntities: SegmentSnapshot = {}
-    state.transcript.segments.keys.forEach(key => {
-        const {regionID, ...rest} = state.transcript.segments.entities[key]
-        filteredEntities[key] = rest
-    })
-    return JSON.stringify({
-        entities: filteredEntities,
-        keys: state.transcript.segments.keys,
-    })
-}
 
 export default transcriptSlice.reducer
