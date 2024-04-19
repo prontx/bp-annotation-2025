@@ -13,12 +13,13 @@ import SpecialChars from "./features/transcript/components/SpecialChars"
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
 
 // style
-import styled, { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components"
 import { scrollableBaseStyles } from "./style/scrollableBaseStyles"
 
 // hooks
 import { useFetchJob } from "./features/job/hooks/useFetchJob"
 import { useFetchTranscript } from "./features/transcript/hooks/useFetchTranscript"
+import { useHistory } from "./features/history/hooks/useHistory"
 
 
 const BaseStyle = createGlobalStyle`
@@ -62,6 +63,7 @@ const SideBar = styled.aside`
 function App() {
     useFetchJob()
     useFetchTranscript()
+    useHistory()
     const waveformRegionsRef = useRef<RegionsPlugin>(RegionsPlugin.create())
 
     return (<>

@@ -1,27 +1,15 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 
 // types
-import type { Group } from "../types/Group"
 import type { RootState } from "../../../redux/store"
-import type { Lookup } from "../../../types/Lookup"
 import type { GroupCreationPayload } from "../types/GroupActionPayload"
+import { GroupingState } from "../types/GroupingState"
+import { Lookup } from "../../../types/Lookup"
+import { Group } from "../types/Group"
 
 // utils
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from 'uuid'
 
-
-interface GroupingState {
-    isEditing: boolean,
-    selecting: "start"|"end"|null,
-    selected: {
-        startSegmentID: string,
-        endSegmentID: string,
-    },
-    parentStartSegmentID: string,
-    parentEndSegmentID: string,
-    groups: Lookup<Group>,
-    segment2Group: Record<string, string>
-}
 
 const initialState: GroupingState = {
     isEditing: false,
@@ -36,7 +24,6 @@ const initialState: GroupingState = {
         keys: [],
         entities: {}
     },
-    segment2Group: {}
 }
 
 export const groupingSlice = createSlice({
@@ -114,12 +101,23 @@ export const groupingSlice = createSlice({
             state.selecting = null
             state.selected.startSegmentID = ""
             state.selected.endSegmentID = ""
+        },
+        setGroupsFromHistory: (state, action: PayloadAction<Lookup<Group>>) => {
+            // set state from history
+            state.groups = action.payload
 
-        }
+            // reset varibles
+            state.isEditing = false
+            state.selecting = null
+            state.parentStartSegmentID = ""
+            state.selected.endSegmentID = ""
+            state.parentStartSegmentID = ""
+            state.parentEndSegmentID = ""
+        },
     },
 })
 
-export const { createOrUpdateGroup, deleteGroup, beginSelecting, chooseSegment, resetSelecting, startEditing, endEditing } = groupingSlice.actions
+export const { createOrUpdateGroup, deleteGroup, beginSelecting, chooseSegment, resetSelecting, startEditing, endEditing, setGroupsFromHistory } = groupingSlice.actions
 
 export const selectGroups = (state: RootState) => state.grouping.groups
 export const selectGroupIDs = (state: RootState) => state.grouping.groups.keys

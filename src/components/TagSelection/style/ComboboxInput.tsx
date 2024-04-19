@@ -1,13 +1,13 @@
-import { ComboboxInput as BaseComboboxInput } from "@reach/combobox";
-import styled, { css } from "styled-components";
-import { editableBaseStyles } from "../../../style/editableBaseStyles";
-import Layer from "../../../types/Layer";
+import { ComboboxInput as BaseComboboxInput } from "@reach/combobox"
+import styled, { css } from "styled-components"
+import { editableBaseStyles } from "../../../style/editableBaseStyles"
+import Layer from "../../../types/Layer"
 
 
 export const ComboboxInput = styled(BaseComboboxInput)<Layer>` ${({theme, $layer}) => css`
     ${editableBaseStyles}
     background: ${theme.layers[$layer].background};
-    color: ${({theme}) => theme.textSecondary};
+    color: ${theme.textSecondary};
     width: 100%;
     padding: 4px 8px;
     font-size: 1rem;

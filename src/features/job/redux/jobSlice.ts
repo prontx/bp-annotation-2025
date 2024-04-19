@@ -114,5 +114,6 @@ export const selectGroupTags = (state: RootState) => {
         return undefined
     return state.job.user_interface.group_tags
 }
+export const selectTitle = (state: RootState) => state.job.title
 
 export default jobSlice.reducer

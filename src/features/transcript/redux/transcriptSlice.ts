@@ -5,16 +5,18 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 // types
 import type { SegmentStorage, Transcript, TranscriptLoadingParams } from "../types/Transcript"
 import type { RootState } from '../../../redux/store'
-import type { SegmentUpdatePayload, SegmentCreationPayload } from '../types/SegmentActionPayload';
-import { Segment } from '../types/Segment';
+import type { SegmentUpdatePayload, SegmentCreationPayload } from '../types/SegmentActionPayload'
+import { Segment } from '../types/Segment'
+import { SpeakerTag } from '../types/Tag'
+import { SegmentSnapshot } from '../../history/types/History'
 
 // utils
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from 'uuid'
 import axios from "../../../utils/getAxios"
-import { segmentWords2String } from '../../../utils/segmentWords2String';
+import { segmentWords2String } from '../../../utils/segmentWords2String'
 
 // testing
-import { JOB_ID } from '../../../testing/test.config';
+import { JOB_ID } from '../../../testing/test.config'
 
 
 export const fetchTranscript = createAsyncThunk("transcript", async (_, { rejectWithValue }) => {
@@ -121,6 +123,21 @@ export const transcriptSlice = createSlice({
         setLastFocusedSegment: (state, action: PayloadAction<string>) => {
             state.lastFocusedSegment = action.payload
         },
+        setSegmentsFromHistory: (state, action: PayloadAction<Omit<SegmentStorage, "region2ID">>) => {
+            // load data from history
+            state.segments.entities = action.payload.entities
+            state.segments.keys = action.payload.keys
+            state.segments.region2ID = {}
+            
+            // reset variables
+            state.specialChar = ""
+            state.lastFocusedSegment = ""
+
+            // FIXME: rerender regions
+        },
+        setSpeakersFromHistory: (state, action: PayloadAction<SpeakerTag[]>) => {
+            state.speaker_tags = action.payload
+        },
     },
     extraReducers(builder) {
         builder.addCase(fetchTranscript.pending, (state, _) => {
@@ -134,6 +151,8 @@ export const transcriptSlice = createSlice({
             action.payload.segments?.forEach(segmentRaw => {
                 const segment: Segment = {
                     ...segmentRaw,
+                    start: Number(segmentRaw.start.toFixed(1)),
+                    end: Number(segmentRaw.end.toFixed(1)),
                     words: segmentWords2String(segmentRaw.words),
                 }
                 const id = uuid()
@@ -148,7 +167,7 @@ export const transcriptSlice = createSlice({
     }
 })
 
-export const { createSegment, updateSegment, deleteSegment, mergeSegment, setSpecialChar, setLastFocusedSegment } = transcriptSlice.actions
+export const { createSegment, updateSegment, deleteSegment, mergeSegment, setSpecialChar, setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript
 export const selectTranscriptStatus = (state: RootState) => state.transcript.status
@@ -185,5 +204,16 @@ export const selectGroupStartEndByIDs = (state: RootState, startID: string|undef
 }
 export const selectSpecialChar = (state: RootState) => state.transcript.specialChar
 export const selectLastFocusedSegment = (state: RootState) => state.transcript.lastFocusedSegment
+export const selectSegmentsJSON = (state: RootState) => {
+    let filteredEntities: SegmentSnapshot = {}
+    state.transcript.segments.keys.forEach(key => {
+        const {regionID, ...rest} = state.transcript.segments.entities[key]
+        filteredEntities[key] = rest
+    })
+    return JSON.stringify({
+        entities: filteredEntities,
+        keys: state.transcript.segments.keys,
+    })
+}
 
 export default transcriptSlice.reducer

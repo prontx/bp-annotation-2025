@@ -5,6 +5,7 @@ import playbackReducer from '../features/playback/redux/playbackSlice'
 import jobReducer from "../features/job/redux/jobSlice"
 import transcriptReducer from "../features/transcript/redux/transcriptSlice"
 import groupingReducer from "../features/grouping/redux/groupingSlice"
+import historyReducer from "../features/history/redux/historySlice"
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     playback: playbackReducer,
     transcript: transcriptReducer,
     grouping: groupingReducer,
+    history: historyReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

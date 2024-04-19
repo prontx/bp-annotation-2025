@@ -1,15 +1,26 @@
-import { FC } from "react";
+import { FC } from "react"
 
-import { Menu, MenuItem } from "@reach/menu-button";
+// components
+import { Menu, MenuItem } from "@reach/menu-button"
 import { MenuPopover } from "../../../components/DropdownSelection/style/MenuPopover"
 import { MenuButton } from "../../../components/DropdownSelection/style/MenuButton"
 import { MenuItems } from "../../../components/DropdownSelection/style/MenuItems"
-// import { positionMatchWidth } from "@reach/popover";
+import Button from "../../../components/Button"
 
-import styled from "styled-components";
+// style
+import styled from "styled-components"
+
+// redux
+import { useSelector } from "react-redux"
+import { selectTitle } from "../../job/redux/jobSlice"
+import { useAppDispatch } from "../../../redux/hooks"
+import { historyRedo, historyUndo } from "../../history/redux/historySlice"
+
+// types
 import Layer from "../../../types/Layer"
 
-const MenuBarContainer = styled.div<Layer>`
+
+const MenuBarContainer = styled.nav<Layer>`
     display: grid;
     grid-template-areas:
         "logo title"
@@ -29,6 +40,12 @@ const MenuBarContainer = styled.div<Layer>`
         font-weight: normal;
         margin-left: 8px;
     }
+
+    button {
+        font-weight: normal;
+        font-size: 1rem;
+        text-transform: none;
+    }
 `
 
 const MenuItemsContainer = styled.div`
@@ -41,63 +58,52 @@ const MenuItemsContainer = styled.div`
 `
 
 const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({$layer, ...props}) => {
+    const title = useSelector(selectTitle)
+    const dispatch = useAppDispatch()
+
+    const handleSave = () => {
+        // TODO
+    }
+
+    const handleNavigateToCatalogue = () => {
+        const URL = "https://data.jamap.cz/cards/show-all"
+        handleSave()
+        window.location.href = URL
+    }
+
     return (
         <MenuBarContainer $layer={$layer} {...props}>
-            <img src="/src/assets/logo-spokendata-inverse.png" alt="SpokenData" />
-            <h1>ATCO Lorem Ipsum Dolor 42</h1>
+            <img src="/src/assets/logo-spokendata-inverse.png" alt="SpokenData logo" />
+            <h1>{title}</h1>
             <MenuItemsContainer>
+                <Button $layer={$layer} onClick={handleNavigateToCatalogue}>Zpět do karty</Button>
                 <Menu>
-                    <MenuButton $layer={$layer}>File</MenuButton>
+                    <MenuButton $layer={$layer}>Soubor</MenuButton>
                     <MenuPopover $layer={$layer+1}>
                         <MenuItems $layer={$layer+1}>
-                            <MenuItem onSelect={() => {}}>Undo</MenuItem>
-                            <MenuItem onSelect={() => {}}>Redo</MenuItem>
-                        </MenuItems>
-                        <MenuItems $layer={$layer+1}>
-                            <MenuItem onSelect={() => {}}>Auto Save</MenuItem>
-                            <MenuItem onSelect={() => {}}>Save</MenuItem>
-                            <MenuItem onSelect={() => {}}>Export</MenuItem>
-                        </MenuItems>
-                        <MenuItems $layer={$layer+1}>
-                            <MenuItem onSelect={() => {}}>Close as DONE</MenuItem>
-                            <MenuItem onSelect={() => {}}>Close as REFUSED</MenuItem>
-                        </MenuItems>
-                        <MenuItems $layer={$layer+1}>
-                            <MenuItem onSelect={() => {}}>Shortcuts</MenuItem>
+                            <MenuItem onSelect={handleSave}>Uložit</MenuItem> {/* Ctrl+S */}
+                            <MenuItem onSelect={() => {/*TODO*/}}>Hotovo</MenuItem>
                         </MenuItems>
                     </MenuPopover>
                 </Menu>
                 <Menu>
-                    <MenuButton $layer={$layer}>Playback</MenuButton>
+                    <MenuButton $layer={$layer}>Úpravy</MenuButton>
                     <MenuPopover $layer={$layer+1}>
                         <MenuItems $layer={$layer+1}>
-                            <MenuItem onSelect={() => {}}>Pre-play [s]</MenuItem>
-                            <MenuItem onSelect={() => {}}>Time Shift [s]</MenuItem>
+                            <MenuItem onSelect={() => dispatch(historyUndo())}>Zpět</MenuItem> {/* Ctrl+Z */}
+                            <MenuItem onSelect={() => dispatch(historyRedo())}>Navrátit</MenuItem> {/* Ctrl+Shift+Z, Ctrl+Y */}
                         </MenuItems>
                     </MenuPopover>
                 </Menu>
+                <Button $layer={$layer}>Nastavení</Button>
                 <Menu>
-                    <MenuButton $layer={$layer}>View</MenuButton>
+                    <MenuButton $layer={$layer}>Nápověda</MenuButton>
                     <MenuPopover $layer={$layer+1}>
                         <MenuItems $layer={$layer+1}>
-                            <MenuItem onSelect={() => {}}>Job Details</MenuItem>
-                            <MenuItem onSelect={() => {}}>Speaker Labels</MenuItem>
-                            <MenuItem onSelect={() => {}}>Sorted Waypoint-Callsign pairs</MenuItem>
+                            <MenuItem onSelect={() => {/*TODO*/}}>Příručka pro anotaci</MenuItem>
+                            <MenuItem onSelect={() => {/*TODO*/}}>Some Other Manual</MenuItem> {/* TODO: load from job */}
                         </MenuItems>
                     </MenuPopover>
-                </Menu>
-                <Menu>
-                    <MenuButton $layer={$layer}>Help</MenuButton>
-                    <MenuPopover $layer={$layer+1}>
-                        <MenuItems $layer={$layer+1}>
-                            <MenuItem onSelect={() => {}}>Cheat Sheet</MenuItem>
-                            <MenuItem onSelect={() => {}}>Annotation Manual</MenuItem>
-                            <MenuItem onSelect={() => {}}>Some Other Manual</MenuItem>
-                        </MenuItems>
-                    </MenuPopover>
-                </Menu>
-                <Menu>
-                    <MenuButton $layer={$layer}>Open in old editor</MenuButton>
                 </Menu>
             </MenuItemsContainer>
         </MenuBarContainer>
