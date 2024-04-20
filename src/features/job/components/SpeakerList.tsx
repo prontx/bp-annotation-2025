@@ -6,7 +6,7 @@ import SpeakerTag from "../../../components/SpeakerItem"
 
 // redux
 import { useSelector } from "react-redux"
-import { selectSpeakers } from "../redux/jobSlice"
+import { selectSpeakers } from "../../transcript/redux/transcriptSlice"
 
 // types
 import Layer from "../../../types/Layer"

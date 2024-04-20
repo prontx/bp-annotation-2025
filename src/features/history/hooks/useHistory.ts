@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { useAppDispatch } from "../../../redux/hooks"
 import { useSelector } from "react-redux"
 import { selectSegments, selectTranscriptStatus } from "../../transcript/redux/transcriptSlice"
-import { selectSpeakers } from "../../job/redux/jobSlice"
+import { selectSpeakers } from "../../transcript/redux/transcriptSlice"
 import { selectGroups } from "../../grouping/redux/groupingSlice"
 import { historyPush, resetShouldTriggerUpdate, selectShouldTriggerUpdate } from "../redux/historySlice"
 

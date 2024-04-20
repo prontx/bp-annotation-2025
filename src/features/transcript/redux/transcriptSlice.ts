@@ -1,3 +1,6 @@
+// style
+import { speakerColors } from '../../../style/tagColors'
+
 // redux
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
@@ -154,6 +157,19 @@ export const transcriptSlice = createSlice({
                 transformedSegments.keys.push(id)
                 transformedSegments.entities[id] = segment
             })
+            const transformedTags: SpeakerTag[] = []
+            for (const [index, tag] of action.payload.speaker_tags?.entries() || []){
+                if (!tag.label)
+                    continue
+                
+                if (!tag.color){
+                    tag.color = speakerColors[index % speakerColors.length]
+                }
+                transformedTags.push(tag)
+            }
+            if (action.payload.speaker_tags){
+                action.payload.speaker_tags = transformedTags
+            }
             return {...state, status: "success", ...action.payload, segments: transformedSegments}
         }).addCase(fetchTranscript.rejected, (state, _) => {
             state.status = "error"
@@ -199,5 +215,17 @@ export const selectGroupStartEndByIDs = (state: RootState, startID: string|undef
 }
 export const selectSpecialChar = (state: RootState) => state.transcript.specialChar
 export const selectLastFocusedSegment = (state: RootState) => state.transcript.lastFocusedSegment
+export const selectSpeakers = (state: RootState) => state.transcript.speaker_tags || []
+export const selectSpeaker2Color = (state: RootState) => {
+    let mapping: Record<string, string> = {}
+    if (!state.transcript || !state.transcript.speaker_tags)
+        return mapping
+    state.transcript.speaker_tags.forEach(tag => {
+        if (tag.color){
+            mapping[tag.id] = tag.color
+        }
+    })
+    return mapping
+}
 
 export default transcriptSlice.reducer

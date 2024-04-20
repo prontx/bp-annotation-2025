@@ -5,7 +5,7 @@ import { useAppDispatch } from "../../../redux/hooks";
 import { playPauseSegment } from "../../playback/redux/playbackSlice";
 import { useSelector } from "react-redux";
 import { createSegment, mapRegion2Segment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
-import { selectSpeaker2Color } from "../../job/redux/jobSlice";
+import { selectSpeaker2Color } from "../../transcript/redux/transcriptSlice";
 
 // wavesurfer
 import WaveSurfer from "wavesurfer.js";

@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying } from "../../playback/redux/playbackSlice";
-import { selectSpeakers } from "../../job/redux/jobSlice";
+import { selectSpeakers } from "../redux/transcriptSlice";
 import { selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
 
 // utils

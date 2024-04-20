@@ -2,12 +2,10 @@ import { createSlice } from '@reduxjs/toolkit'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
 // style
-import { speakerColors } from '../../../style/tagColors'
 
 // types
 import { Job } from "../types/Job"
 import { RootState } from '../../../redux/store'
-import { SpeakerTag } from '../../transcript/types/Tag'
 import { APIErrorResponse } from '../../../types/APIErrorResponse'
 
 // utils
@@ -70,19 +68,6 @@ export const jobSlice = createSlice({
         }).addCase(fetchJob.fulfilled, (state, action) => {
             // @ts-ignore FIXME
             action.payload.user_interface.group_tags = test_groups
-            const transformedTags: SpeakerTag[] = []
-            for (const [index, tag] of action.payload.user_interface?.speaker_tags?.entries() || []){
-                if (!tag.label)
-                    continue
-                
-                if (!tag.color){
-                    tag.color = speakerColors[index % speakerColors.length]
-                }
-                transformedTags.push(tag)
-            }
-            if (action.payload.user_interface){
-                action.payload.user_interface.speaker_tags = transformedTags
-            }
             return {...state, ...action.payload}
         }).addCase(fetchJob.rejected, (state, action) => {
             state.status = "error"
@@ -96,19 +81,7 @@ export const {  } = jobSlice.actions
 export const selectJob = (state: RootState) => state.job
 export const selectJobStatus = (state: RootState) => state.job.status
 export const selectDuration = (state: RootState) => state.job.duration
-export const selectSpeakers = (state: RootState) => state.job.user_interface?.speaker_tags || []
 export const selectAudioURL = (state: RootState) => state.job.url.mp3
-export const selectSpeaker2Color = (state: RootState) => {
-    let mapping: Record<string, string> = {}
-    if (!state.job.user_interface || ! state.job.user_interface.speaker_tags)
-        return mapping
-    state.job.user_interface.speaker_tags.forEach(tag => {
-        if (tag.color){
-            mapping[tag.id] = tag.color
-        }
-    })
-    return mapping
-}
 export const selectGroupTags = (state: RootState) => {
     if (!state.job.user_interface)
         return undefined
