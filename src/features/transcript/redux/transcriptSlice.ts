@@ -227,5 +227,6 @@ export const selectSpeaker2Color = (state: RootState) => {
     })
     return mapping
 }
+export const selectSegmentWords = (state: RootState, id: string) => state.transcript.segments.entities[id]?.words || ""
 
 export default transcriptSlice.reducer

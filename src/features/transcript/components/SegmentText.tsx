@@ -1,12 +1,14 @@
-import { ChangeEventHandler, FC, MutableRefObject, TextareaHTMLAttributes, useEffect, useRef } from "react"
+import { ChangeEventHandler, FC, MutableRefObject, TextareaHTMLAttributes, useEffect, useRef, useState } from "react"
 
 // style
 import styled, { css } from "styled-components"
 import { editableBaseStyles } from "../../../style/editableBaseStyles"
 
 // redux
+import { useSelector } from "react-redux"
 import { useAppDispatch } from "../../../redux/hooks"
-import { setLastFocusedSegment } from "../redux/transcriptSlice"
+import { selectSegmentWords, setLastFocusedSegment, updateSegment } from "../redux/transcriptSlice"
+import { RootState } from "../../../redux/store"
 
 // types
 import Layer from "../../../types/Layer"
@@ -15,8 +17,6 @@ import { useInsertSpecialChars } from "../hooks/useInsertSpecialChars"
 
 interface SegmentTextProps extends Layer, TextareaHTMLAttributes<HTMLTextAreaElement>{
     segmentID: string,
-    words: string,
-    changeHandler: (text: string) => void,
 }
 
 const StyledSegmentText = styled.textarea<Layer>` ${({theme, $layer}) => css`
@@ -44,30 +44,45 @@ const StyledSegmentText = styled.textarea<Layer>` ${({theme, $layer}) => css`
     }
 `}`
 
-const SegmentText: FC<SegmentTextProps> = ({segmentID, words, changeHandler, ...props}) => {
+const SegmentText: FC<SegmentTextProps> = ({segmentID, ...props}) => {
     const textAreaRef: MutableRefObject<HTMLTextAreaElement|null> = useRef(null)
     const dispatch = useAppDispatch()
+    const words = useSelector((state: RootState) => selectSegmentWords(state, segmentID))
+    const [text, setText] = useState(words)
 
     useEffect(() => { // set initial textarea height based on content
         if (textAreaRef.current)
             textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`
     }, [])
 
-    useInsertSpecialChars(textAreaRef, segmentID, words, changeHandler)
+    useEffect(() => {
+        setText(words)
+    }, [words])
+
+    useInsertSpecialChars(textAreaRef, segmentID, text, setText)
 
     const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-        changeHandler(e.target.value)
+        setText(e.target.value)
         if (textAreaRef.current)
             textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`
+    }
+
+    const updateGlobalState = (text: string) => {
+        dispatch(updateSegment({
+            type: "id",
+            key: segmentID,
+            change: {words: text},
+        }))
     }
 
     return (
         <StyledSegmentText
             ref={textAreaRef}
-            value={words}
+            value={text}
             spellCheck="false"
             onFocus={() => dispatch(setLastFocusedSegment(segmentID))}
             onChange={handleChange}
+            onBlur={() => updateGlobalState(text)}
             {...props}
         />
     )

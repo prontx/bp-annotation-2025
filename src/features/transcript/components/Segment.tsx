@@ -11,7 +11,7 @@ import SegmentText from "./SegmentText";
 // redux
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
-import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
+import { deleteSegment, mergeSegment, selectSegmentByID } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying } from "../../playback/redux/playbackSlice";
 import { selectSpeakers } from "../redux/transcriptSlice";
 import { selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
@@ -87,14 +87,6 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
         dispatch(playPauseSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
     }
 
-    const handleTextChange = (text: string) => {
-        dispatch(updateSegment({
-            type: "id",
-            key: segmentID,
-            change: {words: text},
-        }))
-    }
-
     // TODO: implement group visualisation on the side
 
     if (!data)
@@ -128,9 +120,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
                 />
                 <SegmentText
                     segmentID={segmentID}
-                    words={data.words}
                     $layer={$layer}
-                    changeHandler={handleTextChange}
                 />
             </div>
         </SegmentLayout>
