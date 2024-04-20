@@ -2,7 +2,6 @@ import { useEffect } from "react";
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
-import { playPauseSegment } from "../../playback/redux/playbackSlice";
 import { useSelector } from "react-redux";
 import { createSegment, mapRegion2Segment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
 import { selectSpeaker2Color } from "../../transcript/redux/transcriptSlice";
@@ -61,13 +60,6 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                         end: region.end
                     }
                 }))
-            }),
-            waveformRegionsRef.current.on('region-clicked', (region, e) => {
-                e.stopPropagation() // prevent triggering a click on the waveform
-                region.play()
-                dispatch(playPauseSegment({from: region.start, to: region.end, changedBy: "regionClick"}))
-                
-                // region.setOptions({ color: "rgba(128, 128, 255, 0.4)" })
             })
         ]
 
