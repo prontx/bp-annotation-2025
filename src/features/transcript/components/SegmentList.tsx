@@ -1,4 +1,4 @@
-import React, { FC, HTMLAttributes, useEffect, useState } from "react"
+import React, { FC, HTMLAttributes, useState } from "react"
 
 // components
 import Segment from "./Segment"
@@ -10,12 +10,15 @@ import { scrollableBaseStyles } from "../../../style/scrollableBaseStyles"
 // redux
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
-import { selectIsEditing, selectSelecting, chooseSegment, selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
+import { selectSelecting, chooseSegment } from "../../grouping/redux/groupingSlice";
 import { selectSegmentIDs } from "../redux/transcriptSlice"
 
 // types
 import Layer from "../../../types/Layer"
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
+
+// hooks
+import { useSelectingStartEnd } from "../../grouping/hooks/useSelectingStartEnd";
 
 
 interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
@@ -39,53 +42,19 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     const dispatch = useAppDispatch()
     const segmentIDs = useSelector(selectSegmentIDs)
     const selecting = useSelector(selectSelecting)
-    const isEditing = useSelector(selectIsEditing)
-    const [startIdx, setStartIdx] = useState(-1)
-    const [endIdx, setEndIdx] = useState(-1)
-    const [hoverIdx, setHoverIdx] = useState(-1)
-    const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
-    const [hoverID, setHover] = useState<string>("")
-
-    useEffect(() => { // find hoverIdx when selecting
-        if (!selecting)
-            return
-        setHoverIdx(segmentIDs.findIndex(id => id === hoverID))
-    }, [selecting, segmentIDs, hoverID])
-    
-    useEffect(() => { // 
-        if (!selecting && !isEditing)
-            return
-
-        if (startSegmentID){
-            setStartIdx(segmentIDs.findIndex(id => id === startSegmentID))
-        } else if (hoverID){
-            setStartIdx(segmentIDs.findIndex(id => id === hoverID))
-        }
-        if (endSegmentID){
-            setEndIdx(segmentIDs.findIndex(id => id === endSegmentID))
-        } else if (hoverID){
-            setEndIdx(segmentIDs.findIndex(id => id === hoverID))
-        } 
-    }, [segmentIDs, selecting, isEditing, hoverIdx, startSegmentID, endSegmentID])
-
-    useEffect(() => {
-        if (!selecting && !isEditing){
-            setStartIdx(-1)
-            setEndIdx(-1)
-            setHoverIdx(-1)
-        }
-    }, [selecting, isEditing])
+    const [hoverID, setHoverID] = useState<string>("")
+    const [selectionStartIdx, selectionEndIdx] = useSelectingStartEnd(segmentIDs, hoverID)
     
     return (
-        <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHover("")}>
+        <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHoverID("")}>
             {segmentIDs.map((id, i) =>
                 <Segment
                     key={id}
                     className={`
                         ${selecting ? "selecting" : ""}
-                        ${(startIdx >= 0 && i >= startIdx && i <= endIdx) ? "ingroup" : ""}`}
+                        ${(selectionStartIdx >= 0 && i >= selectionStartIdx && i <= selectionEndIdx) ? "ingroup" : ""}`}
                     onClick={selecting ? () => dispatch(chooseSegment({id: id})) : undefined}
-                    onMouseOver={selecting ? () => setHover(id) : undefined}
+                    onMouseOver={selecting ? () => setHoverID(id) : undefined}
                     segmentID={id}
                     $layer={$layer+1}
                     regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
