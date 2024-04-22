@@ -4,8 +4,6 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 import type { RootState } from "../../../redux/store"
 import type { GroupCreationPayload } from "../types/GroupActionPayload"
 import { GroupingState } from "../types/GroupingState"
-import { Lookup } from "../../../types/Lookup"
-import { Group } from "../types/Group"
 
 // utils
 import { v4 as uuid } from 'uuid'
@@ -24,6 +22,8 @@ const initialState: GroupingState = {
         keys: [],
         entities: {}
     },
+    startSegment2Group: {},
+    endSegment2Group: {},
 }
 
 export const groupingSlice = createSlice({
@@ -31,6 +31,15 @@ export const groupingSlice = createSlice({
     initialState,
     reducers: {
         createOrUpdateGroup: (state, action: PayloadAction<GroupCreationPayload>) => {
+            // remove old records from {start|end}Segment2Group if {start|end}SegmentID changed
+            if (action.payload.id){
+                const old = state.groups.entities[action.payload.id]
+                if (old.startSegmentID !== action.payload.startSegmentID)
+                    state.startSegment2Group[old.startSegmentID] = state.startSegment2Group[old.startSegmentID].filter(groupID => groupID !== action.payload.id)
+                if (old.endSegmentID !== action.payload.endSegmentID)
+                    state.endSegment2Group[old.endSegmentID] = state.endSegment2Group[old.endSegmentID].filter(groupID => groupID !== action.payload.id)
+            }
+
             // create or update a group entity
             const id = action.payload.id || uuid()
             state.groups.entities[id] = {
@@ -39,12 +48,28 @@ export const groupingSlice = createSlice({
                 childrenIDs: action.payload.id ? state.groups.entities[id].childrenIDs : [],
             }
             
-            if (!action.payload.id){ // insert key
+            // insert key
+            if (!action.payload.id){
                 if (!action.payload.parentID){
                     state.groups.keys.push(id)
                 } else {
                     state.groups.entities[action.payload.parentID].childrenIDs.push(id)
                 }
+            }
+
+            // add new records to {start|end}Segment2Group
+            const {startSegmentID, endSegmentID} = action.payload
+            if (!state.startSegment2Group[startSegmentID]){
+                state.startSegment2Group[startSegmentID] = [id]
+            }
+            if (!state.startSegment2Group[startSegmentID].includes(id)){
+                state.startSegment2Group[startSegmentID].push(id)
+            }
+            if (!state.endSegment2Group[endSegmentID]){
+                state.endSegment2Group[endSegmentID] = [id]
+            }
+            if (!state.endSegment2Group[endSegmentID].includes(id)){
+                state.endSegment2Group[endSegmentID].push(id)
             }
         },
         deleteGroup: (state, action: PayloadAction<{id: string, parentID?: string}>) => {
@@ -102,9 +127,11 @@ export const groupingSlice = createSlice({
             state.selected.startSegmentID = ""
             state.selected.endSegmentID = ""
         },
-        setGroupsFromHistory: (state, action: PayloadAction<Lookup<Group>>) => {
+        setGroupingFromHistory: (state, action: PayloadAction<Pick<GroupingState, "groups"|"startSegment2Group"|"endSegment2Group">>) => {
             // set state from history
-            state.groups = action.payload
+            state.groups = action.payload.groups
+            state.startSegment2Group = action.payload.startSegment2Group
+            state.endSegment2Group = action.payload.endSegment2Group
 
             // reset varibles
             state.isEditing = false
@@ -117,7 +144,7 @@ export const groupingSlice = createSlice({
     },
 })
 
-export const { createOrUpdateGroup, deleteGroup, beginSelecting, chooseSegment, resetSelecting, startEditing, endEditing, setGroupsFromHistory } = groupingSlice.actions
+export const { createOrUpdateGroup, deleteGroup, beginSelecting, chooseSegment, resetSelecting, startEditing, endEditing, setGroupingFromHistory } = groupingSlice.actions
 
 export const selectGroups = (state: RootState) => state.grouping.groups
 export const selectGroupIDs = (state: RootState) => state.grouping.groups.keys
@@ -136,5 +163,23 @@ export const selectStartEndSegmentIDs = (state: RootState) => {
 }
 export const selectStartEndParentSegmentID = (state: RootState) => [state.grouping.parentStartSegmentID, state.grouping.parentEndSegmentID]
 export const selectIsEditing = (state: RootState) => state.grouping.isEditing
+export const selectGroupsByStartSegment = (state: RootState, segmentID: string) => state.grouping.startSegment2Group[segmentID] || []
+export const selectGroupLen = (state: RootState, startSegmentID?: string, endSegmentID?: string) => {
+    if (!startSegmentID || ! endSegmentID)
+        return 0
+    const keys = state.transcript.segments.keys
+    let j = 0
+    for (let i = keys.findIndex(k => k === startSegmentID); i+j < keys.length; j++){
+        if (keys[i+j] === endSegmentID)
+            break
+    }
+    return j + 1
+}
+export const selectStartEndSegment2Group = (state: RootState) => {
+    return {
+        startSegment2Group: state.grouping.startSegment2Group,
+        endSegment2Group: state.grouping.endSegment2Group,
+    }
+}
 
 export default groupingSlice.reducer

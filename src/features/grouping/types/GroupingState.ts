@@ -11,4 +11,6 @@ export interface GroupingState {
     parentStartSegmentID: string,
     parentEndSegmentID: string,
     groups: Lookup<Group>,
+    startSegment2Group: Record<string, string[]>,
+    endSegment2Group: Record<string, string[]>,
 }

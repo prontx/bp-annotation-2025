@@ -11,10 +11,10 @@ import SegmentText from "./SegmentText";
 // redux
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
-import { deleteSegment, mergeSegment, selectSegmentByID } from "../redux/transcriptSlice";
+import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying } from "../../playback/redux/playbackSlice";
 import { selectSpeakers } from "../redux/transcriptSlice";
-import { selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
+import { selectGroupsByStartSegment, selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
 
 // utils
 // @ts-ignore
@@ -29,6 +29,7 @@ import type { Segment } from "../types/Segment";
 import type { RootState } from "../../../redux/store";
 import { SpeakerTag } from "../types/Tag";
 import { time2FormatedString } from "../../../utils/time2FormatedString";
+import SpermMarker from "../../grouping/components/SpermMarker";
 
 
 interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
@@ -40,6 +41,7 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     padding: 4px;
     border-radius: 4px;
     background: ${theme.layers[$layer].background};
+    grid-column: 1/2;
     
     &.selecting:hover {
         cursor: pointer;
@@ -68,18 +70,24 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
 const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, className, ...props}) => {
     const data = useSelector((state: RootState) => selectSegmentByID(state, segmentID))
     const dispatch = useAppDispatch()
-    const [isPlaying, setIsPlaying] = useState<boolean>(false)
+    const [isPlaying, setIsPlaying] = useState(false)
     const isAudioPlaying = useSelector(selectIsPlaying)
     const speakers = useSelector(selectSpeakers)
     const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
+    const memberGroupIDs = useSelector((state: RootState) => selectGroupsByStartSegment(state, segmentID))
 
     useEffect(() => {
         if (!isAudioPlaying && isPlaying)
             setIsPlaying(false)
     }, [isAudioPlaying])
     
-    const handleSpeakerChange = () => {
-        // FIXME: refresh regions
+    const handleSpeakerChange = (newValue: SpeakerTag) => {
+        regionsReloadCallback()
+        dispatch(updateSegment({
+            type: "id",
+            key: segmentID,
+            change: {speaker: newValue.id}
+        }))
     }
     
     const handlePlayPause = () => {
@@ -87,12 +95,10 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
         dispatch(playPauseSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
     }
 
-    // TODO: implement group visualisation on the side
-
     if (!data)
         return null
     
-    return (
+    return (<>
         <SegmentLayout
             $layer={$layer}
             className={`${className} ${(segmentID === startSegmentID || segmentID === endSegmentID) ? "selected" : ""}`}
@@ -124,7 +130,8 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
                 />
             </div>
         </SegmentLayout>
-    )
+        {memberGroupIDs.map(id => <SpermMarker $layer={$layer} groupID={id} />)}
+    </>)
 }
 
 export default Segment

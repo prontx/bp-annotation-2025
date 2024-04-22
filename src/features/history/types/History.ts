@@ -9,6 +9,8 @@ export interface Snapshot {
         speaker_tags: SpeakerTag[],
     },
     grouping: {
+        startSegment2Group: Record<string, string[]>,
+        endSegment2Group: Record<string, string[]>,
         groups: Lookup<Group>
     },
 }

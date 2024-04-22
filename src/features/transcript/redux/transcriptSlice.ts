@@ -210,8 +210,7 @@ export const selectSegmentEndByID = (state: RootState, id: string) => {
 export const selectGroupStartEndByIDs = (state: RootState, startID: string|undefined, endID: string|undefined) => {
     if (!startID || !endID)
         return [-1, -1]
-    return [state.transcript.segments.entities[startID].start, state.transcript.segments.entities[endID].end]
-    // FIXME: can entities[ID] called from groups return undefined anyhow?
+    return [state.transcript.segments.entities[startID]?.start || -1, state.transcript.segments.entities[endID]?.end || -1]
 }
 export const selectSpecialChar = (state: RootState) => state.transcript.specialChar
 export const selectLastFocusedSegment = (state: RootState) => state.transcript.lastFocusedSegment

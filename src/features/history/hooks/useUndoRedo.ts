@@ -5,7 +5,7 @@ import { useAppDispatch } from "../../../redux/hooks"
 import { useSelector } from "react-redux"
 import { selectHistory, selectShouldTriggerUpdate } from "../redux/historySlice"
 import { setSegmentsFromHistory, setSpeakersFromHistory } from "../../transcript/redux/transcriptSlice"
-import { setGroupsFromHistory } from "../../grouping/redux/groupingSlice"
+import { setGroupingFromHistory } from "../../grouping/redux/groupingSlice"
 
 
 export const useUndoRedo = () => {
@@ -19,6 +19,6 @@ export const useUndoRedo = () => {
 
         dispatch(setSegmentsFromHistory(current.transcript.segments))
         dispatch(setSpeakersFromHistory(current.transcript.speaker_tags))
-        dispatch(setGroupsFromHistory(current.grouping.groups))
+        dispatch(setGroupingFromHistory(current.grouping))
     }, [current, shouldTriggerUpdate])
 }

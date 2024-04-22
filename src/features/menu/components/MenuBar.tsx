@@ -51,6 +51,7 @@ const MenuBarContainer = styled.nav<Layer>`
 const MenuItemsContainer = styled.div`
     display: flex;
     gap: 8px;
+    align-items: center;
 
     & [data-reach-menu-popover] {
         z-index: 999;
@@ -95,7 +96,7 @@ const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({$layer, ...
                         </MenuItems>
                     </MenuPopover>
                 </Menu>
-                <Button $layer={$layer}>Nastavení</Button>
+                <Button $layer={$layer} onClick={() => {/*TODO*/}}>Nastavení</Button>
                 <Menu>
                     <MenuButton $layer={$layer}>Nápověda</MenuButton>
                     <MenuPopover $layer={$layer+1}>

@@ -4,7 +4,7 @@ import React, { FC, HTMLAttributes, useState } from "react"
 import Segment from "./Segment"
 
 // styles
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import { scrollableBaseStyles } from "../../../style/scrollableBaseStyles"
 
 // redux
@@ -25,18 +25,18 @@ interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
 }
 
-const SegmentLayout = styled.section<Layer>`
+const SegmentLayout = styled.section<Layer>` ${({theme, $layer}) => css`
     ${scrollableBaseStyles}
 
-    background: ${({theme, $layer}) => theme.layers[$layer].background};
+    background: ${theme.layers[$layer].background};
     padding: 8px;
     border-radius: 8px 8px 0 0;
     min-width: 100%;
 
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-`
+    display: grid;
+    gap: 2px 4px;
+    grid-template-columns: 1fr repeat(3, 32px);
+`}`
 
 const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...props}) => {
     const dispatch = useAppDispatch()

@@ -11,7 +11,7 @@ import styled, { css } from "styled-components";
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
-import { createOrUpdateGroup, endEditing, selectGroupByID, chooseSegment, selectStartEndSegmentIDs, startEditing, selectIsEditing } from "../redux/groupingSlice";
+import { createOrUpdateGroup, endEditing, selectGroupByID, chooseSegment, startEditing, selectIsEditing, selectStartEndSegmentIDs } from "../redux/groupingSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 
