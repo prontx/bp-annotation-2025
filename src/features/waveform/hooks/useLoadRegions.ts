@@ -33,6 +33,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                 const region = waveformRegionsRef.current.addRegion({
                     start: segment.start,
                     end: segment.end,
+                    drag: false,
                     color: rgba(speaker2color[segment.speaker] || "#c6c6c6", 0.4)
                 })
                 dispatch(mapRegion2Segment({segmentID: key, regionID: region.id}))
