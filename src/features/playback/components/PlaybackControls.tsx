@@ -50,25 +50,29 @@ const PlaybackControls : FC<Layer> = ({$layer}) => {
     
     return (
         <PlaybackControlsContainer>
-            <Button $layer={$layer} onClick={() => dispatch(setTime({value: 0, changedBy: "controlsButton"}))}>
-                <FastRewindRoundedIcon />
-            </Button>
-            <Button $layer={$layer} onClick={() => dispatch(skipBy({value: -1, changedBy: "controlsButton"}))}>
-                <SkipPreviousRoundedIcon />
-            </Button>
-            { isPlaying
-                ? <Button $layer={$layer} onClick={() => dispatch(pause())}>
-                    <PauseRoundedIcon />
-                </Button>
-                : <Button $layer={$layer} onClick={() => dispatch(play())}>
-                    <PlayArrowRoundedIcon />
-                </Button> }
-            <Button $layer={$layer} onClick={() => dispatch(skipBy({value: 1, changedBy: "controlsButton"}))}>
-                <SkipNextRoundedIcon />
-            </Button>
-            <Button $layer={$layer} onClick={() => dispatch(setTime({value: length, changedBy: "controlsButton"}))}>
-                <FastForwardRoundedIcon />
-            </Button>
+            <Button
+                $layer={$layer}
+                onClick={() => dispatch(setTime({value: 0, changedBy: "controlsButton"}))}
+                icon={<SkipPreviousRoundedIcon />}
+            />
+            <Button
+                $layer={$layer}
+                onClick={() => dispatch(skipBy({value: -3, changedBy: "controlsButton"}))}
+                icon={<FastRewindRoundedIcon />}
+            >-3</Button>
+            {isPlaying
+                ? <Button $layer={$layer} onClick={() => dispatch(pause())} icon={<PauseRoundedIcon />} />
+                : <Button $layer={$layer} onClick={() => dispatch(play())} icon={<PlayArrowRoundedIcon />} />}
+            <Button
+                $layer={$layer}
+                onClick={() => dispatch(skipBy({value: 3, changedBy: "controlsButton"}))}
+                icon={<FastForwardRoundedIcon />}
+            >+3</Button>
+            <Button
+                $layer={$layer}
+                onClick={() => dispatch(setTime({value: length, changedBy: "controlsButton"}))}
+                icon={<SkipNextRoundedIcon />}
+            />
             <span className="currentTime">{time2FormatedString(currentTimeValue)}</span>
             <span> / {time2FormatedString(length)}</span>
         </PlaybackControlsContainer>
