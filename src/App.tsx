@@ -63,8 +63,8 @@ const SideBar = styled.aside`
 function App() {
     useFetchJob()
     useFetchTranscript()
-    useHistory()
     const waveformRegionsRef = useRef<RegionsPlugin>(RegionsPlugin.create())
+    useHistory(waveformRegionsRef)
 
     return (<>
         <BaseStyle />

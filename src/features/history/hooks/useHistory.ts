@@ -11,9 +11,10 @@ import { historyPush, resetShouldTriggerUpdate, selectShouldTriggerUpdate } from
 // types
 import { Snapshot } from "../types/History"
 import { useUndoRedo } from "./useUndoRedo"
+import type RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js"
 
 
-export const useHistory = () => {
+export const useHistory = (waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
     const dispatch = useAppDispatch()
     const segments = useSelector(selectSegments)
     const speakerTags = useSelector(selectSpeakers)
@@ -22,7 +23,7 @@ export const useHistory = () => {
     const status = useSelector(selectTranscriptStatus)
     const shouldTriggerUpdate = useSelector(selectShouldTriggerUpdate)
 
-    useUndoRedo()
+    useUndoRedo(waveformRegionsRef)
 
     useEffect(() => {
         if (status === "loading" || status === "error" || status === "idle" || status === "")

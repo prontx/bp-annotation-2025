@@ -7,8 +7,11 @@ import { selectHistory, selectShouldTriggerUpdate } from "../redux/historySlice"
 import { setSegmentsFromHistory, setSpeakersFromHistory } from "../../transcript/redux/transcriptSlice"
 import { setGroupingFromHistory } from "../../grouping/redux/groupingSlice"
 
+// types
+import type RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js"
 
-export const useUndoRedo = () => {
+
+export const useUndoRedo = (waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
     const dispatch = useAppDispatch()
     const current = useSelector(selectHistory)
     const shouldTriggerUpdate = useSelector(selectShouldTriggerUpdate)
@@ -20,5 +23,6 @@ export const useUndoRedo = () => {
         dispatch(setSegmentsFromHistory(current.transcript.segments))
         dispatch(setSpeakersFromHistory(current.transcript.speaker_tags))
         dispatch(setGroupingFromHistory(current.grouping))
-    }, [current, shouldTriggerUpdate])
+        waveformRegionsRef.current.clearRegions()
+    }, [current, shouldTriggerUpdate, waveformRegionsRef])
 }
