@@ -27,8 +27,8 @@ export const minimapOptions : MinimapPluginOptions = {
     hideScrollbar: true,
     height: 20,
     container: '#minimap',
-    interact: false,
-    overlayColor: "#525252"
+    interact: true,
+    overlayColor: "#6f6f6f",
 }
 
 export const timelineOptions = {
