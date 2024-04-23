@@ -7,7 +7,7 @@ const testData = await mockWaveformRequest()
 export const wavesurferOptions : WaveSurferOptions = {
     normalize: true,
     waveColor: '#c6c6c6',
-    progressColor: '#c6c6c6',
+    progressColor: '#8d8d8d',
     cursorColor: '#ff0000',
     cursorWidth: 2,
     interact: true,
@@ -21,11 +21,11 @@ export const wavesurferOptions : WaveSurferOptions = {
 export const minimapOptions : MinimapPluginOptions = { 
     normalize: true,
     waveColor: '#c6c6c6',
-    progressColor: '#c6c6c6',
+    progressColor: '#8d8d8d',
     cursorColor: '#ff0000',
     cursorWidth: 2,
     hideScrollbar: true,
-    height: 20,
+    height: 24,
     container: '#minimap',
     interact: true,
     overlayColor: "#6f6f6f",

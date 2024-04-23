@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 // wavesurfer
 import WaveSurfer from "wavesurfer.js";
@@ -21,7 +21,6 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                         waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
     const dispatch = useAppDispatch()
     const zoom = useSelector(selectZoom)
-    const minimapRegions = useRef<RegionsPlugin>(RegionsPlugin.create())
     const jobStatus = useSelector(selectJobStatus)
     const audioURL = useSelector(selectAudioURL)
     const duration = useSelector(selectDuration)
@@ -32,7 +31,10 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             return
 
         // create minimap
-        const minimap = Minimap.create({ ...minimapOptions, plugins: [ minimapRegions.current ] })
+        const minimap = Minimap.create({
+            ...minimapOptions,
+            plugins: [Timeline.create(timelineOptions)]
+        })
         
         // create wavesurfer unless it already exists
         if (!wavesurfer.current) {
@@ -58,9 +60,6 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             wavesurfer.current?.zoom(zoom)
             waveformRegionsRef.current.enableDragSelection({})
         })
-               
-        // TODO: minimap initial setup, use .once (?)
-        // minimap.on("ready", () => {})
             
         return unsubscribe
     }, [jobStatus])
