@@ -30,7 +30,7 @@ const TagSet: FC<TagSetProps> = ({tags, editable, $layer, addHandler, deleteHand
         <TagSetLayout {...props}>
             {tags.length !== 0 && tags.map((tag, i) =>
                 <Tag
-                    key={tag.name}
+                    key={tag.label}
                     $layer={$layer}
                     tag={tag}
                     style={{marginRight: "auto"}}

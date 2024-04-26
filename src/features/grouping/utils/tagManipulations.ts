@@ -2,17 +2,17 @@ import { GroupTag } from "../../transcript/types/Tag"
 
 
 const stringArr2GroupTag = (tag: string[]): GroupTag => {
-    let ret: GroupTag = {name: tag[0]}
+    let ret: GroupTag = {label: tag[0]}
     let current: GroupTag = ret
     for (let i = 1; i < tag.length; i++){
-        current.subcategories = [{name: tag[i]}]
+        current.subcategories = [{label: tag[i]}]
         current = current.subcategories[0]
     }
     return ret
 }
 
 export const addTag = (tags: GroupTag[], newTag: string[]): GroupTag[] => {
-    const idx = tags.findIndex(t => t.name === newTag[0])
+    const idx = tags.findIndex(t => t.label === newTag[0])
     if (idx < 0){
         tags.push(stringArr2GroupTag(newTag))
         return tags
@@ -24,7 +24,7 @@ export const addTag = (tags: GroupTag[], newTag: string[]): GroupTag[] => {
             subtag.subcategories = [stringArr2GroupTag(newTag.slice(i))]
             break
         }
-        const subIdx = subtag.subcategories.findIndex(subcategory => subcategory.name === newTag[i])
+        const subIdx = subtag.subcategories.findIndex(subcategory => subcategory.label === newTag[i])
         if (subIdx < 0){ // insert into subcategories
             subtag.subcategories.push(stringArr2GroupTag(newTag.slice(i)))
             break
@@ -46,7 +46,7 @@ export const deleteTag = (tagsRaw: GroupTag[], i:number, tag: string): GroupTag[
         if (!current.subcategories){
             continue
         }
-        let idx = current.subcategories.findIndex(sc => sc.name === tag)
+        let idx = current.subcategories.findIndex(sc => sc.label === tag)
         if (idx < 0){
             search = search.concat(current.subcategories)
             continue
@@ -67,7 +67,7 @@ export const tagNotInTags = (tag: string[], tags: GroupTag[]|undefined): boolean
     }
     let current = tags
     for (let i = 0; i < tag.length; i++){
-        const idx = current.findIndex(t => t.name === tag[i])
+        const idx = current.findIndex(t => t.label === tag[i])
         if (idx < 0){
             return true
         }

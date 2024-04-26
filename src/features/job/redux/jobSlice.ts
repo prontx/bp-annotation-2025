@@ -13,7 +13,6 @@ import axios from "../../../utils/getAxios"
 
 // testing
 import { JOB_ID } from '../../../testing/test.config'
-import test_groups from "../../../testing/metadata.json"
 
 
 export const fetchJob = createAsyncThunk("job", async (_, { rejectWithValue }) => {
@@ -66,8 +65,7 @@ export const jobSlice = createSlice({
         builder.addCase(fetchJob.pending, (state, _) => {
             state.status = "loading"
         }).addCase(fetchJob.fulfilled, (state, action) => {
-            // @ts-ignore FIXME
-            action.payload.user_interface.group_tags = test_groups
+            console.log(action.payload)
             return {...state, ...action.payload}
         }).addCase(fetchJob.rejected, (state, action) => {
             state.status = "error"

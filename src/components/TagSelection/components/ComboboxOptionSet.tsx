@@ -30,7 +30,7 @@ const ComboboxOptionSet: FC<ComboboxOptionSetProps> = ({term, options, onSelecti
         }
         setFlags(options.map(option => {
             const cleanTerm = removeDiacritics(term).trim().toLocaleLowerCase()
-            const cleanOption = removeDiacritics(option.name).trim().toLocaleLowerCase()
+            const cleanOption = removeDiacritics(option.label).trim().toLocaleLowerCase()
             return cleanOption.includes(cleanTerm)
         }))
     }, [options, term])
@@ -42,17 +42,17 @@ const ComboboxOptionSet: FC<ComboboxOptionSetProps> = ({term, options, onSelecti
         return null
 
     return options.map((option, i) => (
-        <Fragment key={option.name}>
+        <Fragment key={option.label}>
             {flags[i] && <ComboboxOption
-                value={option.name}
+                value={option.label}
                 style={{paddingLeft: `${depth*16}px`}}
-                onClick={() => onSelection([...parentTags, option.name])}
+                onClick={() => onSelection([...parentTags, option.label])}
             />}
             <ComboboxOptionSet
                 term={term}
                 options={option.subcategories}
                 onSelection={onSelection}
-                parentTags={[...parentTags, option.name]}
+                parentTags={[...parentTags, option.label]}
                 depth={depth+1}
             />
         </Fragment>)

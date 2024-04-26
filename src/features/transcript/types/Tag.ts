@@ -18,6 +18,6 @@ export interface TextTag {
 }
 
 export interface GroupTag {
-    name: string,
+    label: string,
     subcategories?: GroupTag[],
 }

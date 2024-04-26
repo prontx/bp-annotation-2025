@@ -51,16 +51,16 @@ const DeleteIcon = styled(ClearRoundedIcon)<Layer>` ${({theme, $layer}) => css`
 const Tag: FC<TagProps> = ({$layer, tag, deleteCallback, ...props}) => {
     return (
         <StyledTag $layer={$layer} style={!tag.subcategories ? {flexWrap: "nowrap", padding: "0 4px"} : undefined} {...props}>
-            <span>{tag.name}</span>
+            <span>{tag.label}</span>
             {tag.subcategories && tag.subcategories.map(subtag => 
                 <Tag
-                    key={subtag.name}
+                    key={subtag.label}
                     tag={subtag}
                     $layer={$layer+1}
                     deleteCallback={deleteCallback}
                 />
             )}
-            {(!tag.subcategories && deleteCallback) && <DeleteIcon $layer={$layer} onClick={() => deleteCallback(tag.name)} />}
+            {(!tag.subcategories && deleteCallback) && <DeleteIcon $layer={$layer} onClick={() => deleteCallback(tag.label)} />}
         </StyledTag>
     )
 }
