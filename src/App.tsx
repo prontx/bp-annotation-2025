@@ -6,7 +6,7 @@ import Waveform from "./features/waveform/components/Waveform"
 import MenuBar from "./features/menu/components/MenuBar"
 import SegmentList from "./features/transcript/components/SegmentList"
 import GroupList from "./features/grouping/components/GroupList"
-import SpeakerList from "./features/job/components/SpeakerList"
+import SpeakerList from "./features/transcript/components/SpeakerList"
 import SpecialChars from "./features/transcript/components/SpecialChars"
 
 // wavesurfer

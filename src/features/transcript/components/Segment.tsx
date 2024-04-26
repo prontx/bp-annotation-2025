@@ -5,7 +5,7 @@ import Button from "../../../components/Button"
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
 import SegmentActions from "./SegmentActions";
-import DropdownSelection from "../../../components/DropdownSelection/DropdownSelection"
+import SpeakerSelection from "./SpeakerSelection"
 import SegmentText from "./SegmentText";
 
 // redux
@@ -13,7 +13,6 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying } from "../../playback/redux/playbackSlice";
-import { selectSpeakers } from "../redux/transcriptSlice";
 import { selectGroupsByStartSegment, selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
 
 // utils
@@ -27,7 +26,6 @@ import styled, { css } from "styled-components";
 import type Layer from "../../../types/Layer"
 import type { Segment } from "../types/Segment";
 import type { RootState } from "../../../redux/store";
-import { SpeakerTag } from "../types/Tag";
 import { time2FormatedString } from "../../../utils/time2FormatedString";
 import SpermMarker from "../../grouping/components/SpermMarker";
 
@@ -72,7 +70,6 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
     const dispatch = useAppDispatch()
     const [isPlaying, setIsPlaying] = useState(false)
     const isAudioPlaying = useSelector(selectIsPlaying)
-    const speakers = useSelector(selectSpeakers)
     const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
     const memberGroupIDs = useSelector((state: RootState) => selectGroupsByStartSegment(state, segmentID))
 
@@ -81,12 +78,12 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
             setIsPlaying(false)
     }, [isAudioPlaying])
     
-    const handleSpeakerChange = (newValue: SpeakerTag) => {
+    const handleSpeakerChange = (speakerID: string) => {
         regionsReloadCallback()
         dispatch(updateSegment({
             type: "id",
             key: segmentID,
-            change: {speaker: newValue.id}
+            change: {speaker: speakerID}
         }))
     }
     
@@ -104,11 +101,10 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
             className={`${className} ${(segmentID === startSegmentID || segmentID === endSegmentID) ? "selected" : ""}`}
             {...props}>
             <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
-                <DropdownSelection<SpeakerTag>
+                <SpeakerSelection
                     $layer={$layer+1}
                     onSelection={handleSpeakerChange}
-                    initialState={speakers.find(speaker => speaker.id === data.speaker)}
-                    options={speakers}
+                    initialState={data.speaker}
                 />
                 {time2FormatedString(data.start)} – {time2FormatedString(data.end)}
                 <SegmentActions

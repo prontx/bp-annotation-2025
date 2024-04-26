@@ -2,15 +2,17 @@ import { FC } from "react"
 
 // components
 import NamedContainer from "../../../components/NamedContainer"
-import SpeakerTag from "../../../components/SpeakerItem"
+import EditableSpeaker from "./EditableSpeaker"
+
+// style
+import styled from "styled-components"
 
 // redux
 import { useSelector } from "react-redux"
-import { selectSpeakers } from "../../transcript/redux/transcriptSlice"
+import { selectSpeakers } from "../redux/transcriptSlice"
 
 // types
 import Layer from "../../../types/Layer"
-import styled from "styled-components"
 
 
 const SpeakerListBody = styled.div`
@@ -25,11 +27,7 @@ const SpeakerList: FC<Layer> = ({$layer}) => {
     return (
         <NamedContainer name="Mluvčí" $layer={$layer}>
             <SpeakerListBody className="body">
-                {speakers.map(speaker => (
-                    <SpeakerTag key={speaker.id} color={speaker.color} speakerID={speaker.id}>
-                        {speaker.label}
-                    </SpeakerTag>
-                ))}
+                {speakers.map(speaker => <EditableSpeaker $layer={$layer} speaker={speaker} />)}
             </SpeakerListBody>
         </NamedContainer>
     )
