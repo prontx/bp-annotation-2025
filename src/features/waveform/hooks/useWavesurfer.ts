@@ -16,6 +16,9 @@ import { selectZoom } from "../../playback/redux/playbackSlice";
 import { setTime } from "../../playback/redux/playbackSlice";
 import { selectAudioURL, selectDuration, selectJobStatus } from "../../job/redux/jobSlice";
 
+// hooks
+import { useFetchWaveformPeaks } from "./useFetchWaveformPeaks";
+
 
 const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                         waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
@@ -24,10 +27,11 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     const jobStatus = useSelector(selectJobStatus)
     const audioURL = useSelector(selectAudioURL)
     const duration = useSelector(selectDuration)
+    const waveformPeaks = useFetchWaveformPeaks()
 
     useEffect(() => {
-        // wait until job loads
-        if (jobStatus === "idle" || jobStatus === "loading" || jobStatus === "error")
+        // wait until job and waveform load
+        if (jobStatus === "idle" || jobStatus === "loading" || jobStatus === "error" || !waveformPeaks)
             return
 
         // create minimap
@@ -40,6 +44,7 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         if (!wavesurfer.current) {
             wavesurfer.current = WaveSurfer.create({
                 ...wavesurferOptions,
+                peaks: waveformPeaks,
                 duration: duration,
                 url: audioURL,
                 plugins: [
@@ -62,7 +67,7 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         })
             
         return unsubscribe
-    }, [jobStatus])
+    }, [jobStatus, waveformPeaks])
 }
 
 export default useWavesurfer

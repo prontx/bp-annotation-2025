@@ -1,8 +1,5 @@
 import { WaveSurferOptions } from "wavesurfer.js";
 import { MinimapPluginOptions } from "wavesurfer.js/plugins/minimap"
-import { mockWaveformRequest } from "../../../testing/mockAPI";
-
-const testData = await mockWaveformRequest()
 
 export const wavesurferOptions : WaveSurferOptions = {
     normalize: true,
@@ -15,7 +12,6 @@ export const wavesurferOptions : WaveSurferOptions = {
     autoCenter: false,
     container: '#waveform',
     height: 80,
-    peaks: testData,
 }
 
 export const minimapOptions : MinimapPluginOptions = { 

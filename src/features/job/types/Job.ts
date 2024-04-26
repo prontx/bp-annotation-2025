@@ -52,6 +52,7 @@ export interface Job {
         waveform: string,
         mp3: string,
         transcript: string,
+        waveform_data: string,
     },
     pipeline: {
         id: string,

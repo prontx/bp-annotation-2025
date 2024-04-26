@@ -47,6 +47,7 @@ const initialState: Job = {
         waveform: "",
         mp3: "",
         transcript: "",
+        waveform_data: "",
     },
     pipeline: {
         id: "",
@@ -58,14 +59,11 @@ const initialState: Job = {
 export const jobSlice = createSlice({
     name: 'job',
     initialState,
-    reducers: {
-        // TODO: add reducers
-    },
+    reducers: {},
     extraReducers(builder) {
         builder.addCase(fetchJob.pending, (state, _) => {
             state.status = "loading"
         }).addCase(fetchJob.fulfilled, (state, action) => {
-            console.log(action.payload)
             return {...state, ...action.payload}
         }).addCase(fetchJob.rejected, (state, action) => {
             state.status = "error"
@@ -86,5 +84,6 @@ export const selectGroupTags = (state: RootState) => {
     return state.job.user_interface.group_tags
 }
 export const selectTitle = (state: RootState) => state.job.title
+export const selectWaveformURL = (state: RootState) => state.job.url.waveform_data
 
 export default jobSlice.reducer
