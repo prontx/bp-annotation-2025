@@ -35,8 +35,8 @@ export const addTag = (tags: GroupTag[], newTag: string[]): GroupTag[] => {
 }
 
 export const deleteTag = (tagsRaw: GroupTag[], i:number, tag: string): GroupTag[] => {
-    const tags = JSON.parse(JSON.stringify(tagsRaw)) // deep copy the object
-    if (tags[i].name === tag){
+    const tags: GroupTag[] = JSON.parse(JSON.stringify(tagsRaw)) // deep copy the object
+    if (tags[i].label === tag){
         tags.splice(i, 1)
         return tags
     }
