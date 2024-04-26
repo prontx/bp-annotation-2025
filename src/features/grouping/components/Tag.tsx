@@ -25,6 +25,7 @@ const StyledTag = styled.span<Layer>` ${({theme, $layer}) => css`
     padding: 4px;
     background: ${theme.layers[$layer].background};
     border-radius: 4px;
+    color: ${$layer < 5 ? theme.textSecondary : theme.textSecondaryDark};
     /* box-shadow: 0 0 0 2px ${theme.layers[$layer].background}; */
 `}`
 
@@ -37,12 +38,12 @@ const DeleteIcon = styled(ClearRoundedIcon)<Layer>` ${({theme, $layer}) => css`
     margin-bottom: -4px;
     position: relative;
     background: ${theme.layers[$layer].background};
-
+    
     &:hover {
-        color: ${theme.textPrimary};
+        color: ${$layer < 5 ? theme.textPrimary : theme.textPrimaryDark};
         background: ${theme.layers[$layer].hover};
     }
-
+    
     &:active {
         background: ${theme.layers[$layer].active};
     }

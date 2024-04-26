@@ -54,7 +54,9 @@ export const theme = {
     redHover100: redHover[100],
 
     textPrimary: gray[10],
+    textPrimaryDark: black,
     textSecondary: gray[30],
+    textSecondaryDark: gray[90],
     textDanger: red[40],
 
     layers: [
