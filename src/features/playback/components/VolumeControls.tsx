@@ -36,7 +36,7 @@ const VolumeControls : FC = () => {
 
     return (
         <VolumeControlsContainer>
-            <p>Volume:</p>
+            <p>Hlasitost:</p>
             <VolumeMuteRoundedIcon />
             <Slider min={0} max={100} defaultValue={100} onChange={(val) => handleSliderChange(val)}/>
             <VolumeUpRoundedIcon className="space" />

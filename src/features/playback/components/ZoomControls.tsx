@@ -31,7 +31,7 @@ const ZoomControls : FC<Layer> = ({$layer}) => {
 
     return (
         <ZoomControlsContainer>
-            <p>Zoom:</p>
+            <p>Přiblížení:</p>
             <Button $layer={$layer} onClick={ () => dispatch(zoomIn()) }>
                 <ZoomInRoundedIcon />
             </Button>
