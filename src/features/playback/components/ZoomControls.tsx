@@ -29,8 +29,6 @@ const ZoomControlsContainer = styled.div`
 const ZoomControls : FC<Layer> = ({$layer}) => {
     const dispatch = useAppDispatch()
 
-    // TODO: fix icons
-    
     return (
         <ZoomControlsContainer>
             <p>Zoom:</p>

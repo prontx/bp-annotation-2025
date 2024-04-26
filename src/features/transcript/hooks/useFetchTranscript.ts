@@ -9,8 +9,6 @@ export const useFetchTranscript = () => {
     const jobStatus = useSelector(selectJobStatus)
     const transcriptStatus = useSelector(selectTranscriptStatus)
 
-    // TODO: check job's loaded and then fetch job.url.transcript
-
     useEffect(() => {
         if (jobStatus !== "" && jobStatus !== "idle" && jobStatus !== "loading" && jobStatus !== "error"){
             if (transcriptStatus === "" || transcriptStatus === "idle") {

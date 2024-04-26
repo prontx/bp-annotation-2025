@@ -131,8 +131,6 @@ export const transcriptSlice = createSlice({
             // reset variables
             state.specialChar = ""
             state.lastFocusedSegment = ""
-
-            // FIXME: rerender regions
         },
         setSpeakersFromHistory: (state, action: PayloadAction<SpeakerTag[]>) => {
             state.speaker_tags = action.payload

@@ -9,7 +9,7 @@ const usePlayPause = (wavesurfer: React.MutableRefObject<WaveSurfer | null>) => 
     // listen for playback changes
     useEffect(() => {
         if (isPlaying) {
-            wavesurfer.current?.play() // TODO: .play() returns a promise
+            wavesurfer.current?.play()
         } else {
             wavesurfer.current?.pause()
         }
