@@ -27,7 +27,7 @@ const SpeakerList: FC<Layer> = ({$layer}) => {
     return (
         <NamedContainer name="Mluvčí" $layer={$layer}>
             <SpeakerListBody className="body">
-                {speakers.map(speaker => <EditableSpeaker $layer={$layer} speaker={speaker} />)}
+                {speakers.map(speaker => <EditableSpeaker key={speaker.id} $layer={$layer} speaker={speaker} />)}
             </SpeakerListBody>
         </NamedContainer>
     )
