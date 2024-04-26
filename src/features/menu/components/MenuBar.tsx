@@ -2,9 +2,9 @@ import { FC } from "react"
 
 // components
 import { Menu, MenuItem } from "@reach/menu-button"
-import { MenuPopover } from "../../../components/DropdownSelection/style/MenuPopover"
-import { MenuButton } from "../../../components/DropdownSelection/style/MenuButton"
-import { MenuItems } from "../../../components/DropdownSelection/style/MenuItems"
+import { MenuPopover } from "../../../components/Menu/MenuPopover"
+import { MenuButton } from "../../../components/Menu/MenuButton"
+import { MenuItems } from "../../../components/Menu/MenuItems"
 import Button from "../../../components/Button"
 
 // style
