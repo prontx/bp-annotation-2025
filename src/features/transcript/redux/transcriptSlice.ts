@@ -83,7 +83,12 @@ export const transcriptSlice = createSlice({
                 state.segments.entities[key] = {...segment, ...change}
             }
 
-            // FIXME: update state.segments.keys order by state.segments.entities[key].start (possibly changed)
+             // ensure keys stay ordered on start change
+             if (change.start){
+                state.segments.keys = state.segments.keys.sort((a, b) =>
+                    state.segments.entities[a].start - state.segments.entities[b].start
+                )
+            }
         },
         deleteSegment: (state, action: PayloadAction<{id: string, callback: () => void}>) => {
             const idx = state.segments.keys.findIndex(key => key === action.payload.id)
