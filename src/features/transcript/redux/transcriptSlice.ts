@@ -16,6 +16,7 @@ import { SpeakerTag } from '../types/Tag'
 import { v4 as uuid } from 'uuid'
 import axios from "../../../utils/getAxios"
 import { segmentWords2String } from '../../../utils/segmentWords2String'
+import { segment2RegionID } from '../utils/segment2RegionID'
 
 // testing
 import { JOB_ID } from '../../../testing/test.config'
@@ -96,17 +97,8 @@ export const transcriptSlice = createSlice({
                 state.segments.keys.splice(idx, 1)
             }
 
-            let regionID = ""
-            for (const key in state.region2ID) {
-                const segmentID = state.region2ID[key];
-                if (segmentID === action.payload.id){
-                    regionID = key
-                    break
-                }
-            }
-              
+            let regionID = segment2RegionID(state.region2ID, action.payload.id)
             delete state.segments.entities[action.payload.id]
-            
             if (regionID){                
                 // delete regionID from id lookup
                 delete state.region2ID[regionID]
@@ -116,8 +108,31 @@ export const transcriptSlice = createSlice({
             // WARNING: the callbacks must not update the redux state!
             action.payload.callback()
         },
-        mergeSegment: (_, __: PayloadAction<{id: string}>) => {
-            // TODO: implement
+        mergeSegment: (state, action: PayloadAction<{id: string, callback: () => void}>) => {
+            const {id, callback} = action.payload
+            const keys = state.segments.keys
+            const idx = keys.findIndex(key => key === id)
+
+            if (idx < 0 || idx + 1 >= keys.length)
+                return
+
+            const current = state.segments.entities[id]
+            const next = state.segments.entities[keys[idx+1]]
+            next.start = current.start
+            next.words = current.words + " " + next.words
+            
+            let regionID = segment2RegionID(state.region2ID, action.payload.id)
+            keys.splice(idx, 1)
+            delete state.segments.entities[id]
+
+            if (regionID){
+                // delete regionID from id lookup
+                delete state.region2ID[regionID]
+            }
+
+            // reload waveform regions
+            // WARNING: the callbacks must not update the redux state!
+            callback()
         },
         mapRegion2Segment: (state, action: PayloadAction<{segmentID: string, regionID: string}>) => {
             state.region2ID[action.payload.regionID] = action.payload.segmentID

@@ -111,7 +111,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
                     style={{marginLeft: "auto"}}
                     $layer={$layer}
                     deleteHandler={() => dispatch(deleteSegment({id: segmentID, callback: regionsReloadCallback}))}
-                    mergeHandler={() => dispatch(mergeSegment({id: segmentID}))}
+                    mergeHandler={() => dispatch(mergeSegment({id: segmentID, callback: regionsReloadCallback}))}
                 />
             </div>
             <div style={{display: "flex"}}>
