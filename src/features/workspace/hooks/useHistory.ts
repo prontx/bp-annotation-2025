@@ -6,7 +6,7 @@ import { useSelector } from "react-redux"
 import { selectSegments, selectTranscriptStatus } from "../../transcript/redux/transcriptSlice"
 import { selectSpeakers } from "../../transcript/redux/transcriptSlice"
 import { selectGroups, selectStartEndSegment2Group } from "../../grouping/redux/groupingSlice"
-import { historyPush, resetShouldTriggerUpdate, selectShouldTriggerUpdate } from "../redux/historySlice"
+import { historyPush, resetShouldTriggerUpdate, selectShouldTriggerUpdate } from "../redux/workspaceSlice"
 
 // types
 import { Snapshot } from "../types/History"

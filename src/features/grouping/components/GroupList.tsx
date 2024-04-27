@@ -11,7 +11,7 @@ import { scrollableBaseStyles } from "../../../style/scrollableBaseStyles"
 // redux
 import { useSelector } from "react-redux"
 import { selectGroupIDs } from "../redux/groupingSlice"
-import { selectGroupTags } from "../../job/redux/jobSlice"
+import { selectGroupTags } from "../../workspace/redux/workspaceSlice"
 
 // types
 import Layer from "../../../types/Layer"

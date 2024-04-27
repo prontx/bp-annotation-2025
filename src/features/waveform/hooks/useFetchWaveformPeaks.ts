@@ -3,7 +3,7 @@ import axios from "axios";
 
 // redux
 import { useSelector } from "react-redux";
-import { selectWaveformURL } from "../../job/redux/jobSlice";
+import { selectWaveformURL } from "../../workspace/redux/workspaceSlice";
 
 
 interface waveformDataResponse {

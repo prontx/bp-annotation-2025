@@ -17,7 +17,7 @@ import Layer from "../../../types/Layer";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { play, pause, skipBy, setTime, selectIsPlaying, selectCurrentTimeValue } from "../redux/playbackSlice";
-import { selectDuration } from "../../job/redux/jobSlice";
+import { selectDuration } from "../../workspace/redux/workspaceSlice";
 
 // utils
 import { time2FormatedString } from "../../../utils/time2FormatedString";

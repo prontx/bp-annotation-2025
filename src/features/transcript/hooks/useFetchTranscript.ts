@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { selectTranscriptStatus, fetchTranscript } from "../redux/transcriptSlice"
 import { AppDispatch } from "../../../redux/store"
-import { selectJobStatus } from "../../job/redux/jobSlice"
+import { selectJobStatus } from "../../workspace/redux/workspaceSlice"
 
 export const useFetchTranscript = () => {
     const dispatch = useDispatch<AppDispatch>()

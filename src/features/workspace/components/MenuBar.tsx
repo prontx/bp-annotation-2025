@@ -12,9 +12,9 @@ import styled from "styled-components"
 
 // redux
 import { useSelector } from "react-redux"
-import { selectTitle } from "../../job/redux/jobSlice"
+import { selectTitle } from "../redux/workspaceSlice"
 import { useAppDispatch } from "../../../redux/hooks"
-import { historyRedo, historyUndo } from "../../history/redux/historySlice"
+import { historyRedo, historyUndo } from "../redux/workspaceSlice"
 
 // types
 import Layer from "../../../types/Layer"

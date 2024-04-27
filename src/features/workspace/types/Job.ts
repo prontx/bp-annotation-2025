@@ -23,6 +23,7 @@ interface JobUserInterface {
     segment_tags?: SegmentTag[],
     text_tags?: TextTag[],
     group_tags?: GroupTag[],
+    group_tag_shortlist?: GroupTag[],
     links?: Link[],
     views?: View[]
 }

@@ -3,7 +3,7 @@ import { useEffect } from "react"
 // redux
 import { useAppDispatch } from "../../../redux/hooks"
 import { useSelector } from "react-redux"
-import { selectHistory, selectShouldTriggerUpdate } from "../redux/historySlice"
+import { selectHistory, selectShouldTriggerUpdate } from "../redux/workspaceSlice"
 import { setSegmentsFromHistory, setSpeakersFromHistory } from "../../transcript/redux/transcriptSlice"
 import { setGroupingFromHistory } from "../../grouping/redux/groupingSlice"
 

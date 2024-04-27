@@ -3,7 +3,7 @@ import { useRef } from "react"
 // components
 import Controls from "./features/playback/components/Controls"
 import Waveform from "./features/waveform/components/Waveform"
-import MenuBar from "./features/menu/components/MenuBar"
+import MenuBar from "./features/workspace/components/MenuBar"
 import SegmentList from "./features/transcript/components/SegmentList"
 import GroupList from "./features/grouping/components/GroupList"
 import SpeakerList from "./features/transcript/components/SpeakerList"
@@ -17,9 +17,9 @@ import styled, { createGlobalStyle } from "styled-components"
 import { scrollableBaseStyles } from "./style/scrollableBaseStyles"
 
 // hooks
-import { useFetchJob } from "./features/job/hooks/useFetchJob"
+import { useFetchJob } from "./features/workspace/hooks/useFetchJob"
 import { useFetchTranscript } from "./features/transcript/hooks/useFetchTranscript"
-import { useHistory } from "./features/history/hooks/useHistory"
+import { useHistory } from "./features/workspace/hooks/useHistory"
 
 
 const BaseStyle = createGlobalStyle`

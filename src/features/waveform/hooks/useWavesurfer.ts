@@ -14,7 +14,7 @@ import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
 import { selectZoom } from "../../playback/redux/playbackSlice";
 import { setTime } from "../../playback/redux/playbackSlice";
-import { selectAudioURL, selectDuration, selectJobStatus } from "../../job/redux/jobSlice";
+import { selectAudioURL, selectDuration, selectJobStatus } from "../../workspace/redux/workspaceSlice";
 
 // hooks
 import { useFetchWaveformPeaks } from "./useFetchWaveformPeaks";

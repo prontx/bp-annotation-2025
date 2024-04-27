@@ -12,7 +12,7 @@ import "@reach/combobox/styles.css"
 
 // redux
 import { useSelector } from "react-redux"
-import { selectGroupTags } from "../../features/job/redux/jobSlice"
+import { selectGroupTags } from "../../features/workspace/redux/workspaceSlice"
 
 // types
 import Layer from "../../types/Layer"
