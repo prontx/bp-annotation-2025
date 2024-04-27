@@ -51,7 +51,7 @@ const SpeakerSelection: FC<SpeakerSelectionProps> = ({$layer, onSelection, initi
             <MenuPopover $layer={$layer}>
                 <MenuItems $layer={$layer}>
                     {choices.map((choice) => (
-                        <MenuItem key={choice.id} onSelect={() => handleSelect(choice.id)}>
+                        <MenuItem key={choice.id} onSelect={() => handleSelect(choice.id)} onClick={e => e.stopPropagation()}>
                             <SpeakerItem speakerID={choice?.id || "?"} color={choice?.color}>
                                 {choice?.label}
                             </SpeakerItem>

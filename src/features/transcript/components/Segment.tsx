@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react"
+import { FC, MouseEventHandler, useEffect, useRef, useState } from "react"
 
 // components
 import Button from "../../../components/Button"
@@ -16,7 +16,7 @@ import styled, { css } from "styled-components";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
-import { playPauseSegment, selectIsPlaying } from "../../playback/redux/playbackSlice";
+import { playPauseSegment, selectIsPlaying, setTime } from "../../playback/redux/playbackSlice";
 import { selectGroupsByStartSegment, selectIsEditing, selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
 
 // types
@@ -92,7 +92,8 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
         }))
     }
     
-    const handlePlayPause = () => {
+    const handlePlayPause: MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.stopPropagation()
         setIsPlaying(!isPlaying)
         dispatch(playPauseSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
     }
@@ -109,6 +110,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
                 ${(!groupEditing && isCursorIn) ? "selected" : ""}`}
             {...props}
             ref={containerRef}
+            onClick={() => dispatch(setTime({value: data.start, changedBy: "segment"}))}
         >
             <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
                 <SpeakerSelection
@@ -133,6 +135,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
                 <SegmentText
                     segmentID={segmentID}
                     $layer={$layer}
+                    onClick={e => e.stopPropagation()}
                 />
             </div>
         </SegmentLayout>

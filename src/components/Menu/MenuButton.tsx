@@ -38,6 +38,7 @@ export const MenuButton : FC<MenuButtonProps & Layer & {className?: string}> = (
     return (
         <StyledMenuButton
             className={isExpanded ? `${props.className} expanded` : props.className}
+            onClick={e => e.stopPropagation()}
             {...props}
         />
     )
