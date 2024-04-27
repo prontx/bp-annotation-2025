@@ -98,6 +98,14 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
         dispatch(playPauseSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
     }
 
+    const handleSegmentClick: MouseEventHandler<HTMLDivElement> = (e) => {
+        if (props.onClick)
+            props.onClick(e)
+        if (groupEditing)
+            return
+        dispatch(setTime({value: data.start, changedBy: "segment"}))
+    }
+
     if (!data)
         return null
     
@@ -110,7 +118,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
                 ${(!groupEditing && isCursorIn) ? "selected" : ""}`}
             {...props}
             ref={containerRef}
-            onClick={() => dispatch(setTime({value: data.start, changedBy: "segment"}))}
+            onClick={handleSegmentClick}
         >
             <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
                 <SpeakerSelection
