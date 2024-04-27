@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react"
+import { FC, useEffect, useRef, useState } from "react"
 
 // components
 import Button from "../../../components/Button"
@@ -7,27 +7,28 @@ import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
 import SegmentActions from "./SegmentActions";
 import SpeakerSelection from "./SpeakerSelection"
 import SegmentText from "./SegmentText";
+import SpermMarker from "../../grouping/components/SpermMarker";
+
+// style
+import styled, { css } from "styled-components";
 
 // redux
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying } from "../../playback/redux/playbackSlice";
-import { selectGroupsByStartSegment, selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
-
-// utils
-// @ts-ignore
-import { rgba } from "@carbon/colors"
-
-// styles
-import styled, { css } from "styled-components";
+import { selectGroupsByStartSegment, selectIsEditing, selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
 
 // types
 import type Layer from "../../../types/Layer"
 import type { Segment } from "../types/Segment";
 import type { RootState } from "../../../redux/store";
+
+// utils
+// @ts-ignore
+import { rgba } from "@carbon/colors"
 import { time2FormatedString } from "../../../utils/time2FormatedString";
-import SpermMarker from "../../grouping/components/SpermMarker";
+import { useScrollToSegment } from "../hooks/useScrollToSegment";
 
 
 interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
@@ -72,6 +73,10 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
     const isAudioPlaying = useSelector(selectIsPlaying)
     const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
     const memberGroupIDs = useSelector((state: RootState) => selectGroupsByStartSegment(state, segmentID))
+    const groupEditing = useSelector(selectIsEditing)
+    
+    const containerRef = useRef<HTMLDivElement>(null)
+    const isCursorIn = useScrollToSegment(containerRef, data.start, data.end)
 
     useEffect(() => {
         if (!isAudioPlaying && isPlaying)
@@ -98,8 +103,13 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
     return (<>
         <SegmentLayout
             $layer={$layer}
-            className={`${className} ${(segmentID === startSegmentID || segmentID === endSegmentID) ? "selected" : ""}`}
-            {...props}>
+            className={`
+                ${className}
+                ${(segmentID === startSegmentID || segmentID === endSegmentID) ? "selected" : ""}
+                ${(!groupEditing && isCursorIn) ? "selected" : ""}`}
+            {...props}
+            ref={containerRef}
+        >
             <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
                 <SpeakerSelection
                     $layer={$layer+1}
