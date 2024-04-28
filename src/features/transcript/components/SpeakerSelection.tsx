@@ -11,8 +11,9 @@ import { MenuItems } from "../../../components/Menu/MenuItems";
 import "@reach/menu-button/styles.css";
 
 // redux
+import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
-import { selectSpeakerByID, selectSpeakers } from "../redux/transcriptSlice";
+import { selectSpeakerByID, selectSpeakerIDBySegment, selectSpeakers, updateSegment } from "../redux/transcriptSlice";
 
 // types
 import Layer from "../../../types/Layer";
@@ -21,12 +22,13 @@ import { RootState } from "../../../redux/store";
 
 
 interface SpeakerSelectionProps extends React.HTMLAttributes<typeof Menu>, Layer {
-    onSelection: (speakerID: string) => void,
-    initialState?: string,
+    segmentID: string,
+    regionReloadCallback: () => void,
 }
 
-const SpeakerSelection: FC<SpeakerSelectionProps> = ({$layer, onSelection, initialState, ...props}) => {
-    const [speakerID, setSpeakerID] = useState(initialState)
+const SpeakerSelection: FC<SpeakerSelectionProps> = ({$layer, regionReloadCallback, segmentID, ...props}) => {
+    const dispatch = useAppDispatch()
+    const speakerID = useSelector((state: RootState) => selectSpeakerIDBySegment(state)(segmentID))
     const value = useSelector((state: RootState) => selectSpeakerByID(state)(speakerID))
     const speakers = useSelector(selectSpeakers)
     const [choices, setChoices] = useState<SpeakerTag[]>([])
@@ -34,10 +36,14 @@ const SpeakerSelection: FC<SpeakerSelectionProps> = ({$layer, onSelection, initi
     useEffect(() => {
         setChoices([...speakers.filter(speaker => speaker.id !== speakerID && speaker.label)])
     }, [speakerID, speakers])
-    
+
     const handleSelect = (newID: string) => {
-        setSpeakerID(newID)
-        onSelection(newID)
+        regionReloadCallback()
+        dispatch(updateSegment({
+            type: "id",
+            key: segmentID,
+            change: {speaker: newID}
+        }))
     }
 
     return (

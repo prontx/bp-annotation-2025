@@ -15,7 +15,7 @@ import styled, { css } from "styled-components";
 // redux
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
-import { deleteSegment, mergeSegment, selectSegmentByID, updateSegment } from "../redux/transcriptSlice";
+import { deleteSegment, mergeSegment, selectSegmentByID } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying, setTime } from "../../playback/redux/playbackSlice";
 import { selectGroupsByStartSegment, selectIsEditing, selectStartEndSegmentIDs } from "../../grouping/redux/groupingSlice";
 
@@ -83,15 +83,6 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
             setIsPlaying(false)
     }, [isAudioPlaying])
     
-    const handleSpeakerChange = (speakerID: string) => {
-        regionsReloadCallback()
-        dispatch(updateSegment({
-            type: "id",
-            key: segmentID,
-            change: {speaker: speakerID}
-        }))
-    }
-    
     const handlePlayPause: MouseEventHandler<HTMLButtonElement> = (e) => {
         e.stopPropagation()
         setIsPlaying(!isPlaying)
@@ -123,8 +114,8 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
             <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
                 <SpeakerSelection
                     $layer={$layer+1}
-                    onSelection={handleSpeakerChange}
-                    initialState={data.speaker}
+                    segmentID={segmentID}
+                    regionReloadCallback={regionsReloadCallback}
                 />
                 {time2FormatedString(data.start)} – {time2FormatedString(data.end)}
                 <SegmentActions

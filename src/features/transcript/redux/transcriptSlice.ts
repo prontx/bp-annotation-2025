@@ -299,5 +299,9 @@ export const selectSegmentWords = createSelector(
     selectSegmentEntities,
     (entities) => (id: string) => entities[id]?.words || ""
 )
+export const selectSpeakerIDBySegment = createSelector(
+    [selectSegmentByID],
+    (segmentByID) => (id: string) => segmentByID(id).speaker
+)
 
 export default transcriptSlice.reducer
