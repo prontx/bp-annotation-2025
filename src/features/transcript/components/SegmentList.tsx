@@ -36,6 +36,7 @@ const SegmentLayout = styled.section<Layer>` ${({theme, $layer}) => css`
     display: grid;
     gap: 2px 4px;
     grid-template-columns: 1fr repeat(3, 32px);
+    grid-auto-rows: min-content;
 `}`
 
 const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...props}) => {
