@@ -2,8 +2,9 @@
 import { speakerColors } from '../../../style/tagColors'
 
 // redux
-import { createAsyncThunk } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { selectParentStartEndSegmentIDs } from '../../grouping/redux/groupingSlice'
 
 // types
 import type { Transcript, TranscriptLoadingParams } from "../types/Transcript"
@@ -42,7 +43,7 @@ const initialState: Transcript = {
     created_at: "",
     specialChar: "",
     lastFocusedSegment: "",
-    speaker_tags: null,
+    speakerTags: [],
     segments: {
         keys: [],
         entities: {},
@@ -153,24 +154,24 @@ export const transcriptSlice = createSlice({
             state.lastFocusedSegment = ""
         },
         setSpeakersFromHistory: (state, action: PayloadAction<SpeakerTag[]>) => {
-            state.speaker_tags = action.payload
+            state.speakerTags = action.payload
         },
         updateSpeaker: (state, action: PayloadAction<SpeakerTag>) => {
-            if (!state.speaker_tags)
-                state.speaker_tags = []
+            if (!state.speakerTags)
+                state.speakerTags = []
 
-            const idx = state.speaker_tags.findIndex(tag => tag.id === action.payload.id)
+            const idx = state.speakerTags.findIndex(tag => tag.id === action.payload.id)
             if (idx < 0)
                 return
 
-            const shouldAddEmpty = state.speaker_tags[idx].label === ""
-            state.speaker_tags[idx] = action.payload
+            const shouldAddEmpty = state.speakerTags[idx].label === ""
+            state.speakerTags[idx] = action.payload
 
             if (!shouldAddEmpty)
                 return
 
             let key_arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
-            state.speaker_tags.forEach(tag => key_arr = key_arr.filter(k => k !== tag.id))
+            state.speakerTags.forEach(tag => key_arr = key_arr.filter(k => k !== tag.id))
             
             // if a key is available, add an empty speaker
             if (key_arr.length === 0)
@@ -179,27 +180,29 @@ export const transcriptSlice = createSlice({
             const emptySpeaker = {
                 id: key_arr[0],
                 label: "",
-                color: speakerColors[state.speaker_tags.length % speakerColors.length],
+                color: speakerColors[state.speakerTags.length % speakerColors.length],
             }
-            state.speaker_tags.push(emptySpeaker)
+            state.speakerTags.push(emptySpeaker)
         },
         deleteSpeaker: (state, action: PayloadAction<string>) => {
-            if (!state.speaker_tags)
+            if (!state.speakerTags)
                 return
 
-            const idx = state.speaker_tags.findIndex(st => st.id === action.payload)
-            state.speaker_tags.splice(idx, 1)
+            const idx = state.speakerTags.findIndex(st => st.id === action.payload)
+            state.speakerTags.splice(idx, 1)
         },
     },
     extraReducers(builder) {
         builder.addCase(fetchTranscript.pending, (state, _) => {
             state.status = "loading"
         }).addCase(fetchTranscript.fulfilled, (state, action) => { // load segments from API response
+            const {segments, groups, speaker_tags, ...transcriptCommon} = action.payload
+            
             const transformedSegments: Lookup<Segment> = {
                 keys: [],
                 entities: {},
             }
-            action.payload.segments?.forEach(segmentRaw => {
+            segments?.forEach(segmentRaw => {
                 const segment: Segment = {
                     ...segmentRaw,
                     start: Number(segmentRaw.start.toFixed(1)),
@@ -210,28 +213,29 @@ export const transcriptSlice = createSlice({
                 transformedSegments.keys.push(id)
                 transformedSegments.entities[id] = segment
             })
+            
             const transformedTags: SpeakerTag[] = []
             let possible_keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
-            for (const [index, tag] of action.payload.speaker_tags?.entries() || []){
-                if (!tag.label)
-                    continue
-
-                possible_keys = possible_keys.filter(k => k !== tag.id)
-                
-                if (!tag.color){
-                    tag.color = speakerColors[index % speakerColors.length]
+            if (speaker_tags){
+                for (const [index, tag] of speaker_tags.entries()){
+                    if (!tag.label)
+                        continue
+    
+                    possible_keys = possible_keys.filter(k => k !== tag.id)
+                    
+                    if (!tag.color){
+                        tag.color = speakerColors[index % speakerColors.length]
+                    }
+                    transformedTags.push(tag)
                 }
-                transformedTags.push(tag)
             }
             transformedTags.push({
                 id: possible_keys[0],
                 label: "",
                 color: speakerColors[transformedTags.length % speakerColors.length],
             })
-            if (action.payload.speaker_tags){
-                action.payload.speaker_tags = transformedTags
-            }
-            return {...state, status: "success", ...action.payload, segments: transformedSegments}
+            
+            return {...state, status: "success", ...transcriptCommon, segments: transformedSegments, speakerTags: transformedTags}
         }).addCase(fetchTranscript.rejected, (state, _) => {
             state.status = "error"
             // TODO: handle error message
@@ -245,51 +249,88 @@ export const { createSegment, updateSegment, deleteSegment, mergeSegment, mapReg
 export const selectTranscript = (state: RootState) => state.transcript
 export const selectTranscriptStatus = (state: RootState) => state.transcript.status
 export const selectSegments = (state: RootState) => state.transcript.segments
-export const selectSegmentIDs = (state: RootState) => {
-    let startIdx = 0
-    let endIdx = state.transcript.segments.keys.length
-    if (state.grouping.parentStartSegmentID)
-        startIdx = state.transcript.segments.keys.findIndex(id => id === state.grouping.parentStartSegmentID)
-    if (state.grouping.parentEndSegmentID)
-        endIdx = state.transcript.segments.keys.findIndex(id => id === state.grouping.parentEndSegmentID) + 1
-    if (startIdx < 0)
-        startIdx = 0
-    if (endIdx < 0)
-        endIdx = state.transcript.segments.keys.length
-    return state.transcript.segments.keys.slice(startIdx, endIdx)
-}
-export const selectSegmentByID = (state: RootState, id: string) => state.transcript.segments.entities[id]
-export const selectSegmentStartByID = (state: RootState, id: string) => {
-    if (!id)
-        return undefined
-    return state.transcript.segments.entities[id].start
-}
-export const selectSegmentEndByID = (state: RootState, id: string) => {
-    if (!id)
-        return undefined
-    return state.transcript.segments.entities[id].end
-}
-export const selectGroupStartEndByIDs = (state: RootState, startID: string|undefined, endID: string|undefined) => {
-    if (!startID || !endID)
-        return [-1, -1]
-    return [state.transcript.segments.entities[startID]?.start || -1, state.transcript.segments.entities[endID]?.end || -1]
-}
 export const selectSpecialChar = (state: RootState) => state.transcript.specialChar
 export const selectLastFocusedSegment = (state: RootState) => state.transcript.lastFocusedSegment
-export const selectSpeakers = (state: RootState) => state.transcript.speaker_tags || []
-export const selectSpeakerByID = (state: RootState, id: string|undefined) => state.transcript.speaker_tags?.find(st => st.id === id)
-
-export const selectSpeaker2Color = (state: RootState) => {
-    let mapping: Record<string, string> = {}
-    if (!state.transcript || !state.transcript.speaker_tags)
-        return mapping
-    state.transcript.speaker_tags.forEach(tag => {
-        if (tag.color){
-            mapping[tag.id] = tag.color
+export const selectSpeakers = (state: RootState) => state.transcript.speakerTags
+const selectSegmentKeys = (state: RootState) => state.transcript.segments.keys
+const selectSegmentEntities = (state: RootState) => state.transcript.segments.entities
+export const selectSegmentIDs = createSelector(
+    [selectParentStartEndSegmentIDs, selectSegmentKeys],
+    (parentIDs, keys) => {
+        let startIdx = 0
+        let endIdx = keys.length
+        if (parentIDs.start){
+            const idx = keys.findIndex(key => key === parentIDs.start)
+            if (idx >= 0)
+                startIdx = idx
         }
+        if (parentIDs.end){
+            const idx = keys.findIndex(key => key === parentIDs.end)
+            if (idx >= 0)
+                endIdx = idx + 1
+        }
+        return keys.slice(startIdx, endIdx)
+    }
+)
+export const selectGroupLen = createSelector(
+    selectSegmentKeys,
+    (keys) => (startSegmentID?: string, endSegmentID?: string) => {
+        if (!startSegmentID || !endSegmentID)
+            return 0
+
+        let i = keys.findIndex(key => key === startSegmentID)
+        if (i < 0)
+            return 0
+
+        for (let j = 0; i+j < keys.length; j++){
+            if (keys[i+j] === endSegmentID){
+                return j + 1
+            }
+        }
+        return 0
+    }
+)
+export const selectSegmentByID = createSelector(
+    [selectSegmentEntities],
+    (entities) => (id: string) => entities[id]
+)
+export const selectStartEndTimeBySegmentIDs = createSelector(
+    selectSegmentEntities,
+    (entities) => (startID: string, endID: string) => ({
+        startTime: entities[startID]?.start,
+        endTime: entities[endID]?.end
     })
-    return mapping
-}
-export const selectSegmentWords = (state: RootState, id: string) => state.transcript.segments.entities[id]?.words || ""
+)
+export const selectGroupStartEndByIDs = createSelector(
+    selectSegmentEntities,
+    (entities) => (startID: string|undefined, endID: string|undefined) => {
+        if (!startID || !endID)
+            return [-1, -1]
+        return [entities[startID]?.start || -1, entities[endID]?.end || -1]
+    }
+)
+export const selectSpeakerByID = createSelector(
+    selectSpeakers,
+    (speakers) => (id: string|undefined) => speakers.find(speaker => speaker.id === id)
+)
+export const selectSpeaker2Color = createSelector(
+    selectSpeakers,
+    (speakers) => {
+        if (!speakers)
+            return {}
+
+        let mapping: Record<string, string> = {}
+        speakers.forEach(speaker => {
+            if (speaker.color){
+                mapping[speaker.id] = speaker.color
+            }
+        })
+        return mapping
+    }
+)
+export const selectSegmentWords = createSelector(
+    selectSegmentEntities,
+    (entities) => (id: string) => entities[id]?.words || ""
+)
 
 export default transcriptSlice.reducer

@@ -110,10 +110,10 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
     const [editing, setEditing] = useState(!!submitCallback)
     const [title, setTitle] = useState<string|undefined>("")
     const [error, setError] = useState("")
-    const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
+    const {start: startSegmentID, end: endSegmentID} = useSelector(selectStartEndSegmentIDs)
     const [publish, setPublish] = useState(false)
     const [tags, setTags] = useState<GroupTag[]>([])
-    const group = useSelector((state: RootState) => selectGroupByID(state, groupID))
+    const group = useSelector((state: RootState) => selectGroupByID(state)(groupID))
     
     useEffect(() => { // load existing data if editing, skip if creating
         if (!group)

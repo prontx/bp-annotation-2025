@@ -9,17 +9,18 @@ interface TranscriptCommon {
     status?: string,
     source: string,
     created_at: string,
-    speaker_tags: SpeakerTag[] | null,
     segment_tags?: SegmentTag[] | null,
     text_tags?: TextTag[] | null,
 }
 
 export interface TranscriptLoadingParams extends TranscriptCommon {
+    speaker_tags?: SpeakerTag[] | null,
     segments?: SegmentLoadingParams[] | null,
     groups?: GroupLoadingParams[] | null,
 }
 
 export interface Transcript extends TranscriptCommon {
+    speakerTags: SpeakerTag[],
     segments: Lookup<Segment>,
     region2ID: Record<string, string>,
     specialChar: string,

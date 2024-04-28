@@ -5,7 +5,8 @@ import styled, { css } from "styled-components"
 
 // redux
 import { useSelector } from "react-redux"
-import { selectGroupByID, selectGroupLen } from "../redux/groupingSlice"
+import { selectGroupByID } from "../redux/groupingSlice"
+import { selectGroupLen } from "../../transcript/redux/transcriptSlice"
 
 // types
 import { RootState } from "../../../redux/store"
@@ -55,8 +56,8 @@ const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $len}) =>
 `}`
 
 const SpermMarker: FC<SpermMarkerProps> = ({groupID, $layer}) => {
-    const group = useSelector((state: RootState) => selectGroupByID(state, groupID))
-    const groupLen = useSelector((state: RootState) => selectGroupLen(state, group?.startSegmentID, group?.endSegmentID))
+    const group = useSelector((state: RootState) => selectGroupByID(state)(groupID))
+    const groupLen = useSelector((state: RootState) => selectGroupLen(state)(group?.startSegmentID, group?.endSegmentID))
 
     if (!group)
         return null

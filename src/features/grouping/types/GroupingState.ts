@@ -4,12 +4,14 @@ import { Group } from "./Group"
 export interface GroupingState {
     isEditing: boolean,
     selecting: "start"|"end"|null,
-    selected: {
-        startSegmentID: string,
-        endSegmentID: string,
+    selectedSegmentIDs: {
+        start: string,
+        end: string,
     },
-    parentStartSegmentID: string,
-    parentEndSegmentID: string,
+    parentSegmentIDs: {
+        start: string,
+        end: string,
+    },
     groups: Lookup<Group>,
     startSegment2Group: Record<string, string[]>,
     endSegment2Group: Record<string, string[]>,

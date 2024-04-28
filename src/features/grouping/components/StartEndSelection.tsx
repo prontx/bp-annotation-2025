@@ -11,7 +11,7 @@ import styled from "styled-components"
 import { useAppDispatch } from "../../../redux/hooks"
 import { selectSelecting, beginSelecting, selectStartEndSegmentIDs } from "../redux/groupingSlice"
 import { useSelector } from "react-redux"
-import { selectSegmentEndByID, selectSegmentStartByID } from "../../transcript/redux/transcriptSlice"
+import { selectStartEndTimeBySegmentIDs } from "../../transcript/redux/transcriptSlice"
 
 // types
 import Layer from "../../../types/Layer"
@@ -40,9 +40,8 @@ const StartEndSelectionContainer = styled.div`
 const StartEndSelection: FC<Layer> = ({$layer}) => {
     const dispatch = useAppDispatch()
     const selecting = useSelector(selectSelecting)
-    const { startSegmentID, endSegmentID } = useSelector(selectStartEndSegmentIDs)
-    const startTime = useSelector((state: RootState) => selectSegmentStartByID(state, startSegmentID))
-    const endTime = useSelector((state: RootState) => selectSegmentEndByID(state, endSegmentID))
+    const {start: startSegmentID, end: endSegmentID} = useSelector(selectStartEndSegmentIDs)
+    const {startTime, endTime} = useSelector((state: RootState) => selectStartEndTimeBySegmentIDs(state)(startSegmentID, endSegmentID))
 
     const handleBeginSelecting = (e: SyntheticEvent|null, type: "start"|"end") => {
         if (e){

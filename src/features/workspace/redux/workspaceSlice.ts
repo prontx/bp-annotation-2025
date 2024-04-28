@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import { PayloadAction, createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit"
 
 // types
 import { RootState } from "../../../redux/store"
@@ -118,12 +118,6 @@ export const { save, saved, historyPush, historyUndo, historyRedo, resetShouldTr
 
 export const selectJobID = (state: RootState) => state.workspace.jobID
 export const selectManualSave = (state: RootState) => state.workspace.manualSave
-export const selectHistory = (state: RootState) => {
-    const {pointer, snapshots} = state.workspace.history
-    if (pointer < 0)
-        return undefined
-    return snapshots[pointer]
-}
 export const selectShouldTriggerUpdate = (state: RootState) => state.workspace.history.shouldTriggerUpdate
 export const selectJobStatus = (state: RootState) => state.workspace.loadingStatus
 export const selectDuration = (state: RootState) => state.workspace.duration
@@ -131,5 +125,9 @@ export const selectGroupTags = (state: RootState) => state.workspace.groupTags
 export const selectTitle = (state: RootState) => state.workspace.title
 export const selectAudioURL = (state: RootState) => state.workspace.url.mp3
 export const selectWaveformURL = (state: RootState) => state.workspace.url.waveform_data
+export const selectHistory = createSelector(
+    [(state: RootState) => state.workspace.history],
+    (history) => history.snapshots[history.pointer]
+)
 
 export default workspaceSlice.reducer

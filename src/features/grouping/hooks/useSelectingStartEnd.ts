@@ -11,7 +11,7 @@ export const useSelectingStartEnd = (segmentIDs: string[], hoverID: string) => {
     const [startIdx, setStartIdx] = useState(-1)
     const [endIdx, setEndIdx] = useState(-1)
     const [hoverIdx, setHoverIdx] = useState(-1)
-    const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
+    const {start: startSegmentID, end: endSegmentID} = useSelector(selectStartEndSegmentIDs)
 
     useEffect(() => { // find hoverIdx when selecting
         if (!selecting)

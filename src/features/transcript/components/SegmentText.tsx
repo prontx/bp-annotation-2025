@@ -47,7 +47,7 @@ const StyledSegmentText = styled.textarea<Layer>` ${({theme, $layer}) => css`
 const SegmentText: FC<SegmentTextProps> = ({segmentID, ...props}) => {
     const textAreaRef: MutableRefObject<HTMLTextAreaElement|null> = useRef(null)
     const dispatch = useAppDispatch()
-    const words = useSelector((state: RootState) => selectSegmentWords(state, segmentID))
+    const words = useSelector((state: RootState) => selectSegmentWords(state)(segmentID))
     const [text, setText] = useState(words)
 
     useEffect(() => { // set initial textarea height based on content

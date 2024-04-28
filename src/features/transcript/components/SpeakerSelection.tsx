@@ -27,7 +27,7 @@ interface SpeakerSelectionProps extends React.HTMLAttributes<typeof Menu>, Layer
 
 const SpeakerSelection: FC<SpeakerSelectionProps> = ({$layer, onSelection, initialState, ...props}) => {
     const [speakerID, setSpeakerID] = useState(initialState)
-    const value = useSelector((state: RootState) => selectSpeakerByID(state, speakerID))
+    const value = useSelector((state: RootState) => selectSpeakerByID(state)(speakerID))
     const speakers = useSelector(selectSpeakers)
     const [choices, setChoices] = useState<SpeakerTag[]>([])
 

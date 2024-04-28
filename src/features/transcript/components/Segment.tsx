@@ -67,12 +67,12 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
 `}`
 
 const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, className, ...props}) => {
-    const data = useSelector((state: RootState) => selectSegmentByID(state, segmentID))
+    const data = useSelector((state: RootState) => selectSegmentByID(state)(segmentID))
     const dispatch = useAppDispatch()
     const [isPlaying, setIsPlaying] = useState(false)
     const isAudioPlaying = useSelector(selectIsPlaying)
-    const {startSegmentID, endSegmentID} = useSelector(selectStartEndSegmentIDs)
-    const memberGroupIDs = useSelector((state: RootState) => selectGroupsByStartSegment(state, segmentID))
+    const {start: startSegmentID, end: endSegmentID} = useSelector(selectStartEndSegmentIDs)
+    const memberGroupIDs = useSelector((state: RootState) => selectGroupsByStartSegment(state)(segmentID))
     const groupEditing = useSelector(selectIsEditing)
     
     const containerRef = useRef<HTMLDivElement>(null)
@@ -147,7 +147,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
                 />
             </div>
         </SegmentLayout>
-        {memberGroupIDs.map(id => <SpermMarker $layer={$layer} groupID={id} />)}
+        {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker $layer={$layer} groupID={id} />)}
     </>)
 }
 
