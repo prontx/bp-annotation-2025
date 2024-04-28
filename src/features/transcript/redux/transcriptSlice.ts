@@ -218,6 +218,7 @@ export const selectSegments = (state: RootState) => state.transcript.segments
 export const selectSpecialChar = (state: RootState) => state.transcript.specialChar
 export const selectLastFocusedSegment = (state: RootState) => state.transcript.lastFocusedSegment
 export const selectSpeakers = (state: RootState) => state.transcript.speakerTags
+export const selectGroupsRaw = (state: RootState) => state.transcript.groups
 const selectSegmentKeys = (state: RootState) => state.transcript.segments.keys
 const selectSegmentEntities = (state: RootState) => state.transcript.segments.entities
 export const selectSegmentIDs = createSelector(

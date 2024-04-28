@@ -16,6 +16,7 @@ export interface Snapshot {
 }
 
 export interface History {
+    enable: boolean,
     shouldTriggerUpdate: boolean,
     pointer: number,
     snapshots: Snapshot[],

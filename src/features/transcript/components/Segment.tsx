@@ -147,7 +147,7 @@ const Segment: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, cl
                 />
             </div>
         </SegmentLayout>
-        {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker $layer={$layer} groupID={id} />)}
+        {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id} />)}
     </>)
 }
 

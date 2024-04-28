@@ -44,6 +44,7 @@ const initialState: Workspace = {
         waveform_data: "",
     },
     history: {
+        enable: false,
         shouldTriggerUpdate: false,
         pointer: -1,
         snapshots: [],
@@ -60,6 +61,9 @@ export const workspaceSlice = createSlice({
         },
         saved: (state) => {
             state.manualSave = false
+        },
+        enableHistory: (state) => {
+            state.history.enable = true
         },
         historyPush: (state, action: PayloadAction<Snapshot>) => {
             state.history.shouldTriggerUpdate = false
@@ -114,10 +118,11 @@ export const workspaceSlice = createSlice({
     },
 })
 
-export const { save, saved, historyPush, historyUndo, historyRedo, resetShouldTriggerUpdate, setError } = workspaceSlice.actions
+export const { save, saved, enableHistory, historyPush, historyUndo, historyRedo, resetShouldTriggerUpdate, setError } = workspaceSlice.actions
 
 export const selectJobID = (state: RootState) => state.workspace.jobID
 export const selectManualSave = (state: RootState) => state.workspace.manualSave
+export const selectHistoryEnable = (state: RootState) => state.workspace.history.enable
 export const selectShouldTriggerUpdate = (state: RootState) => state.workspace.history.shouldTriggerUpdate
 export const selectJobStatus = (state: RootState) => state.workspace.loadingStatus
 export const selectDuration = (state: RootState) => state.workspace.duration

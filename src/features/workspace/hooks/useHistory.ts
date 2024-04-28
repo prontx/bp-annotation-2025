@@ -6,7 +6,7 @@ import { useSelector } from "react-redux"
 import { selectSegments, selectTranscriptStatus } from "../../transcript/redux/transcriptSlice"
 import { selectSpeakers } from "../../transcript/redux/transcriptSlice"
 import { selectGroups, selectStartEndSegment2Group } from "../../grouping/redux/groupingSlice"
-import { historyPush, resetShouldTriggerUpdate, selectShouldTriggerUpdate } from "../redux/workspaceSlice"
+import { historyPush, resetShouldTriggerUpdate, selectHistoryEnable, selectShouldTriggerUpdate } from "../redux/workspaceSlice"
 
 // types
 import { Snapshot } from "../types/History"
@@ -22,11 +22,15 @@ export const useHistory = (waveformRegionsRef: React.MutableRefObject<RegionsPlu
     const {startSegment2Group, endSegment2Group} = useSelector(selectStartEndSegment2Group)
     const status = useSelector(selectTranscriptStatus)
     const shouldTriggerUpdate = useSelector(selectShouldTriggerUpdate)
+    const historyEnable = useSelector(selectHistoryEnable)
 
     useUndoRedo(waveformRegionsRef)
 
     useEffect(() => {
         if (status === "loading" || status === "error" || status === "idle" || status === "")
+            return
+
+        if (!historyEnable)
             return
 
         if (shouldTriggerUpdate){ // do not add snapshot if history got loaded

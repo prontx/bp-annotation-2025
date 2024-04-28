@@ -21,6 +21,7 @@ import { useFetchJob } from "./features/workspace/hooks/useFetchJob"
 import { useFetchTranscript } from "./features/transcript/hooks/useFetchTranscript"
 import { useHistory } from "./features/workspace/hooks/useHistory"
 import { useSave } from "./features/workspace/hooks/useSave"
+import { useLoadGroups } from "./features/grouping/hooks/useLoadGroups"
 
 
 const BaseStyle = createGlobalStyle`
@@ -64,6 +65,7 @@ const SideBar = styled.aside`
 function App() {
     useFetchJob()
     useFetchTranscript()
+    useLoadGroups()
     const waveformRegionsRef = useRef<RegionsPlugin>(RegionsPlugin.create())
     useHistory(waveformRegionsRef)
     useSave()

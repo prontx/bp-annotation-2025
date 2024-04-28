@@ -27,7 +27,7 @@ export const useSave = () => {
     const [autoSave, setAutoSave] = useState(false)
     const manualSave = useSelector(selectManualSave)
 
-    const putTranscript = () => {
+    const putTranscript = async () => {
         // transform segments and groups from local representation to API JSON format
         const segmentArr = adaptSegments(segments)
         const groupArr = adaptGroups(groups, segments)

@@ -4,6 +4,8 @@ import { PayloadAction, createSelector, createSlice } from "@reduxjs/toolkit"
 import type { RootState } from "../../../redux/store"
 import type { GroupCreationPayload } from "../types/GroupActionPayload"
 import { GroupingState } from "../types/GroupingState"
+import { Lookup } from "../../../types/Lookup"
+import { Group } from "../types/Group"
 
 // utils
 import { v4 as uuid } from 'uuid'
@@ -32,6 +34,9 @@ export const groupingSlice = createSlice({
     name: "groups",
     initialState,
     reducers: {
+        loadGroups: (state, action: PayloadAction<Lookup<Group>>) => {
+            state.groups = action.payload
+        },
         createOrUpdateGroup: (state, action: PayloadAction<GroupCreationPayload>) => {
             // remove old records from {start|end}Segment2Group if {start|end}SegmentID changed
             if (action.payload.id){
@@ -146,7 +151,8 @@ export const groupingSlice = createSlice({
     },
 })
 
-export const { createOrUpdateGroup, deleteGroup, beginSelecting, chooseSegment, resetSelecting, startEditing, endEditing, setGroupingFromHistory } = groupingSlice.actions
+export const { loadGroups, createOrUpdateGroup, deleteGroup, beginSelecting, chooseSegment,
+            resetSelecting, startEditing, endEditing, setGroupingFromHistory } = groupingSlice.actions
 
 export const selectGroups = (state: RootState) => state.grouping.groups
 export const selectGroupIDs = (state: RootState) => state.grouping.groups.keys
