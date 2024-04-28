@@ -22,6 +22,7 @@ import { useFetchTranscript } from "./features/transcript/hooks/useFetchTranscri
 import { useHistory } from "./features/workspace/hooks/useHistory"
 import { useSave } from "./features/workspace/hooks/useSave"
 import { useLoadGroups } from "./features/grouping/hooks/useLoadGroups"
+import { useHotkeys } from "./features/workspace/hooks/useHotkeys"
 
 
 const BaseStyle = createGlobalStyle`
@@ -69,6 +70,7 @@ function App() {
     const waveformRegionsRef = useRef<RegionsPlugin>(RegionsPlugin.create())
     useHistory(waveformRegionsRef)
     useSave()
+    useHotkeys()
 
     return (<>
         <BaseStyle />

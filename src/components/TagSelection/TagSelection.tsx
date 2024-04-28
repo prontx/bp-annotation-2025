@@ -28,7 +28,14 @@ const TagSelection: FC<TagSelectionProps> = ({$layer, onSelection}) => {
 
     return (<>
         <Combobox aria-label="Metadata" openOnFocus>
-            <ComboboxInput $layer={$layer} value={term} onChange={e => setTerm(e.target.value)} selectOnClick placeholder="Prohledávat metadata" />
+            <ComboboxInput
+                $layer={$layer}
+                value={term}
+                onChange={e => setTerm(e.target.value)}
+                selectOnClick
+                placeholder="Prohledávat metadata"
+                onKeyDown={e => e.stopPropagation()}
+            />
                 <ComboboxPopover $layer={$layer}>
                     <ComboboxList $layer={$layer}>
                         <ComboboxOptionSet

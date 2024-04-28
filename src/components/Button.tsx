@@ -58,7 +58,7 @@ const StyledButton = styled.button<Omit<ButtonProps, "icon">>`${({theme, $layer,
 
 const Button: FC<ButtonProps> = ({icon, ...props}) => {
     return (
-        <StyledButton {...props}>
+        <StyledButton {...props} onKeyDown={e => e.preventDefault()}>
             {icon}
             {props.children}
         </StyledButton>

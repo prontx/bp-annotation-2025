@@ -207,11 +207,19 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
                 value={title}
                 placeholder="Zadat název"
                 onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={e => e.stopPropagation()}
             />
             <div className="body">
                 <StartEndSelection $layer={$layer+1} />
                 <StyledCheckbox $layer={$layer}>
-                    <input type="checkbox" id="checkbox" name="checkbox" checked={publish} onChange={e => setPublish(e.target.checked)}/>
+                    <input
+                        type="checkbox"
+                        id="checkbox"
+                        name="checkbox"
+                        checked={publish}
+                        onChange={e => setPublish(e.target.checked)}
+                        onKeyDown={e => e.stopPropagation()}
+                    />
                     <label htmlFor="checkbox">zveřejnit</label>
                 </StyledCheckbox>
                 <TagSet tags={tags} $layer={$layer+1} editable addHandler={handleTagAdd} deleteHandler={handleTagDelete} />

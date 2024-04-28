@@ -83,6 +83,7 @@ const SegmentText: FC<SegmentTextProps> = ({segmentID, ...props}) => {
             onFocus={() => dispatch(setLastFocusedSegment(segmentID))}
             onChange={handleChange}
             onBlur={() => updateGlobalState(text)}
+            onKeyDown={e => e.stopPropagation()}
             {...props}
         />
     )

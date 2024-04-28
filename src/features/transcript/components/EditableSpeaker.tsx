@@ -61,6 +61,7 @@ const EditableSpeaker: FC<EditableSpeakerProps> = ({speaker, $layer}) => {
     }
 
     const handleEnter: KeyboardEventHandler<HTMLInputElement> = (e) => {
+        e.stopPropagation()
         if (inputRef.current && e.key === "Enter")
             inputRef.current.blur()
     }

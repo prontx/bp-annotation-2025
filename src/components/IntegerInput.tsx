@@ -59,6 +59,7 @@ const IntegerInput: FC<IntegerInputProps> = ({value, min, max, updateGlobalValue
     }
 
     const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
+        e.stopPropagation()
         if (e.key === "ArrowUp" && (!max || value < max)){
             setStringValue(`${value+1}`)
             updateGlobalValue(value+1)

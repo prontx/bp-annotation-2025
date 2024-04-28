@@ -39,6 +39,9 @@ export const playbackSlice = createSlice({
         pause: (state) => {
             state.isPlaying = false
         },
+        playPause: (state) => {
+            state.isPlaying = !state.isPlaying
+        },
         playPauseSegment: (state, action: PayloadAction<{from:number, to:number, changedBy: string}>) => {
             state.currentTime.changedBy = action.payload.changedBy
             state.isPlaying = !state.isPlaying
@@ -72,7 +75,7 @@ export const playbackSlice = createSlice({
     },
 })
 
-export const { play, pause, playPauseSegment, setTime, skipBy, setSpeed, setVolume, zoomIn, zoomOut } = playbackSlice.actions
+export const { play, pause, playPause, playPauseSegment, setTime, skipBy, setSpeed, setVolume, zoomIn, zoomOut } = playbackSlice.actions
 
 export const selectIsPlaying = (state: RootState) => state.playback.isPlaying
 export const selectCurrentTimeValue = (state: RootState) => state.playback.currentTime.value
