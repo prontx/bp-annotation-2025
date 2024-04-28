@@ -62,18 +62,16 @@ export const deleteTag = (tagsRaw: GroupTag[], i:number, tag: string): GroupTag[
 }
 
 export const tagNotInTags = (tag: string[], tags: GroupTag[]|undefined): boolean => {
-    if (!tags){
-        return true
-    }
     let current = tags
     for (let i = 0; i < tag.length; i++){
-        const idx = current.findIndex(t => t.label === tag[i])
-        if (idx < 0){
+        if (!current)
             return true
-        }
-        if (!current[idx].subcategories)
-            break
-        current = current[idx].subcategories as GroupTag[]
+
+        const idx = current.findIndex(t => t.label === tag[i])
+        if (idx < 0)
+            return true
+        
+        current = current[idx].subcategories
     }
     return false
 }
