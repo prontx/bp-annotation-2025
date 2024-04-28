@@ -20,6 +20,7 @@ import { scrollableBaseStyles } from "./style/scrollableBaseStyles"
 import { useFetchJob } from "./features/workspace/hooks/useFetchJob"
 import { useFetchTranscript } from "./features/transcript/hooks/useFetchTranscript"
 import { useHistory } from "./features/workspace/hooks/useHistory"
+import { useSave } from "./features/workspace/hooks/useSave"
 
 
 const BaseStyle = createGlobalStyle`
@@ -65,6 +66,7 @@ function App() {
     useFetchTranscript()
     const waveformRegionsRef = useRef<RegionsPlugin>(RegionsPlugin.create())
     useHistory(waveformRegionsRef)
+    useSave()
 
     return (<>
         <BaseStyle />

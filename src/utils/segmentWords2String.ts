@@ -9,3 +9,11 @@ export const segmentWords2String = (words: Word[]|string|null): string => {
     }
     return text.trim()
 }
+
+export const string2SegmentWords = (text: string): Word[] => {
+    const tokens = text.trim().split(" ")
+    return tokens.map(token => ({
+        label: token,
+        text_tags: [],
+    }))
+}

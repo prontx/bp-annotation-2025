@@ -33,9 +33,9 @@ const initialState: Workspace = {
     title: "",
     duration: 0,
     loadingStatus: "idle",
-    errorMessage: "",
-    groupTags: null,
-    groupTagShortlist: null,
+    error: null,
+    groupTags: [],
+    groupTagShortlist: [],
     url: {
         thumbnail: "",
         waveform: "",
@@ -48,10 +48,7 @@ const initialState: Workspace = {
         pointer: -1,
         snapshots: [],
     },
-    saving: {
-        timestamp: Date.now(),
-        manualSave: false,
-    }
+    manualSave: false,
 }
 
 export const workspaceSlice = createSlice({
@@ -59,11 +56,10 @@ export const workspaceSlice = createSlice({
     initialState,
     reducers: {
         save: (state) => {
-            state.saving.manualSave = true
+            state.manualSave = true
         },
         saved: (state) => {
-            state.saving.manualSave = false
-            state.saving.timestamp = Date.now()
+            state.manualSave = false
         },
         historyPush: (state, action: PayloadAction<Snapshot>) => {
             state.history.shouldTriggerUpdate = false
@@ -95,6 +91,9 @@ export const workspaceSlice = createSlice({
         resetShouldTriggerUpdate: (state) => {
             state.history.shouldTriggerUpdate = false
         },
+        setError: (state, action: PayloadAction<APIErrorResponse>) => {
+            state.error = action.payload
+        },
     },
     extraReducers(builder) {
         builder.addCase(fetchJob.pending, (state, _) => {
@@ -105,19 +104,20 @@ export const workspaceSlice = createSlice({
             state.title = title
             state.duration = duration
             state.loadingStatus = "done"
-            state.groupTags = user_interface?.group_tags || null
-            state.groupTagShortlist = user_interface?.group_tag_shortlist || null
+            state.groupTags = user_interface?.group_tags || []
+            state.groupTagShortlist = user_interface?.group_tag_shortlist || []
             state.url = url
         }).addCase(fetchJob.rejected, (state, action) => {
             state.loadingStatus = "error"
-            state.errorMessage = (action.payload as APIErrorResponse).message
+            state.error = action.payload as APIErrorResponse
         })
     },
 })
 
-export const { save, saved, historyPush, historyUndo, historyRedo, resetShouldTriggerUpdate } = workspaceSlice.actions
+export const { save, saved, historyPush, historyUndo, historyRedo, resetShouldTriggerUpdate, setError } = workspaceSlice.actions
 
-export const selectSaving = (state: RootState) => state.workspace.saving
+export const selectJobID = (state: RootState) => state.workspace.jobID
+export const selectManualSave = (state: RootState) => state.workspace.manualSave
 export const selectHistory = (state: RootState) => {
     const {pointer, snapshots} = state.workspace.history
     if (pointer < 0)
@@ -127,7 +127,7 @@ export const selectHistory = (state: RootState) => {
 export const selectShouldTriggerUpdate = (state: RootState) => state.workspace.history.shouldTriggerUpdate
 export const selectJobStatus = (state: RootState) => state.workspace.loadingStatus
 export const selectDuration = (state: RootState) => state.workspace.duration
-export const selectGroupTags = (state: RootState) => state.workspace.groupTags || undefined
+export const selectGroupTags = (state: RootState) => state.workspace.groupTags
 export const selectTitle = (state: RootState) => state.workspace.title
 export const selectAudioURL = (state: RootState) => state.workspace.url.mp3
 export const selectWaveformURL = (state: RootState) => state.workspace.url.waveform_data

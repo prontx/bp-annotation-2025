@@ -12,7 +12,7 @@ import styled from "styled-components"
 
 // redux
 import { useSelector } from "react-redux"
-import { selectTitle } from "../redux/workspaceSlice"
+import { save, selectTitle } from "../redux/workspaceSlice"
 import { useAppDispatch } from "../../../redux/hooks"
 import { historyRedo, historyUndo } from "../redux/workspaceSlice"
 
@@ -62,13 +62,9 @@ const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({$layer, ...
     const title = useSelector(selectTitle)
     const dispatch = useAppDispatch()
 
-    const handleSave = () => {
-        // TODO
-    }
-
     const handleNavigateToCatalogue = () => {
         const URL = "https://data.jamap.cz/cards/show-all"
-        handleSave()
+        dispatch(save())
         window.location.href = URL
     }
 
@@ -82,7 +78,7 @@ const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({$layer, ...
                     <MenuButton $layer={$layer}>Soubor</MenuButton>
                     <MenuPopover $layer={$layer+1}>
                         <MenuItems $layer={$layer+1}>
-                            <MenuItem onSelect={handleSave}>Uložit</MenuItem> {/* Ctrl+S */}
+                            <MenuItem onSelect={() => dispatch(save())}>Uložit</MenuItem> {/* Ctrl+S */}
                             <MenuItem onSelect={() => {/*TODO*/}}>Hotovo</MenuItem>
                         </MenuItems>
                     </MenuPopover>
