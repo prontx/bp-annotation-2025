@@ -4,6 +4,7 @@ import { Segment, SegmentLoadingParams } from "./Segment";
 import { Lookup } from "../../../types/Lookup";
 import { GroupLoadingParams } from "../../grouping/types/Group";
 
+
 interface TranscriptCommon {
     id: string,
     status?: string,
@@ -11,12 +12,12 @@ interface TranscriptCommon {
     created_at: string,
     segment_tags?: SegmentTag[] | null,
     text_tags?: TextTag[] | null,
+    groups?: GroupLoadingParams[] | null,
 }
 
 export interface TranscriptLoadingParams extends TranscriptCommon {
     speaker_tags?: SpeakerTag[] | null,
     segments?: SegmentLoadingParams[] | null,
-    groups?: GroupLoadingParams[] | null,
 }
 
 export interface Transcript extends TranscriptCommon {

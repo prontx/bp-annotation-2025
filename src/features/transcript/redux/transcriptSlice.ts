@@ -12,16 +12,17 @@ import type { RootState } from '../../../redux/store'
 import type { SegmentUpdatePayload, SegmentCreationPayload } from '../types/SegmentActionPayload'
 import { Segment } from '../types/Segment'
 import { SpeakerTag } from '../types/Tag'
+import { Lookup } from '../../../types/Lookup'
 
 // utils
 import { v4 as uuid } from 'uuid'
 import axios from "../../../utils/getAxios"
-import { segmentWords2String } from '../../../utils/segmentWords2String'
 import { segment2RegionID } from '../utils/segment2RegionID'
+import { adaptSegments } from '../utils/adaptSegments'
+import { adaptSpeakers } from '../utils/adaptSpeakers'
 
 // testing
 import { JOB_ID } from '../../../testing/test.config'
-import { Lookup } from '../../../types/Lookup'
 
 
 export const fetchTranscript = createAsyncThunk("transcript", async (_, { rejectWithValue }) => {
@@ -48,6 +49,7 @@ const initialState: Transcript = {
         keys: [],
         entities: {},
     },
+    groups: [],
     region2ID: {},
 }
 
@@ -196,45 +198,9 @@ export const transcriptSlice = createSlice({
         builder.addCase(fetchTranscript.pending, (state, _) => {
             state.status = "loading"
         }).addCase(fetchTranscript.fulfilled, (state, action) => { // load segments from API response
-            const {segments, groups, speaker_tags, ...transcriptCommon} = action.payload
-            
-            const transformedSegments: Lookup<Segment> = {
-                keys: [],
-                entities: {},
-            }
-            segments?.forEach(segmentRaw => {
-                const segment: Segment = {
-                    ...segmentRaw,
-                    start: Number(segmentRaw.start.toFixed(1)),
-                    end: Number(segmentRaw.end.toFixed(1)),
-                    words: segmentWords2String(segmentRaw.words),
-                }
-                const id = uuid()
-                transformedSegments.keys.push(id)
-                transformedSegments.entities[id] = segment
-            })
-            
-            const transformedTags: SpeakerTag[] = []
-            let possible_keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
-            if (speaker_tags){
-                for (const [index, tag] of speaker_tags.entries()){
-                    if (!tag.label)
-                        continue
-    
-                    possible_keys = possible_keys.filter(k => k !== tag.id)
-                    
-                    if (!tag.color){
-                        tag.color = speakerColors[index % speakerColors.length]
-                    }
-                    transformedTags.push(tag)
-                }
-            }
-            transformedTags.push({
-                id: possible_keys[0],
-                label: "",
-                color: speakerColors[transformedTags.length % speakerColors.length],
-            })
-            
+            const {segments, speaker_tags, ...transcriptCommon} = action.payload
+            const transformedSegments = adaptSegments(segments)
+            const transformedTags = adaptSpeakers(speaker_tags)
             return {...state, status: "success", ...transcriptCommon, segments: transformedSegments, speakerTags: transformedTags}
         }).addCase(fetchTranscript.rejected, (state, _) => {
             state.status = "error"
