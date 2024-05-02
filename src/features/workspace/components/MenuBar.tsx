@@ -70,7 +70,7 @@ const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({$layer, ...
 
     return (
         <MenuBarContainer $layer={$layer} {...props}>
-            <img src="/src/assets/logo-spokendata-inverse.png" alt="SpokenData logo" />
+            <img src="./assets/logo-spokendata-inverse.png" alt="SpokenData logo" />
             <h1>{title}</h1>
             <MenuItemsContainer>
                 <Button $layer={$layer} onClick={handleNavigateToCatalogue}>Zpět do karty</Button>
