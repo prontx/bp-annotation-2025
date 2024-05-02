@@ -2,7 +2,7 @@
 import { speakerColors } from '../../../style/tagColors'
 
 // redux
-import { createAsyncThunk, createSelector } from '@reduxjs/toolkit'
+import { createSelector } from '@reduxjs/toolkit'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { selectParentStartEndSegmentIDs } from '../../grouping/redux/groupingSlice'
 
@@ -16,26 +16,13 @@ import { Lookup } from '../../../types/Lookup'
 
 // utils
 import { v4 as uuid } from 'uuid'
-import axios from "../../../utils/getAxios"
 import { segment2RegionID } from '../utils/segment2RegionID'
 import { adaptSegments } from '../utils/adaptSegments'
 import { adaptSpeakers } from '../utils/adaptSpeakers'
-
-// testing
-import { JOB_ID } from '../../../testing/test.config'
+import { createFetchAsyncThunk } from '../../../utils/createFetchAsyncThunk'
 
 
-export const fetchTranscript = createAsyncThunk("transcript", async (_, { rejectWithValue }) => {
-    try {
-        const { data } = await axios.get<TranscriptLoadingParams>(`${JOB_ID}/transcript`)
-        return data
-    } catch (err) {
-        if (!(err instanceof Error && "response" in err && err.response instanceof Object && "data" in err.response)){
-            throw {code: 400, message: "Unknown error."}
-        }
-        throw rejectWithValue(err.response.data);
-    }
-})
+export const fetchTranscript = createFetchAsyncThunk<TranscriptLoadingParams>("transcript", "transcript")
 
 const initialState: Transcript = {
     id: "",

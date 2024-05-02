@@ -1,11 +1,12 @@
 import axios from "axios"
-import { API_KEY } from "../testing/test.config";
 
+
+const TEST_API_KEY = ""
 
 const instance = axios.create({
-    baseURL: "https://api.spokendata.com/v2/jobs",
+    baseURL: TEST_API_KEY ? "https://api.spokendata.com/v2/jobs" : "https://spokendata.com/api/v2/jobs",
     headers: {
-        'X-API-KEY': API_KEY,
+        'X-API-KEY': TEST_API_KEY || undefined,
         'Accept': "application/json",
     }
 })

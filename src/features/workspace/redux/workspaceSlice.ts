@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit"
+import { PayloadAction, createSlice, createSelector } from "@reduxjs/toolkit"
 
 // types
 import { RootState } from "../../../redux/store"
@@ -8,25 +8,12 @@ import { Snapshot } from "../types/History"
 import { APIErrorResponse } from "../../../types/APIErrorResponse"
 
 // utils
-import axios from "../../../utils/getAxios"
-
-// testing // FIXME
-import { JOB_ID } from '../../../testing/test.config'
+import { createFetchAsyncThunk } from "../../../utils/createFetchAsyncThunk"
 
 
 const MAX_HISTORY_ITEMS = 20
 
-export const fetchJob = createAsyncThunk("job", async (_, { rejectWithValue }) => {
-    try {
-        const { data } = await axios.get<Job>(JOB_ID)
-        return data
-    } catch (err) {
-        if (!(err instanceof Error && "response" in err && err.response instanceof Object && "data" in err.response)){
-            throw {code: 400, message: "Unknown error."}
-        }
-        throw rejectWithValue(err.response.data);
-    }
-})
+export const fetchJob = createFetchAsyncThunk<Job>("job")
 
 const initialState: Workspace = {
     jobID: "",
@@ -110,7 +97,9 @@ export const workspaceSlice = createSlice({
             state.loadingStatus = "done"
             state.groupTags = user_interface?.group_tags || []
             state.groupTagShortlist = user_interface?.group_tag_shortlist || []
-            state.url = url
+            if (url){
+                state.url = url
+            }
         }).addCase(fetchJob.rejected, (state, action) => {
             state.loadingStatus = "error"
             state.error = action.payload as APIErrorResponse
