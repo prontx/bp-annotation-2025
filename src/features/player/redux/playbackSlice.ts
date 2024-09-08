@@ -29,7 +29,7 @@ const initialState: PlaybackState = {
     speed: 100,
     volume: 1.0,
     skipLength: 3,
-    zoom: 4
+    zoom: 100
 }
 
 export const playbackSlice = createSlice({
