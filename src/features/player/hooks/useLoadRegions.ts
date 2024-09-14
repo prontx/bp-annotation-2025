@@ -30,8 +30,8 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         if (!wavesurfer.current || !segments.keys) return;
         const regions = waveformRegionsRef.current.getRegions();
 
-        // Function to load only the visible segments
-        const loadVisibleRegions = () => {
+        // Function to load initial visible regions
+        const loadInitialRegions = () => {
             const visibleRangeStart = wavesurfer.current?.getCurrentTime() || 0;
             const containerWidth = wavesurfer.current?.getWrapper().clientWidth || 0;
             const duration = wavesurfer.current?.getDuration() || 0;
@@ -40,7 +40,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
 
             segments.keys.forEach((key) => {
                 const segment = segments.entities[key];
-                // Render segment only if it's visible and hasn't been rendered yet
+                // Render segment if it's visible and hasn't been rendered yet
                 if (
                     segment.start < visibleRangeEnd &&
                     segment.end > visibleRangeStart &&
@@ -61,26 +61,13 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
 
         // Load the initial visible regions
         if (regions.length === 0) {
-            loadVisibleRegions();
+            loadInitialRegions();
         }
 
-        // Handle scroll/zoom/seek to load more regions on demand
-        const handleInteraction = () => {
-            loadVisibleRegions();
-        };
-
-        // Subscribe to relevant WaveSurfer events
-        wavesurfer.current?.on("scroll", handleInteraction);
-        wavesurfer.current?.on("zoom", handleInteraction);
-        wavesurfer.current?.on("seek" as any, handleInteraction);
-
-        // Clean up event listeners on unmount
+        // Clean up when component is unmounted
         return () => {
-            if (wavesurfer.current) {
-                wavesurfer.current.un("scroll", handleInteraction);
-                wavesurfer.current.un("zoom", handleInteraction);
-                wavesurfer.current.un("seek" as any, handleInteraction);
-            }
+            waveformRegionsRef.current.clearRegions();
+            renderedSegments.current.clear();
         };
     }, [wavesurfer, segments, speakers, groups, speaker2color, dispatch, waveformRegionsRef]);
 };
