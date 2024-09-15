@@ -5,6 +5,7 @@ import Controls from "./features/player/components/Controls"
 import Waveform from "./features/player/components/Waveform"
 import MenuBar from "./features/workspace/components/MenuBar"
 import SegmentList from "./features/transcript/components/SegmentList"
+import SegmentListOptimized from "./features/transcript/components/SegmentListOptimized"
 import GroupList from "./features/grouping/components/GroupList"
 import SpeakerList from "./features/transcript/components/SpeakerList"
 import SpecialChars from "./features/transcript/components/SpecialChars"
@@ -82,7 +83,7 @@ function App() {
                 <SpeakerList waveformRegionsRef={waveformRegionsRef} $layer={1} />
                 <SpecialChars $layer={1} />
             </SideBar>
-            <SegmentList className="segments" waveformRegionsRef={waveformRegionsRef} $layer={1}/>
+            <SegmentListOptimized className="segments" waveformRegionsRef={waveformRegionsRef} $layer={1}/>
             <GroupList className="groups" $layer={1}>
             </GroupList>
         </AppLayout>

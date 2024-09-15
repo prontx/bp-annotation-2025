@@ -1,4 +1,6 @@
-import React, { FC, HTMLAttributes, useState } from "react"
+import React, { FC, HTMLAttributes, useRef, useState } from "react"
+import { VariableSizeList } from 'react-window';
+import AutoSizer from "react-virtualized-auto-sizer";
 
 // components
 import Segment from "./Segment"
@@ -34,10 +36,6 @@ const SegmentLayout = styled.section<Layer>` ${({theme, $layer}) => css`
     border-radius: 8px 8px 0 0;
     min-width: 100%;
 
-    display: grid;
-    gap: 2px 4px;
-    grid-template-columns: 1fr repeat(3, 32px);
-    grid-auto-rows: min-content;
     
 `}`
 
@@ -49,6 +47,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     const [selectionStartIdx, selectionEndIdx] = useSelectingStartEnd(segmentIDs, hoverID)
     const jobError = useSelector(selectJobError)
     const transcriptError = useSelector(selectTranscriptError)
+    
 
     if (jobError || transcriptError){
         return (
@@ -60,20 +59,35 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
 
     return (
         <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHoverID("")}>
-            {segmentIDs.map((id, i) =>
-                <Segment
-                    key={id}
-                    className={`
-                        ${selecting ? "selecting" : ""}
-                        ${(selectionStartIdx >= 0 && i >= selectionStartIdx && i <= selectionEndIdx) ? "ingroup" : ""}`}
-                    onClick={selecting ? () => dispatch(chooseSegment({id: id})) : undefined}
-                    onMouseOver={selecting ? () => setHoverID(id) : undefined}
-                    segmentID={id}
-                    $layer={$layer+1}
-                    regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
-                />
-            )}
-        </SegmentLayout> 
+            <AutoSizer>
+                {({ width, height }) => (
+                <VariableSizeList
+                    width={width}
+                    height={height}
+                    itemCount={segmentIDs.length}
+                    estimatedItemSize={81}
+                    itemSize={() => {return 81;}}
+                >
+                {({index, style}) => {
+                    const segmentID = segmentIDs[index];
+                    
+                    return (<Segment
+                        key={segmentID}
+                        className={`
+                            ${selecting ? "selecting" : ""}
+                            ${(selectionStartIdx >= 0 && index >= selectionStartIdx && index <= selectionEndIdx) ? "ingroup" : ""}`}
+                        onClick={selecting ? () => dispatch(chooseSegment({id: segmentID})) : undefined}
+                        onMouseOver={selecting ? () => setHoverID(segmentID) : undefined}
+                        segmentID={segmentID}
+                        $layer={$layer+1}
+                        regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
+                        style={style}
+                    />);
+                }}
+                </VariableSizeList>
+                )}
+            </AutoSizer>
+        </SegmentLayout>
     )
 }
 

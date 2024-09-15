@@ -1,11 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 // Redux
 import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
-import { createSegment, mapRegion2Segment, selectSegments, selectSpeakers, updateSegment } from "../../transcript/redux/transcriptSlice";
+import { createSegment, mapRegion2Segment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
 import { selectSpeaker2Color } from "../../transcript/redux/transcriptSlice";
-import { selectGroups } from "../../grouping/redux/groupingSlice";
 
 // WaveSurfer
 import WaveSurfer from "wavesurfer.js";
@@ -19,57 +18,82 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                         waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
     const dispatch = useAppDispatch();
     const segments = useSelector(selectSegments);
-    const speakers = useSelector(selectSpeakers);
-    const groups = useSelector(selectGroups);
     const speaker2color = useSelector(selectSpeaker2Color);
     
-    // Keep track of already rendered segments to avoid duplicates
+    // Keep track of already rendered segments
     const renderedSegments = useRef<Set<string>>(new Set());
+
+    // Function to load visible regions
+    const loadVisibleRegions = useCallback(() => {
+        const visibleRangeStart = wavesurfer.current?.getCurrentTime() || 0;
+        const containerWidth = wavesurfer.current?.getWrapper().clientWidth || 0;
+        const duration = wavesurfer.current?.getDuration() || 0;
+        const pixelsPerSecond = containerWidth / duration;
+        const visibleRangeEnd = visibleRangeStart + containerWidth / pixelsPerSecond;
+
+        segments.keys.forEach((key) => {
+            const segment = segments.entities[key];
+            // Render segment if it's visible and hasn't been rendered yet
+            if (
+                segment.start < visibleRangeEnd &&
+                segment.end > visibleRangeStart &&
+                !renderedSegments.current.has(key)
+            ) {
+                const region = waveformRegionsRef.current.addRegion({
+                    start: segment.start,
+                    end: segment.end,
+                    drag: false,
+                    minLength: 0.1,
+                    color: rgba(speaker2color[segment.speaker] || "#c6c6c6", 0.4),
+                });
+                dispatch(mapRegion2Segment({ segmentID: key, regionID: region.id }));
+                renderedSegments.current.add(key); // Mark segment as rendered
+            }
+        });
+    }, [wavesurfer, segments, speaker2color, dispatch, waveformRegionsRef]);
+
+    // Function to handle click and load segments at the clicked position
+    const handleClick = () => {
+        const currentTime = wavesurfer.current?.getCurrentTime() || 0;
+        segments.keys.forEach((key) => {
+            const segment = segments.entities[key];
+            if (segment.start <= currentTime && segment.end >= currentTime && !renderedSegments.current.has(key)) {
+                // Load segment if it is clicked
+                const region = waveformRegionsRef.current.addRegion({
+                    start: segment.start,
+                    end: segment.end,
+                    drag: false,
+                    minLength: 0.1,
+                    color: rgba(speaker2color[segment.speaker] || "#c6c6c6", 0.4),
+                });
+                dispatch(mapRegion2Segment({ segmentID: key, regionID: region.id }));
+                renderedSegments.current.add(key); // Mark segment as rendered
+            }
+        });
+    };
 
     useEffect(() => {
         if (!wavesurfer.current || !segments.keys) return;
-        const regions = waveformRegionsRef.current.getRegions();
 
-        // Function to load initial visible regions
-        const loadInitialRegions = () => {
-            const visibleRangeStart = wavesurfer.current?.getCurrentTime() || 0;
-            const containerWidth = wavesurfer.current?.getWrapper().clientWidth || 0;
-            const duration = wavesurfer.current?.getDuration() || 0;
-            const pixelsPerSecond = containerWidth / duration;
-            const visibleRangeEnd = visibleRangeStart + containerWidth / pixelsPerSecond;
+        // Load visible regions initially
+        loadVisibleRegions();
 
-            segments.keys.forEach((key) => {
-                const segment = segments.entities[key];
-                // Render segment if it's visible and hasn't been rendered yet
-                if (
-                    segment.start < visibleRangeEnd &&
-                    segment.end > visibleRangeStart &&
-                    !renderedSegments.current.has(key)
-                ) {
-                    const region = waveformRegionsRef.current.addRegion({
-                        start: segment.start,
-                        end: segment.end,
-                        drag: false,
-                        minLength: 0.1,
-                        color: rgba(speaker2color[segment.speaker] || "#c6c6c6", 0.4),
-                    });
-                    dispatch(mapRegion2Segment({ segmentID: key, regionID: region.id }));
-                    renderedSegments.current.add(key); // Mark segment as rendered
-                }
-            });
-        };
+        // Subscribe to relevant WaveSurfer events
+        wavesurfer.current?.on("scroll", loadVisibleRegions);
+        wavesurfer.current?.on("zoom", loadVisibleRegions);
+        wavesurfer.current?.on("seek" as any, handleClick);
 
-        // Load the initial visible regions
-        if (regions.length === 0) {
-            loadInitialRegions();
-        }
-
-        // Clean up when component is unmounted
+        // Clean up event listeners on unmount
         return () => {
-            waveformRegionsRef.current.clearRegions();
-            renderedSegments.current.clear();
+            if (wavesurfer.current) {
+                wavesurfer.current.un("scroll", loadVisibleRegions);
+                wavesurfer.current.un("zoom", loadVisibleRegions);
+                wavesurfer.current.un("seek" as any, handleClick);
+            }
         };
-    }, [wavesurfer, segments, speakers, groups, speaker2color, dispatch, waveformRegionsRef]);
+    }, [wavesurfer, segments, dispatch, waveformRegionsRef, loadVisibleRegions, handleClick]);
+
+    return null;
 };
 
 export default useLoadRegions;
