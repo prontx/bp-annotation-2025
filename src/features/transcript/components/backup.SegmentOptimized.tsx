@@ -34,7 +34,7 @@ import { useScrollToSegment } from "../hooks/useScrollToSegment";
 interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
     segmentID: string,
     regionsReloadCallback: () => void,
-    onResize: () => void,
+    layoutRef: any,
 }
 
 const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
@@ -43,7 +43,6 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     padding: 4px;
     border-radius: 4px;
     background: ${theme.layers[$layer].background};
-    height: fit-content !important;
     
     &.selecting:hover {
         cursor: pointer;
@@ -69,7 +68,7 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     }
 `}`
 
-const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, onResize, className, ...props}) => {
+const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, className, layoutRef, ...props}) => {
     const data = useSelector((state: RootState) => selectSegmentByID(state)(segmentID))
     const dispatch = useAppDispatch()
     const [isPlaying, setIsPlaying] = useState(false)
@@ -82,21 +81,6 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
     const containerRef = useRef<HTMLDivElement>(null)
 
     const isCursorIn = useScrollToSegment(containerRef, segmentID)
-
-    useEffect(() => {
-        const container = containerRef.current;
-        if(!container) return;
-
-        const observer = new ResizeObserver(() => {
-            onResize && onResize();
-        });
-
-        observer.observe(container);
-
-        return () => {
-            observer.disconnect();
-        }
-    }, [])
 
     useEffect(() => {
         if (!isAudioPlaying && isPlaying)
@@ -138,7 +122,7 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                 ${className}
                 ${(segmentID === startSegmentID || segmentID === endSegmentID) ? "selected" : ""}`}
             {...props}
-            ref={containerRef}
+            ref={layoutRef}
             onClick={handleSegmentClick}
         >
             <div style={{display: "flex", gap: "8px", alignItems: "center"}}>

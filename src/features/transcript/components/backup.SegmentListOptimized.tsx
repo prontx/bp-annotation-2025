@@ -1,5 +1,7 @@
 import React, { FC, HTMLAttributes, useRef, useState } from "react"
-import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from "react-virtualized"
+import { VariableSizeList } from 'react-window';
+import AutoSizer from "react-virtualized-auto-sizer";
+
 // components
 import SegmentOptimized from "./SegmentOptimized"
 import Segment from "./Segment"
@@ -47,15 +49,11 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     const jobError = useSelector(selectJobError)
     const transcriptError = useSelector(selectTranscriptError)
     const listRef = React.useRef({});
-    const cellCache = React.useRef(
-        new CellMeasurerCache({
-            fixedWidth: true,
-            fixedHeight: false,
-            minHeight: 81,
-            defaultHeight: 81,
-        })
-      );
+    const rowHeights = React.useRef({});
+    const GAP_SIZE = 20
 
+    const visibleChildren = new Array()
+    
 
     if (jobError || transcriptError){
         return (
@@ -65,58 +63,60 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
         )
     }
 
-    const updateListLayout = () => {
-        if(!cellCache.current || !listRef.current) {
-            return;
-        }
-
-        cellCache.current.clearAll();
-        listRef.current.forceUpdateGrid();
+    const getRowHeight = (index) => {
+        return rowHeights.current[index] + 20 || 81;
     }
+
+    const setRowHeight = (index, height) => {
+        listRef.current.resetAfterIndex(0);
+        rowHeights.current = {...rowHeights.current, [index]: height}
+    }
+
+    const Row = ({ index, style }) => {
+        const rowRef = React.useRef({});
+        const segmentID = segmentIDs[index];
+
+        React.useEffect(() => {
+            if(rowRef.current) {
+                setRowHeight(index, rowRef.current.clientHeight);
+                console.log(rowRef.current.clientHeight)
+            }
+        }, [rowRef])
+        
+        return (<SegmentOptimized
+                layoutRef={rowRef}
+                key={segmentID}
+                className={`
+                    ${selecting ? "selecting" : ""}
+                    ${(selectionStartIdx >= 0 && index >= selectionStartIdx && index <= selectionEndIdx) ? "ingroup" : ""}`}
+                onClick={selecting ? () => dispatch(chooseSegment({id: segmentID})) : undefined}
+                onMouseOver={selecting ? () => setHoverID(segmentID) : undefined}
+                segmentID={segmentID}
+                $layer={$layer+1}
+                regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
+                //style={style}
+                style={{
+                    ...style,
+                    top: style.top + GAP_SIZE,
+                    height: style.height - GAP_SIZE
+                }}
+            />);
+    };
 
     return (
         <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHoverID("")}>
             <AutoSizer>
                 {({ width, height }) => (
-                  <List
+                <VariableSizeList
                     ref={listRef}
                     width={width}
                     height={height}
-                    rowHeight={cellCache.current.rowHeight}
-                    deferredMeasurementCache={cellCache.current}
-                    rowCount={segmentIDs.length}
-                    rowRenderer={({ key, index, style, parent }) => {
-                        const segmentID = segmentIDs[index];
-                    
-                        return (
-                            <CellMeasurer
-                              key={key}
-                              cache={cellCache.current}
-                              parent={parent}
-                              columnIndex={0}
-                              rowIndex={index}
-                            >
-                              <SegmentOptimized
-                                  key={segmentID}
-                                  className={`
-                                      ${selecting ? "selecting" : ""}
-                                      ${(selectionStartIdx >= 0 && index >= selectionStartIdx && index <= selectionEndIdx) ? "ingroup" : ""}`}
-                                  onClick={selecting ? () => dispatch(chooseSegment({id: segmentID})) : undefined}
-                                  onMouseOver={selecting ? () => setHoverID(segmentID) : undefined}
-                                  segmentID={segmentID}
-                                  $layer={$layer+1}
-                                  regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
-                                  style={{
-                                    ...style,
-                                  }}
-                                  onResize={() => {
-                                    updateListLayout();
-                                  }}
-                              />
-                            </CellMeasurer>
-                        );
-                    }}
-                  />
+                    itemCount={segmentIDs.length}
+                    //estimatedItemSize={81 + GAP_SIZE}
+                    itemSize={getRowHeight}
+                >
+                    {Row}
+                </VariableSizeList>
                 )}
             </AutoSizer>
         </SegmentLayout>
