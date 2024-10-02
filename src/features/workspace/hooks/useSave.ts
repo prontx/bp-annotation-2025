@@ -39,6 +39,7 @@ export const useSave = () => {
 
         // make request
         try {
+            console.log("111 " + JSON.stringify(transcript))
             axios.put(`/${jobID}/transcript`, JSON.stringify(transcript))
         } catch (err){
             const {code, message} = err as APIErrorResponse

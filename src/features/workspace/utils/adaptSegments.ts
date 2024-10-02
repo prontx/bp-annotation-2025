@@ -7,6 +7,7 @@ export const adaptSegments = (segments: Lookup<Segment>): SegmentLoadingParams[]
     let segmentArr: SegmentLoadingParams[] = []
     segments.keys.forEach(key => {
         const localSegment = segments.entities[key] 
+        console.log("18 " + localSegment.words)
         segmentArr.push({
             ...localSegment,
             words: string2SegmentWords(localSegment.words),
