@@ -10,6 +10,9 @@ import { APIErrorResponse } from "../../../types/APIErrorResponse"
 // utils
 import { createFetchAsyncThunk } from "../../../utils/createFetchAsyncThunk"
 
+//notifications
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const MAX_HISTORY_ITEMS = 20
 
@@ -45,6 +48,7 @@ export const workspaceSlice = createSlice({
     reducers: {
         save: (state) => {
             state.manualSave = true
+            toast("Uloženo !");
         },
         saved: (state) => {
             state.manualSave = false

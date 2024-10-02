@@ -25,6 +25,10 @@ import { useSave } from "./features/workspace/hooks/useSave"
 import { useLoadGroups } from "./features/grouping/hooks/useLoadGroups"
 import { useHotkeys } from "./features/workspace/hooks/useHotkeys"
 
+//notifications
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const BaseStyle = createGlobalStyle`
     body {
@@ -86,6 +90,7 @@ function App() {
             <SegmentListOptimized className="segments" waveformRegionsRef={waveformRegionsRef} $layer={1}/>
             <GroupList className="groups" $layer={1}>
             </GroupList>
+            <ToastContainer />
         </AppLayout>
     </>)
 }
