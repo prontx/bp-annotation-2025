@@ -28,7 +28,7 @@ export const minimapOptions : MinimapPluginOptions = {
 }
 
 export const timelineOptions = {
-    height: 16,
+    height: 5,
     style: {
         color: '#c6c6c6'
     },

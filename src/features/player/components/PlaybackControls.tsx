@@ -30,7 +30,7 @@ const PlaybackControlsContainer = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
-
+    
     .currentTime {
         width: 7ch;
         margin-left: 8px;

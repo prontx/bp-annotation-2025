@@ -14,6 +14,7 @@ const ControlsContainer = styled.div<Layer>`
     justify-content: space-around;
     height: 48px;
     padding: 8px 16px;
+    padding-top: 16px;
     border-radius: 0 0 8px 8px;
     background: ${({theme, $layer}) => theme.layers[$layer].background};
 `
