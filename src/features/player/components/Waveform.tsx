@@ -19,6 +19,9 @@ import styled, { css } from "styled-components"
 // types
 import type Layer from "../../../types/Layer"
 
+import { useSelector } from "react-redux";
+import { selectJobStatus } from "../../workspace/redux/workspaceSlice";
+import { ClipLoader, CircleLoader, BarLoader, ScaleLoader } from 'react-spinners';
 
 interface WaveformProps extends React.HTMLAttributes<HTMLDivElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
@@ -63,6 +66,16 @@ const Waveform : FC<WaveformProps> = ({$layer, waveformRegionsRef, ...props}) =>
     useSetSpeed(wavesurfer)
     useSetVolume(wavesurfer)
     useSetZoom(wavesurfer)
+
+    const jobStatus = useSelector(selectJobStatus)
+
+    if (jobStatus === "loading") {
+            return (
+                <div>
+                    <ClipLoader color={"#36d7b7"} loading={true} size={150} />
+                </div>
+            )  
+    }  
 
     return <WaveformContainer $layer={$layer} {...props}>
         <MinimapContainer $layer={$layer}>

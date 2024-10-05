@@ -22,6 +22,10 @@ import RegionsPlugin from "wavesurfer.js/plugins/regions"
 // hooks
 import { useSelectingStartEnd } from "../../grouping/hooks/useSelectingStartEnd";
 
+import { selectJobStatus } from "../../workspace/redux/workspaceSlice";
+
+import { ClipLoader, CircleLoader, BarLoader, ScaleLoader } from 'react-spinners';
+
 
 interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
@@ -47,6 +51,9 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     const jobError = useSelector(selectJobError)
     const transcriptError = useSelector(selectTranscriptError)
     const listRef = React.useRef({});
+
+    const jobStatus = useSelector(selectJobStatus)  
+
     const cellCache = React.useRef(
         new CellMeasurerCache({
             fixedWidth: true,
@@ -73,6 +80,14 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
         cellCache.current.clearAll();
         listRef.current.forceUpdateGrid();
     }
+
+     if (jobStatus === "loading") {
+            return (
+                <div>
+                    <ClipLoader color={"#36d7b7"} loading={true} size={150} />
+                </div>
+            )  
+    }  
 
     return (
         <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHoverID("")}>
