@@ -44,6 +44,10 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     border-radius: 4px;
     background: ${theme.layers[$layer].background};
     height: fit-content !important;
+
+    max-width: 91%; 
+    width: fit-content; 
+    margin-left:1%;
     
     &.selecting:hover {
         cursor: pointer;
@@ -132,7 +136,8 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
     if (!data)
         return null
     
-    return (<SegmentLayout
+    return (<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <SegmentLayout
             $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
             className={`
                 ${className}
@@ -167,7 +172,11 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                     onClick={e => e.stopPropagation()}
                 />
             </div>
-        </SegmentLayout>)
+        </SegmentLayout>
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginLeft: "auto"}}>
+            {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id} />)}
+        </div>
+        </div>)
 }
 
 export default SegmentOptimized
