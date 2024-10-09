@@ -136,7 +136,7 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
     if (!data)
         return null
     
-    return (<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    return (<>
     <SegmentLayout
             $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
             className={`
@@ -176,7 +176,7 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
         <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginLeft: "auto"}}>
             {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id} />)}
         </div>
-        </div>)
+        </>)
 }
 
 export default SegmentOptimized
