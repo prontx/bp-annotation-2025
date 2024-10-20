@@ -64,7 +64,9 @@ export const transcriptSlice = createSlice({
             state.region2ID[action.payload.regionID] = id
         },
         updateSegment: (state, action: PayloadAction<SegmentUpdatePayload>) => {
+            
             let {type, key, change} = action.payload
+            
             let segment = null
 
             // update entity
@@ -75,6 +77,9 @@ export const transcriptSlice = createSlice({
                 segment = state.segments.entities[key]
                 state.segments.entities[key] = {...segment, ...change}
             }
+
+            console.log("segment: " + JSON.stringify(segment))
+            console.log("entities: " + JSON.stringify(state.segments.entities[key]))
 
              // ensure keys stay ordered on start change
              if (change.start){
@@ -129,7 +134,8 @@ export const transcriptSlice = createSlice({
             state.lastFocusedSegment = action.payload
         },
         setSegmentsFromHistory: (state, action: PayloadAction<Lookup<Segment>>) => {
-            // load data from history
+            // This doesnt get called!
+            
             state.segments.entities = action.payload.entities
             state.segments.keys = action.payload.keys
             
