@@ -10,7 +10,6 @@ export const adaptSegments = (segments: SegmentLoadingParams[]|null|undefined) =
         entities: {},
     }
     segments?.forEach(segmentRaw => {
-        console.log("14 " + segmentRaw.words)
         const segment: Segment = {
             ...segmentRaw,
             start: Number(segmentRaw.start.toFixed(1)),

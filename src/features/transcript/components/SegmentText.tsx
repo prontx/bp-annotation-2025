@@ -48,7 +48,6 @@ const SegmentText: FC<SegmentTextProps> = ({segmentID, ...props}) => {
     const textAreaRef: MutableRefObject<HTMLTextAreaElement|null> = useRef(null)
     const dispatch = useAppDispatch()
     const words = useSelector((state: RootState) => selectSegmentWords(state)(segmentID))
-    console.log("4: " + words)
     const [text, setText] = useState(words)
 
     useEffect(() => { // set initial textarea height based on content
@@ -58,7 +57,6 @@ const SegmentText: FC<SegmentTextProps> = ({segmentID, ...props}) => {
 
     useEffect(() => {
         setText(words)
-        console.log("6: " + words)
     }, [words])
 
     useInsertSpecialChars(textAreaRef, segmentID, text, setText)
