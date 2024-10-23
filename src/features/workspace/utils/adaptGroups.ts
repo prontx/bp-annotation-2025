@@ -20,9 +20,10 @@ export const adaptGroups = (groups: Lookup<Group>, segments: Lookup<Segment>): G
     let groupArr: GroupLoadingParams[] = []
     for (const key of groups.keys){
         const {parentID} = groups.entities[key]
-        // if (!parentID){ TODO! should it be here?
-            // groupArr.push(adaptGroup(key, groups, segments))
-        // }
+        if (!parentID){ 
+            groupArr.push(adaptGroup(key, groups, segments))
+            console.log(groupArr)
+        }
         // this was causing an undefined var error
     }
     return groupArr

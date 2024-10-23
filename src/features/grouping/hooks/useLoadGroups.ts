@@ -17,6 +17,8 @@ export const useLoadGroups = () => {
         if (status !== "success")
             return
 
+        console.log("Loading groups" + JSON.stringify(groups))
+
         const trasnformedData = adaptGroups(groups, segments)
         dispatch(loadGroups(trasnformedData))
         dispatch(enableHistory())

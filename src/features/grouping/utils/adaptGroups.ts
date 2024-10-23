@@ -56,5 +56,8 @@ export const adaptGroups = (groups: GroupLoadingParams[]|null|undefined, segment
         addGroupToSegmentMapping(startSegment2Group, group.startSegmentID, groupID)
         addGroupToSegmentMapping(endSegment2Group, group.endSegmentID, groupID)
     }
+
+    console.log("Groups have been changed: " + JSON.stringify(transformedGroups))
+
     return {transformedGroups: transformedGroups, startSegment2Group: startSegment2Group, endSegment2Group: endSegment2Group}
 }
