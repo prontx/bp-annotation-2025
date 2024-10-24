@@ -57,6 +57,11 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         
         // sync time from player to store
         const unsubscribe = wavesurfer.current.on('timeupdate', (currentTime) => {
+            console.log('time!!')
+            // this here is run whenever we click somewhere in the minimap.
+            // Save the current time to localStorage
+            localStorage.setItem('lastTimestamp', currentTime.toString());
+
             dispatch(setTime({value: currentTime, changedBy: "wavesurfer"}))
         })
 
@@ -64,6 +69,15 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         wavesurfer.current.once('ready', () => {
             wavesurfer.current?.zoom(zoom)
             waveformRegionsRef.current.enableDragSelection({})
+
+            // Load the last timestamp from localStorage
+            const lastTimestamp = localStorage.getItem('lastTimestamp')
+    
+            if (lastTimestamp) {
+                const time = parseFloat(lastTimestamp);
+                wavesurfer.current?.setTime(time); // Set the time in WaveSurfer
+                dispatch(setTime({ value: time, changedBy: "load" })); // Update Redux store
+            }
         })
             
         return unsubscribe
