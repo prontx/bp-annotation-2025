@@ -2,7 +2,7 @@ import React, { FC, HTMLAttributes, useRef, useState } from "react"
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from "react-virtualized"
 // components
 import SegmentOptimized from "./SegmentOptimized"
-import Segment from "./Segment"
+// import Segment from "./Segment"
 
 // styles
 import styled, { css } from "styled-components"
