@@ -4,17 +4,23 @@ import { Segment } from "../../transcript/types/Segment"
 
 
 const adaptGroup = (groupID: string, groups: Lookup<Group>, segments: Lookup<Segment>): GroupLoadingParams => {
-    const {id, startSegmentID, endSegmentID, parentID, childrenIDs, ...commonWithGroupLoadingParams} = groups.entities[groupID]
+    const { id, startSegmentID, endSegmentID, parentID, childrenIDs, ...commonWithGroupLoadingParams } = groups.entities[groupID];
+    
     let childrenArr: GroupLoadingParams[] = childrenIDs.map(childID => 
         adaptGroup(childID, groups, segments)
-    )
+    );
+
+    const startSegment = segments.entities[startSegmentID];
+    const endSegment = segments.entities[endSegmentID];
+
     return {
         ...commonWithGroupLoadingParams,
-        start: segments.entities[startSegmentID].start,
-        end: segments.entities[endSegmentID].end,
+        start: startSegment?.start || 0, // Provide a default value (e.g., 0) if undefined
+        end: endSegment?.end || 0,       // Provide a default value (e.g., 0) if undefined
         children: childrenArr,
-    }
-}
+    };
+};
+
 
 export const adaptGroups = (groups: Lookup<Group>, segments: Lookup<Segment>): GroupLoadingParams[] => {
     let groupArr: GroupLoadingParams[] = []
