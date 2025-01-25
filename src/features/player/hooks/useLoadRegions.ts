@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback } from "react";
 // Redux
 import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
-import { createSegment, mapRegion2Segment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
+import { mapRegion2Segment, selectSegments} from "../../transcript/redux/transcriptSlice";
 import { selectSpeaker2Color } from "../../transcript/redux/transcriptSlice";
 
 // WaveSurfer

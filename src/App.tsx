@@ -4,7 +4,7 @@ import { useRef } from "react"
 import Controls from "./features/player/components/Controls"
 import Waveform from "./features/player/components/Waveform"
 import MenuBar from "./features/workspace/components/MenuBar"
-import SegmentList from "./features/transcript/components/SegmentList"
+// import SegmentList from "./features/transcript/components/SegmentList"
 import SegmentListOptimized from "./features/transcript/components/SegmentListOptimized"
 import GroupList from "./features/grouping/components/GroupList"
 import SpeakerList from "./features/transcript/components/SpeakerList"
@@ -26,7 +26,7 @@ import { useLoadGroups } from "./features/grouping/hooks/useLoadGroups"
 import { useHotkeys } from "./features/workspace/hooks/useHotkeys"
 
 //notifications
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 

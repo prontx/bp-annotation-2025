@@ -11,7 +11,7 @@ import { APIErrorResponse } from "../../../types/APIErrorResponse"
 import { createFetchAsyncThunk } from "../../../utils/createFetchAsyncThunk"
 
 //notifications
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const MAX_HISTORY_ITEMS = 20

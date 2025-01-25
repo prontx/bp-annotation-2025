@@ -1,4 +1,4 @@
-import React, { FC, HTMLAttributes, useRef, useState } from "react"
+import React, { FC, HTMLAttributes, useState } from "react"
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from "react-virtualized"
 // components
 import SegmentOptimized from "./SegmentOptimized"
@@ -24,7 +24,7 @@ import { useSelectingStartEnd } from "../../grouping/hooks/useSelectingStartEnd"
 
 import { selectJobStatus } from "../../workspace/redux/workspaceSlice";
 
-import { ClipLoader, CircleLoader, BarLoader, ScaleLoader } from 'react-spinners';
+import { ClipLoader } from 'react-spinners';
 
 
 interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
@@ -50,7 +50,10 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     const [selectionStartIdx, selectionEndIdx] = useSelectingStartEnd(segmentIDs, hoverID)
     const jobError = useSelector(selectJobError)
     const transcriptError = useSelector(selectTranscriptError)
-    const listRef = React.useRef({});
+    // const listRef = React.useRef({});
+    // Use a properly typed ref for the List component
+    const listRef = React.useRef<List | null>(null);
+
 
     const jobStatus = useSelector(selectJobStatus)  
 

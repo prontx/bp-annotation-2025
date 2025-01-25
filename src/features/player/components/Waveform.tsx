@@ -21,7 +21,7 @@ import type Layer from "../../../types/Layer"
 
 import { useSelector } from "react-redux";
 import { selectJobStatus } from "../../workspace/redux/workspaceSlice";
-import { ClipLoader, CircleLoader, BarLoader, ScaleLoader } from 'react-spinners';
+import { ClipLoader } from 'react-spinners';
 
 interface WaveformProps extends React.HTMLAttributes<HTMLDivElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>

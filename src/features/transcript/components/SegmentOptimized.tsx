@@ -21,7 +21,7 @@ import { selectGroupsByStartSegment, selectIsEditing, selectStartEndSegmentIDs, 
 
 // types
 import type Layer from "../../../types/Layer"
-import type { Segment } from "../types/Segment";
+// import type { Segment } from "../types/Segment";
 import type { RootState } from "../../../redux/store";
 
 // utils
