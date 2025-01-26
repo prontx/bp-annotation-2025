@@ -65,10 +65,19 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             dispatch(setTime({value: currentTime, changedBy: "wavesurfer"}))
         })
 
+         // Listen for region border movement
+        waveformRegionsRef.current.on('region-updated', (region) => {
+            console.log("aaaa");
+            console.log(`Region updated: ID=${region.id}, start=${region.start}, end=${region.end}`)
+        })
+
         // set initial zoom
         wavesurfer.current.once('ready', () => {
             wavesurfer.current?.zoom(zoom)
-            waveformRegionsRef.current.enableDragSelection({})
+            waveformRegionsRef.current.enableDragSelection({
+                drag: true, // Allow dragging
+                resize: true, // Allow resizing
+            })
 
             // Load the last timestamp from localStorage
             const lastTimestamp = localStorage.getItem('lastTimestamp')

@@ -3,16 +3,18 @@ import { useEffect, useRef, useCallback } from "react";
 // Redux
 import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
-import { mapRegion2Segment, selectSegments} from "../../transcript/redux/transcriptSlice";
+import { mapRegion2Segment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
 import { selectSpeaker2Color } from "../../transcript/redux/transcriptSlice";
 
 // WaveSurfer
 import WaveSurfer from "wavesurfer.js";
-import RegionsPlugin from "wavesurfer.js/plugins/regions";
+import RegionsPlugin, {Region} from "wavesurfer.js/plugins/regions";
 
 // Utils
 // @ts-ignore
 import { rgba } from "@carbon/colors";
+
+import type { RootState } from "../../../redux/store"
 
 const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>, 
                         waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
@@ -22,6 +24,10 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     
     // Keep track of already rendered segments
     const renderedSegments = useRef<Set<string>>(new Set());
+
+     // Select `region2ID` from Redux state
+     const region2ID = useSelector((state: RootState) => state.transcript.region2ID);
+
 
     // Function to load visible regions
     const loadVisibleRegions = useCallback(() => {
@@ -52,6 +58,43 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         });
     }, [wavesurfer, segments, speaker2color, dispatch, waveformRegionsRef]);
 
+     // Function to handle region resize and dispatch updates to Redux
+     const handleResize = useCallback(
+        (region: Region) => {
+            if (!region || !region.id) {
+                console.warn("Region is undefined or missing an ID:", region);
+                return;
+            }
+    
+            // Retrieve the segment ID from Redux
+            const segmentID = region2ID[region.id];
+            if (!segmentID) {
+                console.error(`No segment ID found for region ID: ${region.id}`);
+                return;
+            }
+    
+            // Dispatch the updateSegment action
+            dispatch(
+                updateSegment({
+                    type: "region",
+                    key: segmentID,
+                    change: {
+                        start: region.start,
+                        end: region.end,
+                    },
+                })
+            );
+    
+            console.log(
+                `Segment updated: ID=${segmentID}, Start=${region.start}, End=${region.end}`
+            );
+        },
+        [region2ID, dispatch]
+    );
+    
+    
+    
+
     // Function to handle click and load segments at the clicked position
     const handleClick = () => {
         const currentTime = wavesurfer.current?.getCurrentTime() || 0;
@@ -73,25 +116,46 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     };
 
     useEffect(() => {
-        if (!wavesurfer.current || !segments.keys) return;
-
-        // Load visible regions initially
+        if (!wavesurfer.current || !segments.keys) return
+        
+        // Initial region load
         loadVisibleRegions();
-
-        // Subscribe to relevant WaveSurfer events
-        wavesurfer.current?.on("scroll", loadVisibleRegions);
-        wavesurfer.current?.on("zoom", loadVisibleRegions);
-        wavesurfer.current?.on("seek" as any, handleClick);
-
-        // Clean up event listeners on unmount
+    
+        // Subscribe to WaveSurfer events
+        wavesurfer.current.on("scroll", loadVisibleRegions);
+        wavesurfer.current.on("zoom", loadVisibleRegions);
+        wavesurfer.current.on("seek" as any, handleClick);
+    
+        // Attach the resize event listener and debug
+        if (waveformRegionsRef.current) {
+            waveformRegionsRef.current.on("region-updated", (region: Region) => {
+                console.log("Region updated:", region); // Debug region
+                handleResize(region); // Handle resize logic
+            });
+        }
+    
+        // Clean up event listeners
         return () => {
             if (wavesurfer.current) {
                 wavesurfer.current.un("scroll", loadVisibleRegions);
                 wavesurfer.current.un("zoom", loadVisibleRegions);
                 wavesurfer.current.un("seek" as any, handleClick);
             }
+    
+            if (waveformRegionsRef.current) {
+                waveformRegionsRef.current.un("region-updated", handleResize);
+            }
         };
-    }, [wavesurfer, segments, dispatch, waveformRegionsRef, loadVisibleRegions, handleClick]);
+    }, [
+        wavesurfer,
+        segments,
+        dispatch,
+        waveformRegionsRef,
+        loadVisibleRegions,
+        handleClick,
+        handleResize,
+    ]);
+    
 
     return null;
 };

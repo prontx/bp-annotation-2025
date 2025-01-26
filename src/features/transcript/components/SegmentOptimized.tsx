@@ -108,12 +108,14 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
     }, [isAudioPlaying])
     
     const handlePlayPause: MouseEventHandler<HTMLButtonElement> = (e) => {
+        console.log("playPause handle clicked")
         e.stopPropagation()
         setIsPlaying(!isPlaying)
         dispatch(playPauseSegment({from: data.start, to: data.end, changedBy: `segment:${segmentID}`}))
     }
 
     const handleSegmentClick: MouseEventHandler<HTMLDivElement> = (e) => {
+        console.log("segment clicked");
         if (props.onClick)
             props.onClick(e)
         if (groupEditing)
