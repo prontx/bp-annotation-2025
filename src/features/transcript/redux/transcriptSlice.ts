@@ -68,17 +68,13 @@ export const transcriptSlice = createSlice({
             let {type, key, change} = action.payload
             
             let segment = null
-
-            // update entity
-            if (type === "region"){
-                key = state.region2ID[key]
-            }
-            if (key){
+            
+            if (type && key){
                 segment = state.segments.entities[key]
                 state.segments.entities[key] = {...segment, ...change}
             }
 
-            console.log("segment: " + JSON.stringify(segment))
+            console.log("updated segment: " + JSON.stringify(segment))
             console.log("entities: " + JSON.stringify(state.segments.entities[key]))
 
              // ensure keys stay ordered on start change
