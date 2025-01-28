@@ -10,8 +10,9 @@ import { enableHistory } from "../../workspace/redux/workspaceSlice"
 export const useLoadGroups = () => {
     const dispatch = useAppDispatch()
     const status = useSelector(selectTranscriptStatus)
-    const groups = useSelector(selectGroupsRaw)
     const segments = useSelector(selectSegments)
+    const groups = useSelector(selectGroupsRaw)
+    
 
     useEffect(() => {
         if (status !== "success")
@@ -22,5 +23,5 @@ export const useLoadGroups = () => {
         const trasnformedData = adaptGroups(groups, segments)
         dispatch(loadGroups(trasnformedData))
         dispatch(enableHistory())
-    }, [status])
+    }, [status, segments, groups])
 }

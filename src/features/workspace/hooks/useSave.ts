@@ -37,7 +37,7 @@ export const useSave = () => {
             groups: groupArr,
         }
 
-        console.log("the groups: " + groupArr)
+        console.log("the groups: " + JSON.stringify(groupArr))
 
         // make request
         try {

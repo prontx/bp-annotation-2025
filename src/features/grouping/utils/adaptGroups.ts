@@ -10,12 +10,13 @@ import { addGroupToSegmentMapping } from "./segment2GroupManipulations";
 
 const time2SegmentID = (time: number, segments: Lookup<Segment>, type: "start"|"end"): string => {
     const segmentID = segments.keys.find(key => {
-        segments.entities[key][type] - time < 0.05
-    })
+        const segment = segments.entities[key];
+        console.log(`Checking segment ${key}:`, segment);
+        return Math.abs(segment[type] - time) < 0.05; // 
+    });
 
-    if (!segmentID)
-        return ""
-    return segmentID
+    console.log(`Mapping time ${time} to segment ID:`, segmentID || "No match found");
+    return segmentID || ""; // Default to empty string if no match is found
 }
 
 const adaptGroup = (group: GroupLoadingParams, entities: Record<string, Group>, segments: Lookup<Segment>, parentID: string|undefined): string => {
@@ -44,6 +45,9 @@ const adaptGroupArr = (groupArr: GroupLoadingParams[], entities: Record<string, 
 
 export const adaptGroups = (groups: GroupLoadingParams[]|null|undefined, segments: Lookup<Segment>) => {
     const transformedGroups: Lookup<Group> = { keys: [], entities: {}, }
+    
+    // console.log("complete print groups:", groups, "segments:", segments, "transformed groups:", transformedGroups)
+
     if (!groups)   
         return {transformedGroups: transformedGroups, startSegment2Group: {}, endSegment2Group: {}}
 

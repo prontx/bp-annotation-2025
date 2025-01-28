@@ -177,7 +177,9 @@ export const { loadGroups, createOrUpdateGroup, deleteGroup, beginSelecting, cho
             resetSelecting, startEditing, endEditing, setGroupingFromHistory, updateGroupSegmentReferences } = groupingSlice.actions
 
 export const selectGroups = (state: RootState) => state.grouping.groups
-export const selectGroupIDs = (state: RootState) => state.grouping.groups.keys
+// export const selectGroupIDs = (state: RootState) => state.grouping.groups.keys
+export const selectGroupIDs = (state: RootState) =>
+    state.grouping.groups?.keys ?? [];
 export const selectSelecting = (state: RootState) => state.grouping.selecting
 export const selectParentStartEndSegmentIDs = (state: RootState) => state.grouping.parentSegmentIDs
 export const selectIsEditing = (state: RootState) => state.grouping.isEditing
@@ -206,7 +208,7 @@ export const selectStartEndSegmentIDs = createSelector(
     }
 )
 export const selectGroupByID = createSelector(
-    (state: RootState) => state.grouping.groups.entities,
+    (state: RootState) => state.grouping.groups?.entities,
     (entities) => (id?: string) => id ? entities[id] : undefined
 )
 
