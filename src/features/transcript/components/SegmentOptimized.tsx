@@ -43,12 +43,15 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     padding: 4px;
     border-radius: 4px;
     background: ${theme.layers[$layer].background};
-    height: fit-content !important;
+    height: 99px !important;
 
     max-width: 91%; 
     width: fit-content; 
     margin-left:1%;
+    position: relative;
     
+    overflow:visible;
+
     &.selecting:hover {
         cursor: pointer;
         background: ${theme.layers[$layer].hover};
@@ -58,10 +61,12 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
             pointer-events: none;
             background: none;
         }
+        overflow:visible;
     }
     
     &.selected {
         outline: 2px solid ${theme.layers[$layer]["primary"].active};
+        overflow:visible;
     }
 
     &.ingroup {
@@ -174,10 +179,12 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                     onClick={e => e.stopPropagation()}
                 />
             </div>
+            <div style={{ position: "absolute", left: "100%", top: 0, height: "100%", overflow: "visible" }}>
+                {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id} />)}
+            </div>
+
         </SegmentLayout>
-        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginLeft: "auto"}}>
-            {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id} />)}
-        </div>
+        
         </>)
 }
 

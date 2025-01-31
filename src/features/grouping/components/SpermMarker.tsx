@@ -25,8 +25,13 @@ const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $len}) =>
     border-radius: 16px;
     grid-row: span ${$len};
     overflow: hidden;
-    position: relative;
+    position: absolute;
     z-index: 0;
+    height: 100%;
+    left: calc(100% + 16px); /* Moves the marker the right of the segment */
+    min-height: ${$len*99}px; /* Adjusted to span multiple segments */
+    
+    
     
     & > span {
         writing-mode: vertical-lr;
