@@ -85,6 +85,7 @@ const SpecialChars: FC<Layer> = ({$layer}) => {
                     <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ł"))}>Ł</CharIcon>
                     <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ł́"))}>Ł́</CharIcon>
                     <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("’"))}>’</CharIcon>
+                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("„"))}>„</CharIcon>
                 </div>
                 <div>
                     <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("[]"))}>{"[]"}</CharIcon>
