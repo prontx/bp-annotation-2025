@@ -36,7 +36,7 @@ const SpeedControls : FC<Layer> = ({$layer}) => {
                 value={speed}
                 $width={"4.5ch"}
                 min={1}
-                max={100}
+                max={400}
                 updateGlobalValue={(x) => dispatch(setSpeed(x))}
             /> %
         </SpeedControlsContainer>
