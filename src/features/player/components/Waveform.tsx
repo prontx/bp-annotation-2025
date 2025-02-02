@@ -1,4 +1,4 @@
-import { FC, useRef } from "react"
+import { FC, useRef, useEffect } from "react"
 
 // hooks
 import useWavesurfer from "../hooks/useWavesurfer"
@@ -23,8 +23,11 @@ import { useSelector } from "react-redux";
 import { selectJobStatus } from "../../workspace/redux/workspaceSlice";
 import { ClipLoader } from 'react-spinners';
 
+import { useAppDispatch } from "../../../redux/hooks"
+import { zoomScroll} from "../redux/playbackSlice"
+
 interface WaveformProps extends React.HTMLAttributes<HTMLDivElement>, Layer {
-    waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
+    waveformRegionsRef: React.MutableRefObject<RegionsPlugin>,
 }
 
 const WaveformContainer = styled.div<Layer>` ${({theme, $layer}) => css`
@@ -54,6 +57,32 @@ const MinimapContainer = styled.div<Layer>` ${({theme, $layer}) => css`
 `}`
 
 const Waveform : FC<WaveformProps> = ({$layer, waveformRegionsRef, ...props}) => {
+    const dispatch = useAppDispatch();
+    
+    // Instead of relying on React's onWheel, I'll attach my own event listener.
+    const containerRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            if (e.ctrlKey) {
+              e.preventDefault();
+              const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+              dispatch(zoomScroll(zoomFactor));
+            }
+          };
+          
+        // These need to be added to both document and container. Document catches events before they reach any DOM elements.
+        document. addEventListener('wheel', handleWheel, { passive: false, capture: true });
+        // container.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+
+        return () => {
+            document.removeEventListener('wheel', handleWheel, { capture: true });
+            // container.removeEventListener('wheel', handleWheel, { capture: true });
+        };
+    }, [dispatch]);
+
     const wavesurfer = useRef<WaveSurfer | null>(null)
 
     // setup and load waveform with plugins
@@ -77,7 +106,7 @@ const Waveform : FC<WaveformProps> = ({$layer, waveformRegionsRef, ...props}) =>
             )  
     }  
 
-    return <WaveformContainer $layer={$layer} {...props}>
+    return <WaveformContainer $layer={$layer} ref={containerRef} {...props}>
         <MinimapContainer $layer={$layer}>
             <div id="minimap"></div>
         </MinimapContainer>

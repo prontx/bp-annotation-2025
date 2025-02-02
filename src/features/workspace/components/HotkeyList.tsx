@@ -31,6 +31,7 @@ const HotkeyList: FC<HotkeyListProps> = ({$layer, closeCallback}) => {
                 <ListItem><span>Shift+šipka doprava</span>skok na nejbližší budoucí začátek segmentu</ListItem>
                 <ListItem><span>Shift+šipka doleva</span>skok na nejbližší minulý začátek segmentu</ListItem>
                 <ListItem><span>Ctrl+s</span>uložit</ListItem>
+                <ListItem><span>Ctrl+kolečko myši</span>přiblížení/oddálení audia</ListItem>
             </div>
         </NamedContainer>
     )

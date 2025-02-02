@@ -76,13 +76,17 @@ export const playbackSlice = createSlice({
             if (state.zoom > 129) return
             state.zoom *= 2
         },
+        zoomScroll: (state, action) => {
+            if (state.zoom > 129) return
+            state.zoom *= action.payload
+        },
         setSkipLength: (state, action: PayloadAction<number>) => {
             state.skipLength = action.payload
         },
     },
 })
 
-export const { play, pause, playPause, playPauseSegment, setTime, skipBy, setSpeed, setVolume, zoomIn, zoomOut, setSkipLength } = playbackSlice.actions
+export const { play, pause, playPause, playPauseSegment, setTime, skipBy, setSpeed, setVolume, zoomIn, zoomOut, zoomScroll, setSkipLength } = playbackSlice.actions
 
 export const selectIsPlaying = (state: RootState) => state.playback.isPlaying
 export const selectCurrentTimeValue = (state: RootState) => state.playback.currentTime.value
