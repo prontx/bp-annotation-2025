@@ -41,7 +41,7 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     display: flex;
     flex-direction: column;
     padding: 4px;
-    border-radius: 4px;
+    border-radius: 10px;
     background: ${theme.layers[$layer].background};
     height: 99px !important;
 

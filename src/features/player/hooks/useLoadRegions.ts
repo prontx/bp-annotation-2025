@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback } from "react";
 // Redux
 import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
-import { mapRegion2Segment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
+import { createSegment, mapRegion2Segment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
 import { selectSpeaker2Color } from "../../transcript/redux/transcriptSlice";
 
 // WaveSurfer
@@ -57,6 +57,30 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             }
         });
     }, [wavesurfer, segments, speaker2color, dispatch, waveformRegionsRef]);
+
+    // Function to handle region creation (for creating segments)
+    const handleRegionCreated = useCallback(
+      (region: Region) => {
+        // If region is very short, adjust the end time
+        const regionEnd = (region.end - region.start < 0.1) ? region.start + 0.1 : region.end;
+        // Update region options
+        region.setOptions({
+          start: region.start,
+          drag: false,
+          end: regionEnd,
+          color: rgba(speaker2color["A"] || "#c6c6c6", 0.4),
+        });
+        // Dispatch createSegment with the region's data
+        dispatch(createSegment({
+          regionID: region.id,
+          start: region.start,
+          end: regionEnd,
+        }));
+      },
+      [dispatch, speaker2color]
+    );
+
+
 
      // Function to handle region resize and dispatch updates to Redux
      const handleResize = useCallback(
@@ -128,6 +152,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     
         // Attach the resize event listener and debug
         if (waveformRegionsRef.current) {
+            waveformRegionsRef.current.on("region-created", handleRegionCreated);
             waveformRegionsRef.current.on("region-updated", (region: Region) => {
                 console.log("Region updated:", region); // Debug region
                 handleResize(region); // Handle resize logic
@@ -143,6 +168,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             }
     
             if (waveformRegionsRef.current) {
+                waveformRegionsRef.current.un("region-created", handleRegionCreated);
                 waveformRegionsRef.current.un("region-updated", handleResize);
             }
         };

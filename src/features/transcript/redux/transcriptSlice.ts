@@ -47,6 +47,7 @@ export const transcriptSlice = createSlice({
     initialState,
     reducers: {
         createSegment: (state, action: PayloadAction<SegmentCreationPayload>) => {
+            console.log("Segment is created!")
             const idx = state.segments.keys.findIndex((key) => state.segments.entities[key].start > action.payload.start);
             const id = uuid()
             if (idx === -1){
