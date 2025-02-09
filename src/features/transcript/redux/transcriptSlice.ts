@@ -40,6 +40,8 @@ const initialState: Transcript = {
     },
     groups: [],
     region2ID: {},
+    mostRecentSpeaker: "",
+
 }
 
 export const transcriptSlice = createSlice({
@@ -47,23 +49,62 @@ export const transcriptSlice = createSlice({
     initialState,
     reducers: {
         createSegment: (state, action: PayloadAction<SegmentCreationPayload>) => {
-            console.log("Segment is created!")
-            const idx = state.segments.keys.findIndex((key) => state.segments.entities[key].start > action.payload.start);
-            const id = uuid()
-            if (idx === -1){
-                state.segments.keys.push(id)
+            const { regionID, start, end } = action.payload;
+        
+            // 1. Check for duplicate regionID
+            if (state.region2ID[regionID]) {
+                console.warn("Segment with regionID already exists:", regionID);
+                return;
+            }
+        
+            // 2. Check for overlapping segments (using BOTH start and end)
+            const existingSegment = Object.values(state.segments.entities).find(
+                (seg) => seg.start === start && seg.end === end
+            );
+            if (existingSegment) {
+                console.warn("Segment already exists at this position:", start, end);
+                return;
+            }
+        
+            // 3. Find previous segment (using end time)
+            const previousSegments = state.segments.keys
+                .map(key => state.segments.entities[key])
+                .filter(seg => seg.end <= start) // Only consider segments that END before this one starts
+                .sort((a, b) => b.start - a.start); // Most recent first
+        
+            const previousSpeaker = previousSegments[0]?.speaker || state.mostRecentSpeaker;
+        
+            // 4. Insert new segment
+            const idx = state.segments.keys.findIndex(
+                key => state.segments.entities[key].start > start
+            );
+        
+            const id = uuid();
+            if (idx === -1) {
+                state.segments.keys.push(id);
             } else {
                 state.segments.keys.splice(idx, 0, id);
             }
+        
+            // 5. Create the segment with speaker
             state.segments.entities[id] = {
                 ...action.payload,
-                speaker: "A",
+                speaker: previousSpeaker, 
                 language: null,
                 segment_tags: [],
                 words: "",
-            }
-            state.region2ID[action.payload.regionID] = id
+            };
+        
+            // 6. Update mappings
+            state.region2ID[regionID] = id;
+            state.mostRecentSpeaker = previousSpeaker; // Track globally
         },
+
+         // Update the mostRecentSpeaker
+        updateMostRecentSpeaker: (state, action: PayloadAction<string>) => {
+            state.mostRecentSpeaker = action.payload;
+        },
+
         updateSegment: (state, action: PayloadAction<SegmentUpdatePayload>) => {
             
             let {type, key, change} = action.payload
@@ -73,6 +114,11 @@ export const transcriptSlice = createSlice({
             if (type && key){
                 segment = state.segments.entities[key]
                 state.segments.entities[key] = {...segment, ...change}
+
+                state.segments.entities[key].speaker = change.speaker || "";
+
+                // Update the mostRecentSpeaker whenever a segment's speaker is updated
+                state.mostRecentSpeaker = change.speaker || "";
             }
 
             console.log("updated segment: " + JSON.stringify(segment))
@@ -195,7 +241,7 @@ export const transcriptSlice = createSlice({
     }
 })
 
-export const { createSegment, updateSegment, deleteSegment, mergeSegment, mapRegion2Segment, setSpecialChar,
+export const { createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, mergeSegment, mapRegion2Segment, setSpecialChar,
             setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, updateSpeaker, deleteSpeaker } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript

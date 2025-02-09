@@ -13,7 +13,7 @@ import "@reach/menu-button/styles.css";
 // redux
 import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
-import { selectSpeakerByID, selectSpeakerIDBySegment, selectSpeakers, updateSegment } from "../redux/transcriptSlice";
+import { selectSpeakerByID, selectSpeakerIDBySegment, selectSpeakers, updateSegment, updateMostRecentSpeaker } from "../redux/transcriptSlice";
 
 // types
 import Layer from "../../../types/Layer";
@@ -44,6 +44,7 @@ const SpeakerSelection: FC<SpeakerSelectionProps> = ({$layer, regionReloadCallba
             key: segmentID,
             change: {speaker: newID}
         }))
+        dispatch(updateMostRecentSpeaker(newID)); // Update the most recent speaker
     }
 
     return (

@@ -16,12 +16,18 @@ import { rgba } from "@carbon/colors";
 
 import type { RootState } from "../../../redux/store"
 
+import { v4 as uuid } from 'uuid'
+
 const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>, 
                         waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
     const dispatch = useAppDispatch();
     const segments = useSelector(selectSegments);
     const speaker2color = useSelector(selectSpeaker2Color);
     
+    const mostRecentSpeaker = useSelector(
+        (state: RootState) => state.transcript.mostRecentSpeaker
+    );
+
     // Keep track of already rendered segments
     const renderedSegments = useRef<Set<string>>(new Set());
 
@@ -60,25 +66,26 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
 
     // Function to handle region creation (for creating segments)
     const handleRegionCreated = useCallback(
-      (region: Region) => {
-        // If region is very short, adjust the end time
-        const regionEnd = (region.end - region.start < 0.1) ? region.start + 0.1 : region.end;
-        // Update region options
-        region.setOptions({
-          start: region.start,
-          drag: false,
-          end: regionEnd,
-          color: rgba(speaker2color["A"] || "#c6c6c6", 0.4),
-        });
-        // Dispatch createSegment with the region's data
-        dispatch(createSegment({
-          regionID: region.id,
-          start: region.start,
-          end: regionEnd,
-        }));
-      },
-      [dispatch, speaker2color]
+        (region: Region) => {
+            const regionEnd = Math.max(region.start + 0.1, region.end);
+            
+            region.setOptions({
+                start: region.start,
+                end: regionEnd,
+                drag: false,
+                color: rgba(speaker2color[mostRecentSpeaker] || "#c6c6c6", 0.4),
+            });
+
+            dispatch(createSegment({
+                regionID: uuid(),
+                start: region.start,
+                end: regionEnd,
+            }));
+        },
+        [dispatch, speaker2color, mostRecentSpeaker] // Add to dependencies
     );
+    
+    
 
 
 
@@ -139,6 +146,27 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         });
     };
 
+    // another option using callback, just in case:
+    
+    // const handleClick = useCallback(() => {
+        // const currentTime = wavesurfer.current?.getCurrentTime() || 0;
+        // segments.keys.forEach((key) => {
+        //   const segment = segments.entities[key];
+        //   if (segment.start <= currentTime && segment.end >= currentTime && !renderedSegments.current.has(key)) {
+            // Load segment if it is clicked
+            // const region = waveformRegionsRef.current.addRegion({
+            //   start: segment.start,
+            //   end: segment.end,
+            //   drag: false,
+            //   minLength: 0.1,
+            //   color: rgba(speaker2color[segment.speaker] || "#c6c6c6", 0.4),
+            // });
+            // dispatch(mapRegion2Segment({ segmentID: key, regionID: region.id }));
+            // renderedSegments.current.add(key); // Mark segment as rendered
+        //   }
+        // });
+    //   }, [wavesurfer, segments, speaker2color, dispatch, waveformRegionsRef]);
+
     useEffect(() => {
         if (!wavesurfer.current || !segments.keys) return
         
@@ -152,7 +180,14 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     
         // Attach the resize event listener and debug
         if (waveformRegionsRef.current) {
-            waveformRegionsRef.current.on("region-created", handleRegionCreated);
+            waveformRegionsRef.current.on("region-created",(region) => {
+                if (region.start === region.end || region.start < 0) {
+                    console.error("Invalid region:", region);
+                    region.remove();
+                    return;
+                }
+                handleRegionCreated(region);
+            });
             waveformRegionsRef.current.on("region-updated", (region: Region) => {
                 console.log("Region updated:", region); // Debug region
                 handleResize(region); // Handle resize logic
