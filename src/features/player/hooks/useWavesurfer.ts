@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // wavesurfer
 import WaveSurfer from "wavesurfer.js";
@@ -21,7 +21,7 @@ import { useFetchWaveformPeaks } from "./useFetchWaveformPeaks";
 
 
 const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
-                        waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
+                        waveformRegionsRef: React.MutableRefObject<RegionsPlugin>,) => {
     const dispatch = useAppDispatch()
     const zoom = useSelector(selectZoom)
     const jobStatus = useSelector(selectJobStatus)
@@ -29,6 +29,8 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     const duration = useSelector(selectDuration)
     const waveformPeaks = useFetchWaveformPeaks()
 
+     const [isReady, setIsReady] = useState(false);
+                            
     useEffect(() => {
         // wait until job and waveform load
         if (jobStatus === "idle" || jobStatus === "loading" || jobStatus === "error" || !waveformPeaks)
@@ -81,10 +83,12 @@ const useWavesurfer = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                 wavesurfer.current?.setTime(time); // Set the time in WaveSurfer
                 dispatch(setTime({ value: time, changedBy: "load" })); // Update Redux store
             }
+            setIsReady(true);
         })
             
         return unsubscribe
     }, [jobStatus, waveformPeaks])
+    return { isReady };
 }
 
 export default useWavesurfer
