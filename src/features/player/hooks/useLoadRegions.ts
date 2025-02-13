@@ -180,14 +180,21 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     
         // Attach the resize event listener and debug
         if (waveformRegionsRef.current) {
-            waveformRegionsRef.current.on("region-created",(region) => {
-                if (region.start === region.end || region.start < 0) {
+            waveformRegionsRef.current.on("region-created", (region) => {
+                if (!region || region.start === region.end || region.start < 0) {
                     console.error("Invalid region:", region);
-                    region.remove();
+                    if (region && typeof region.remove === "function") {
+                        try {
+                            region.remove();
+                        } catch (error) {
+                            console.warn("Error removing region:", error);
+                        }
+                    }
                     return;
                 }
                 handleRegionCreated(region);
             });
+            
             waveformRegionsRef.current.on("region-updated", (region: Region) => {
                 console.log("Region updated:", region); // Debug region
                 handleResize(region); // Handle resize logic
