@@ -96,32 +96,56 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                 console.warn("Region is undefined or missing an ID:", region);
                 return;
             }
-    
+            
             // Retrieve the segment ID from Redux
             const segmentID = region2ID[region.id];
             if (!segmentID) {
                 console.error(`No segment ID found for region ID: ${region.id}`);
                 return;
             }
+            
+            // Get the segment being resized
+            const segment = segments.entities[segmentID];
+            if (!segment) return;
     
-            // Dispatch the updateSegment action
+            let newStart = region.start;
+            let newEnd = region.end;
+            const minDuration = 0.1; // Minimum segment length to prevent collapsing
+    
+            // Find the next segment that starts after this one
+            const nextSegment = Object.values(segments.entities).find(
+                (otherSegment) =>
+                    otherSegment !== segment &&
+                    otherSegment.start >= newStart && // Must be positioned after this one
+                    otherSegment.start < newEnd // Only matters if it overlaps
+            );
+    
+            if (nextSegment) {
+                // Adjust newEnd, ensuring it doesn't shrink below the minDuration
+                newEnd = Math.max(newStart + minDuration, Math.min(newEnd, nextSegment.start));
+            }
+    
+            // Apply the corrected values to the region
+            region.setOptions({ start: newStart, end: newEnd });
+    
+            // Dispatch the update
             dispatch(
                 updateSegment({
                     type: "region",
                     key: segmentID,
                     change: {
-                        start: region.start,
-                        end: region.end,
+                        start: newStart,
+                        end: newEnd,
                     },
                 })
             );
     
-            console.log(
-                `Segment updated: ID=${segmentID}, Start=${region.start}, End=${region.end}`
-            );
+            console.log(`Segment updated: ID=${segmentID}, Start=${newStart}, End=${newEnd}`);
         },
-        [region2ID, dispatch]
+        [region2ID, dispatch, segments]
     );
+    
+    
     
     
     
