@@ -96,14 +96,14 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                 console.warn("Region is undefined or missing an ID:", region);
                 return;
             }
-            
+    
             // Retrieve the segment ID from Redux
             const segmentID = region2ID[region.id];
             if (!segmentID) {
                 console.error(`No segment ID found for region ID: ${region.id}`);
                 return;
             }
-            
+    
             // Get the segment being resized
             const segment = segments.entities[segmentID];
             if (!segment) return;
@@ -120,9 +120,22 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                     otherSegment.start < newEnd // Only matters if it overlaps
             );
     
+            // Find the previous segment that ends before this one
+            const prevSegment = Object.values(segments.entities).find(
+                (otherSegment) =>
+                    otherSegment !== segment &&
+                    otherSegment.end <= newEnd && // Must be positioned before this one
+                    otherSegment.end > newStart // Only matters if it overlaps
+            );
+    
+            // Adjust newEnd to prevent overlapping into the next segment
             if (nextSegment) {
-                // Adjust newEnd, ensuring it doesn't shrink below the minDuration
                 newEnd = Math.max(newStart + minDuration, Math.min(newEnd, nextSegment.start));
+            }
+    
+            // Adjust newStart to prevent overlapping into the previous segment
+            if (prevSegment) {
+                newStart = Math.min(newEnd - minDuration, Math.max(newStart, prevSegment.end));
             }
     
             // Apply the corrected values to the region
@@ -144,6 +157,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         },
         [region2ID, dispatch, segments]
     );
+    
     
     
     
