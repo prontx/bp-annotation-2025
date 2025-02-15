@@ -65,7 +65,7 @@ export const useSave = () => {
     }, [autoSave, manualSave, changed])
     
     useEffect(() => { // auto save signal every 30s
-        const intervalID = setInterval(() => setAutoSave(true), 30000)
-        return () => clearInterval(intervalID)
+        // const intervalID = setInterval(() => setAutoSave(true), 30000)
+        // return () => clearInterval(intervalID)
     }, [])
 }
