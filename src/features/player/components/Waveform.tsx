@@ -46,13 +46,13 @@ const WaveformContainer = styled.div<Layer>` ${({theme, $layer}) => css`
 
 const MinimapContainer = styled.div<Layer>` ${({theme, $layer}) => css`
     background:  ${theme.layers[$layer].background};
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     
     #minimap {
         padding: 0 4px;
         border-radius: 4px;
         background: ${theme.layers[$layer+1].background};
-        height: 40px; /* visualization height + timeline height */
+        height: 50px; /* visualization height + timeline height */
     }
 `}`
 

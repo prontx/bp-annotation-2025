@@ -21,7 +21,7 @@ export const minimapOptions : MinimapPluginOptions = {
     cursorColor: '#ff0000',
     cursorWidth: 2,
     hideScrollbar: true,
-    height: 24,
+    height: 44,
     container: '#minimap',
     interact: true,
     overlayColor: "#6f6f6f",
