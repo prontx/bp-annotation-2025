@@ -14,7 +14,7 @@ import styled from "styled-components"
 
 // redux
 import { useSelector } from "react-redux"
-import { save, selectTitle } from "../redux/workspaceSlice"
+import { save, selectTitle, delayedSave } from "../redux/workspaceSlice"
 import { useAppDispatch } from "../../../redux/hooks"
 import { historyRedo, historyUndo } from "../redux/workspaceSlice"
 
@@ -79,7 +79,7 @@ const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({$layer, ...
             <h1>{title}</h1>
             <MenuItemsContainer>
                 <Button $layer={$layer} onClick={handleNavigateToCatalogue}>Zpět do karty</Button>
-                <Button $layer={$layer} onClick={() => dispatch(save())}>Uložit</Button>
+                <Button $layer={$layer} onClick={() => dispatch(delayedSave(5))}>Uložit</Button>
                 <Menu>
                     <MenuButton $layer={$layer}>Úpravy</MenuButton>
                     <MenuPopover $layer={$layer+1}>

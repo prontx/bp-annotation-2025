@@ -48,7 +48,12 @@ export const workspaceSlice = createSlice({
     reducers: {
         save: (state) => {
             state.manualSave = true
-            toast("Uloženo !");
+            // toast("Uloženo !");
+            toast.update("save-toast", {
+                render: "✅ Uloženo!",
+                type: "success",
+                autoClose: 2000,
+            });
         },
         saved: (state) => {
             state.manualSave = false
@@ -110,6 +115,34 @@ export const workspaceSlice = createSlice({
         })
     },
 })
+
+// Thunk: Delays save by X seconds before dispatching the reducer
+export const delayedSave = (delay = 5) => (dispatch: any) => {
+    let countdown = delay;
+    
+    // Create a single toast notification
+    const toastId = toast(`💾 Ukládám za ${countdown} s...`, {
+        toastId: "save-toast", // Ensures only one toast instance updates
+        autoClose: false,
+        closeOnClick: false,
+    });
+
+    const intervalID = setInterval(() => {
+        countdown--;
+
+        // Update the same toast message
+        toast.update(toastId, {
+            render: `💾 Ukládám za ${countdown} s...`,
+        });
+
+        if (countdown <= 0) {
+            clearInterval(intervalID);
+            dispatch(workspaceSlice.actions.save());
+        }
+    }, 1000);
+};
+
+
 
 export const { save, saved, enableHistory, historyPush, historyUndo, historyRedo, resetShouldTriggerUpdate, setError } = workspaceSlice.actions
 
