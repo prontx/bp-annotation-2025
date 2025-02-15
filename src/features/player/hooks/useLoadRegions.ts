@@ -54,7 +54,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                 const region = waveformRegionsRef.current.addRegion({
                     start: segment.start,
                     end: segment.end,
-                    drag: false,
+                    drag: true,
                     minLength: 0.1,
                     color: rgba(speaker2color[segment.speaker] || "#c6c6c6", 0.4),
                 });
@@ -72,7 +72,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             region.setOptions({
                 start: region.start,
                 end: regionEnd,
-                drag: false,
+                drag: true,
                 color: rgba(speaker2color[mostRecentSpeaker] || "#c6c6c6", 0.4),
             });
 
@@ -86,7 +86,69 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     );
     
     
-
+    const handleSegmentMove = useCallback(
+        (region: Region) => {
+            if (!region || !region.id) {
+                console.warn("Region is undefined or missing an ID:", region);
+                return;
+            }
+    
+            const segmentID = region2ID[region.id];
+            if (!segmentID) {
+                console.error(`No segment ID found for region ID: ${region.id}`);
+                return;
+            }
+    
+            const segment = segments.entities[segmentID];
+            if (!segment) return;
+    
+            const duration = segment.end - segment.start;
+            let newStart = region.start;
+            let newEnd = newStart + duration;
+    
+            // Prevent overlapping with next and previous segments
+            const nextSegment = Object.values(segments.entities).find(
+                (otherSegment) =>
+                    otherSegment !== segment &&
+                    otherSegment.start >= newStart &&
+                    otherSegment.start < newEnd // Overlaps with new position
+            );
+    
+            const prevSegment = Object.values(segments.entities).find(
+                (otherSegment) =>
+                    otherSegment !== segment &&
+                    otherSegment.end <= newEnd &&
+                    otherSegment.end > newStart // Overlaps with new position
+            );
+    
+            if (nextSegment) {
+                newStart = Math.min(newStart, nextSegment.start - duration);
+                newEnd = newStart + duration;
+            }
+    
+            if (prevSegment) {
+                newStart = Math.max(newStart, prevSegment.end);
+                newEnd = newStart + duration;
+            }
+    
+            // Update region position
+            region.setOptions({ start: newStart, end: newEnd });
+    
+            // Dispatch update to Redux
+            dispatch(updateSegment({
+                type: "region",
+                key: segmentID,
+                change: {
+                    start: newStart,
+                    end: newEnd,
+                },
+            }));
+    
+            console.log(`Segment moved: ID=${segmentID}, Start=${newStart}, End=${newEnd}`);
+        },
+        [region2ID, dispatch, segments]
+    );
+    
 
 
      // Function to handle region resize and dispatch updates to Redux
@@ -99,6 +161,10 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     
             // Retrieve the segment ID from Redux
             const segmentID = region2ID[region.id];
+
+            console.log("region2ID mapping:", region2ID);
+            console.log("Resizing region:", region.id);
+
             if (!segmentID) {
                 console.error(`No segment ID found for region ID: ${region.id}`);
                 return;
@@ -234,9 +300,23 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             });
             
             waveformRegionsRef.current.on("region-updated", (region: Region) => {
-                console.log("Region updated:", region); // Debug region
-                handleResize(region); // Handle resize logic
+                const segmentID = region2ID[region.id];
+                if (!segmentID) return;
+            
+                const segment = segments.entities[segmentID];
+                if (!segment) return;
+            
+                const isStartChanged = Math.abs(segment.start - region.start) > 0.01;
+                const isEndChanged = Math.abs(segment.end - region.end) > 0.01;
+            
+                if (isStartChanged && isEndChanged) {
+                    handleSegmentMove(region);  // Full dragging
+                } else {
+                    console.log("resizin")
+                    handleResize(region);  // Resizing (only start or end changed)
+                }
             });
+            
         }
     
         // Clean up event listeners
@@ -260,6 +340,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         loadVisibleRegions,
         handleClick,
         handleResize,
+        handleSegmentMove
     ]);
     
 
