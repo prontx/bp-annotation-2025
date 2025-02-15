@@ -43,7 +43,7 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     padding: 4px;
     border-radius: 10px;
     background: ${theme.layers[$layer].background};
-    height: 99px !important;
+    height: fit-content !important;
 
     max-width: 91%; 
     width: fit-content; 
@@ -92,20 +92,32 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
 
     const isCursorIn = useScrollToSegment(containerRef, segmentID)
 
+    const [segmentHeight, setSegmentHeight] = useState(200); // Default height
+
     useEffect(() => {
         const container = containerRef.current;
         if(!container) return;
 
-        const observer = new ResizeObserver(() => {
+        // const observer = new ResizeObserver(() => {
+        //     onResize && onResize();
+            
+        // });
+        const observer = new ResizeObserver(entries => {
             onResize && onResize();
+            for (let entry of entries) {
+                setSegmentHeight(container.offsetHeight);
+
+            }
         });
 
         observer.observe(container);
 
         return () => {
+            // setSegmentHeight(200);
             observer.disconnect();
+            
         }
-    }, [])
+    }, [segmentHeight])
 
     useEffect(() => {
         if (!isAudioPlaying && isPlaying)
@@ -180,7 +192,7 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                 />
             </div>
             <div style={{ position: "absolute", left: "100%", top: 0, height: "100%", overflow: "visible" }}>
-                {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id} />)}
+                {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id} segmentHeights={segmentHeight} />)}
             </div>
 
         </SegmentLayout>

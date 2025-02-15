@@ -15,21 +15,23 @@ import Layer from "../../../types/Layer"
 
 interface SpermMarkerProps extends Layer {
     groupID: string,
+    segmentHeights: number,
 }
 
 interface StyledMarkerProps extends Layer {
     $len: number,
+    $totalHeight: number,
 }
 
-const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $len}) => css`
+const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $len, $totalHeight}) => css`
     border-radius: 16px;
     grid-row: span ${$len};
     overflow: hidden;
-    position: absolute;
+    position: relative;
     z-index: 0;
     height: 100%;
     left: calc(100% + 16px); /* Moves the marker the right of the segment */
-    min-height: ${$len*99}px; /* Adjusted to span multiple segments */
+    height: ${$len*$totalHeight}px; /* Adjusted to span multiple segments */
     
     
     
@@ -60,7 +62,7 @@ const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $len}) =>
     }
 `}`
 
-const SpermMarker: FC<SpermMarkerProps> = ({groupID, $layer}) => {
+const SpermMarker: FC<SpermMarkerProps> = ({groupID, $layer, segmentHeights}) => {
     const group = useSelector((state: RootState) => selectGroupByID(state)(groupID))
     const groupLen = useSelector((state: RootState) => selectGroupLen(state)(group?.startSegmentID, group?.endSegmentID))
 
@@ -68,7 +70,7 @@ const SpermMarker: FC<SpermMarkerProps> = ({groupID, $layer}) => {
         return null
 
     return (
-        <StyledMarker $layer={$layer} $len={groupLen}>
+        <StyledMarker $layer={$layer} $len={groupLen} $totalHeight={segmentHeights}>
             <span>
                 {group.title}
             </span>
