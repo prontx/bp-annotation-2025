@@ -32,8 +32,9 @@ interface GroupFormProps extends Layer, React.HTMLAttributes<HTMLFormElement> {
 }
 
 const GroupFormContainer = styled.form<Layer>` ${({theme, $layer}) => css`
-    background: ${theme.layers[$layer].background};
-    border-radius: 4px;
+    // background: ${theme.layers[$layer].background};
+    background: #646464;
+    border-radius: 10px;
     border: 2px solid ${theme.layers[$layer].background};
 
     & .body {
@@ -59,7 +60,9 @@ const GroupTitleInput = styled.input<Layer>` ${({theme, $layer}) => css`
     font-weight: 600;
     color: ${theme.textSecondary};
     margin-right: auto;
-    background: ${theme.layers[$layer].background};
+    // background: ${theme.layers[$layer].background};
+    // background: #646464;
+    background: #363636;
     outline: none;
     
     &:hover {

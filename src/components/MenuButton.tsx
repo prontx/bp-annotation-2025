@@ -16,10 +16,15 @@ const StyledMenuButton = styled(BaseMenuButton)<Layer>` ${({theme, $layer}) => c
     color: ${({theme}) => theme.textSecondary};
     padding: 4px 8px;
     font-size: 1rem;
+    background: #363636;
+    color: white;
 
     &:hover, &:focus, &.expanded {
-        background-color: ${theme.layers[$layer].hover};
-        color: ${({theme}) => theme.textPrimary};
+        // background-color: ${theme.layers[$layer].hover};
+        // color: ${({theme}) => theme.textPrimary};
+        color: #35C073;
+        transform: scale(1.10); /* Slightly enlarges the text */
+        transition: transform 0.2s ease-in-out;
     }
 
     &:active {

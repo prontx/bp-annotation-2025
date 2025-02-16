@@ -20,6 +20,7 @@ const SpeedControlsContainer = styled.div`
     align-items: center;
 
     p {
+        color:white;
         margin-right: 16px;
     }
 `
@@ -38,7 +39,7 @@ const SpeedControls : FC<Layer> = ({$layer}) => {
                 min={1}
                 max={400}
                 updateGlobalValue={(x) => dispatch(setSpeed(x))}
-            /> %
+            /> <p>%</p>
         </SpeedControlsContainer>
     );
 }

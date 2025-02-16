@@ -24,6 +24,8 @@ const SpeakerListBody = styled.div`
     display: flex;
     flex-direction: column;
     gap: 4px;
+    background: #646464;
+    border-radius: 1px 1px 10px 10px;
 `
 
 const SpeakerList: FC<SpeakerListProps> = ({$layer, waveformRegionsRef}) => {

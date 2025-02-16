@@ -29,10 +29,15 @@ const LabelInput = styled.input<Layer>` ${({theme, $layer}) => css`
     font-size: 1rem;
     color: ${theme.textSecondary};
     margin-right: 4px;
+    margin-left: 10px;
     outline: none;
+    color:white;
     
     &:hover {
-        background: ${theme.layers[$layer].hover};
+        // background: ${theme.layers[$layer].hover};
+        color: #35C073;
+        transform: scale(1.05); /* Slightly enlarges the text */
+        transition: transform 0.2s ease-in-out;
     }
 
     &:active, &:focus {

@@ -23,18 +23,26 @@ const StyledButton = styled.button<Omit<ButtonProps, "icon">>`${({theme, $layer,
     gap: 2px;
     padding: ${($size == "s") ? "2px 8px" : ($size === "l") ? "10px 16px" : "4px 8px"};
     background: ${theme.layers[$layer][($blended) ? "neutral": $color].background};
-    color: ${theme.textSecondary};
+    background: #363636;
+    // color: ${theme.textSecondary};
+    color: white;
     font-size: ${theme.text_s};
     text-transform: uppercase;
     font-weight: bold;
-
+    font-family: Helvetica;
+    border-radius: 10px;   
+    
     & svg {
         fill: ${theme.textSecondary};
     }
 
     &:hover, &:focus {
-        background: ${theme.layers[$layer][$color].hover};
-        color: ${theme.textPrimary};
+        // background: ${theme.layers[$layer][$color].hover};
+        // background: #35C073;
+        // color: ${theme.textPrimary};
+        color: #35C073;
+        transform: scale(1.10); /* Slightly enlarges the text */
+        transition: transform 0.2s ease-in-out;
 
         svg {
             fill: ${theme.textPrimary};
@@ -53,6 +61,15 @@ const StyledButton = styled.button<Omit<ButtonProps, "icon">>`${({theme, $layer,
     &:disabled {
         cursor: not-allowed;
         opacity: 0.5;
+    }
+
+
+    .change & {
+        background: #247BA0; /* Change background when inside .change */
+    }
+
+    .delete & {
+        background: #FB3640;
     }
 `}`
 

@@ -17,6 +17,7 @@ const ControlsContainer = styled.div<Layer>`
     padding-top: 16px;
     border-radius: 0 0 8px 8px;
     background: ${({theme, $layer}) => theme.layers[$layer].background};
+    background: #1F1F1F;
 `
 
 const Controls : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({$layer, ...props}) => {

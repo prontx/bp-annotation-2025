@@ -31,9 +31,12 @@ const PlaybackControlsContainer = styled.div`
     align-items: center;
     gap: 8px;
     
+    color: white;
+    
     .currentTime {
         width: 7ch;
         margin-left: 8px;
+        color: white;
     }
 `
 

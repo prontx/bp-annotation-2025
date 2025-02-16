@@ -20,6 +20,7 @@ const ZoomControlsContainer = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
+    color: white;
 
     p {
         margin-right: 8px;

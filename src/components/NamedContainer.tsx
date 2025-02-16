@@ -20,17 +20,22 @@ const StyledNamedContainer = styled.section<Layer>` ${({theme, $layer}) => css`
     background: ${theme.layers[$layer].background};
     position: relative;
     border-radius: 4px;
+    // border: 1px solid white;
+    border-radius: 10px 10px 10px 10px;
 
     header {
         display: flex;
         align-items: center;
         padding-left: 8px;
         background: ${theme.layers[$layer+1].background};
-        border-radius: 4px;
+        background: #1F1F1F;
+        border-radius: 10px 10px 1px 1px;
 
         h2 {
-            color: ${theme.textSecondary};
-            font-size: ${theme.text_xs};
+            // color: ${theme.textSecondary};
+            color: white;
+            font-size: 0.9rem;
+            // font-size: ${theme.text_xs};
         }
 
         svg {

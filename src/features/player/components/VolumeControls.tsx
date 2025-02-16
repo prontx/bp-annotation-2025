@@ -20,6 +20,7 @@ const VolumeControlsContainer = styled.div`
     p {
         margin-bottom: 2px;
         margin-right: 4px;
+        color: white;
     }
 
     .space {

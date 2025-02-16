@@ -20,14 +20,17 @@ import Layer from "../../../types/Layer"
 const GroupListContainer = styled.div<Layer>`
     ${scrollableBaseStyles}
 
-    border-radius: 8px 8px 0 0;
-    background: ${({theme, $layer}) => theme.layers[$layer].background};
+    border-radius: 10px;
+    // background: ${({theme, $layer}) => theme.layers[$layer].background};
+    background: #363636;
     padding: 8px;
     display: flex;
     flex-direction: column;
     gap: 8px;
     min-width: 100%;
     padding-bottom: 40vh;
+    color: white;
+    // border: 1px solid cyan
 `
 
 const GroupList: FC<Layer & React.HTMLAttributes<HTMLDivElement>> = ({$layer, ...props}) => {

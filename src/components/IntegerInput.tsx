@@ -25,6 +25,7 @@ const StyledInput = styled.input<Layer & {$width: string}>` ${({theme, $layer, $
     padding: 4px 8px;
     text-align: end;
     margin-right: 4px;
+    color: white;
 
     &:hover {
         background: ${theme.layers[$layer].hover};

@@ -33,10 +33,19 @@ const GroupBodyContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 8px;
+    background: #646464;
+    border:10px 10px 0 0;
+    // border: 1px solid green;
 
     & > p {
         margin: 0 4px;
+        margin-right:auto;
+        margin-left:auto;
     }
+
+    // & .change {
+    //     background:blue;
+    // }
 `
 
 const GroupExpandableActions = styled.div`
@@ -76,23 +85,29 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
                 {data.childrenIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer} parentTags={data.tags}/>)}
                 <GroupForm $layer={$layer+1} parentID={groupID} parentTags={data.tags} />
                 <GroupExpandableActions>
-                    <Button
-                        $size="l"
-                        $layer={$layer+1}
-                        onClick={handleEditing}
-                        disabled={globalEditing}
+                    <div className="change">
+                        <Button
+                            $size="l"
+                            $layer={$layer+1}
+                            onClick={handleEditing}
+                            disabled={globalEditing}
+                            >
+                            Upravit
+                    </Button>
+                    </div>
+                    
+                    <div className="delete">
+                        <Button
+                            $size="l"
+                            $color="danger"
+                            $layer={$layer+1}
+                            onClick={() => dispatch(deleteGroup({id: groupID, parentID:data.parentID}))}
+                            disabled={globalEditing}
                         >
-                        Upravit
+                            Smazat
                     </Button>
-                    <Button
-                        $size="l"
-                        $color="danger"
-                        $layer={$layer+1}
-                        onClick={() => dispatch(deleteGroup({id: groupID, parentID:data.parentID}))}
-                        disabled={globalEditing}
-                    >
-                        Smazat
-                    </Button>
+                    </div>
+                   
                 </GroupExpandableActions>
             </></GroupBodyContainer>
         </Expandable>

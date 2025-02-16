@@ -19,6 +19,8 @@ const SpecialCharLaylout = styled.div`
     display: flex;
     flex-direction: column;
     gap: 8px;
+    background: #646464;
+    border-radius: 1px 1px 10px 10px;
 
     div {
         display: grid;
@@ -29,13 +31,17 @@ const SpecialCharLaylout = styled.div`
 
 const CharIcon = styled.span<Layer>` ${({theme, $layer}) => css`
     ${clickableBaseStyles}
-    background: ${theme.layers[$layer].background};
+    // background: ${theme.layers[$layer].background};
+    background: #1F1F1F;
     text-align: center;
     padding: 8px 0;
     font-family: Arial;
+    color: white;
     
     &:hover {
-        background: ${theme.layers[$layer].hover};
+        // background: ${theme.layers[$layer].hover};
+        color: #35C073;
+        background: #363636;
     }
 
     &:active {

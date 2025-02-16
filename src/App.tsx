@@ -37,7 +37,8 @@ const BaseStyle = createGlobalStyle`
         font-size: ${({theme}) => theme.text_m};
 
         color: ${({theme}) => theme.textSecondary};
-        background: ${({theme}) => theme.gray100};
+        // background: ${({theme}) => theme.gray100};
+        background: #363636;
     }
 `
 
@@ -59,13 +60,16 @@ const AppLayout = styled.div`
         grid-column: 1 / -1;
         margin: -8px 0 4px 0;
     }
+    .waveform {
+        background: #1F1F1F;
+    }
 `
 
 const SideBar = styled.aside`
     ${scrollableBaseStyles}
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 38px;
 `
 
 function App() {

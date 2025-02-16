@@ -30,7 +30,8 @@ const MenuBarContainer = styled.nav<Layer>`
         "logo menuItems";
     grid-template-columns: auto 1fr;
     gap: 0 16px;
-    background: ${({theme, $layer}) => theme.layers[$layer].background};
+    // background: ${({theme, $layer}) => theme.layers[$layer].background};
+    background:  #363636;
 
     img {
         grid-area: logo;

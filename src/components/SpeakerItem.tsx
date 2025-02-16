@@ -27,7 +27,8 @@ const StyledSpeakerItem = styled.span<{$color: string}>`
             height: 20px;
             border-radius: 12px;
             border: 2px solid ${$color};
-            background: ${rgba($color, 0.5)};
+            background: ${rgba($color, 1)};
+            color:white;
         }
     `}
 `
