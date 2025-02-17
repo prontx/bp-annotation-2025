@@ -42,7 +42,9 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     flex-direction: column;
     padding: 4px;
     border-radius: 10px;
-    background: ${theme.layers[$layer].background};
+    border: 1px solid #646464;
+    // background: ${theme.layers[$layer].background};
+    background: #646464;
     height: fit-content !important;
 
     max-width: 91%; 
@@ -165,35 +167,35 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
             ref={containerRef}
             onClick={handleSegmentClick}
         >
-            <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
-                <SpeakerSelection
-                    $layer={(!groupEditing && isCursorIn) ? $layer +2 : $layer+1}
-                    segmentID={segmentID}
-                    regionReloadCallback={regionsReloadCallback}
-                />
-                {time2FormatedString(data.start)} – {time2FormatedString(data.end)}
-                <SegmentActions
-                    style={{marginLeft: "auto"}}
-                    $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
-                    deleteHandler={handleDelete}
-                    mergeHandler={handleMerge}
-                />
-            </div>
-            <div style={{display: "flex"}}>
-                <Button
-                    $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
-                    onClick={handlePlayPause}
-                    icon={isPlaying ? <PauseRoundedIcon /> : <PlayArrowRoundedIcon />}
-                />
-                <SegmentText
-                    segmentID={segmentID}
-                    $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
-                    onClick={e => e.stopPropagation()}
-                />
-            </div>
-            <div style={{ position: "absolute", left: "100%", top: 0, height: "100%", overflow: "visible" }}>
-                {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id} segmentHeights={segmentHeight} />)}
-            </div>
+                <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
+                    <SpeakerSelection
+                        $layer={(!groupEditing && isCursorIn) ? $layer +2 : $layer+1}
+                        segmentID={segmentID}
+                        regionReloadCallback={regionsReloadCallback}
+                    />
+                    {time2FormatedString(data.start)} – {time2FormatedString(data.end)}
+                    <SegmentActions
+                        style={{marginLeft: "auto"}}
+                        $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
+                        deleteHandler={handleDelete}
+                        mergeHandler={handleMerge}
+                    />
+                </div>
+                <div style={{display: "flex"}}>
+                    <Button
+                        $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
+                        onClick={handlePlayPause}
+                        icon={isPlaying ? <PauseRoundedIcon /> : <PlayArrowRoundedIcon />}
+                    />
+                    <SegmentText
+                        segmentID={segmentID}
+                        $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
+                        onClick={e => e.stopPropagation()}
+                    />
+                </div>
+                <div style={{ position: "absolute", left: "100%", top: 0, height: "100%", overflow: "visible" }}>
+                    {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id} segmentHeights={segmentHeight} />)}
+                </div>
 
         </SegmentLayout>
         

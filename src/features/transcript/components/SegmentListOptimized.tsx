@@ -31,10 +31,12 @@ interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
 }
 
+
 const SegmentLayout = styled.section<Layer>` ${({theme, $layer}) => css`
     ${scrollableBaseStyles}
 
-    background: ${theme.layers[$layer].background};
+    // background: ${theme.layers[$layer].background};
+    // background: #1F1F1F;
     padding: 8px;
     border-radius: 8px 8px 0 0;
     min-width: 100%;
@@ -96,7 +98,8 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
         <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHoverID("")}>
             <AutoSizer>
                 {({ width, height }) => (
-                  <List
+                <div className="list">
+                       <List
                     ref={listRef}
                     width={width}
                     height={height}
@@ -114,7 +117,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                               columnIndex={0}
                               rowIndex={index}
                             >
-                              <SegmentOptimized
+                              {/* <SegmentOptimized
                                   key={segmentID}
                                   className={`
                                       ${selecting ? "selecting" : ""}
@@ -126,15 +129,59 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                                   regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
                                   style={{
                                     ...style,
+                                    // paddingBottom: "8px", // <-- Add space between items
+                                    paddingTop: "100px",
+                                    // marginBottom: "100px",
+                                    marginTop: "100px",
+                                    boxSizing: 'border-box',
+                                    
                                   }}
                                   onResize={() => {
                                     updateListLayout();
                                   }}
-                              />
+                              /> */}
+
+
+
+{({ measure }) => (
+                    <div 
+                        style={{ 
+                            ...style, 
+                            paddingBottom: '8px',  // Add space between items
+                            // boxSizing: 'border-box'
+                        }}
+                    >
+                        <SegmentOptimized
+                            key={segmentID}
+                            className={`
+                                ${selecting ? "selecting" : ""}
+                                ${(selectionStartIdx >= 0 && index >= selectionStartIdx && index <= selectionEndIdx) ? "ingroup" : ""}`}
+                            onClick={selecting ? () => dispatch(chooseSegment({id: segmentID})) : undefined}
+                            onMouseOver={selecting ? () => setHoverID(segmentID) : undefined}
+                            segmentID={segmentID}
+                            $layer={$layer+1}
+                            regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
+                            // onResize={measure}  // Pass measure to SegmentOptimized
+                            onResize={() => {
+                                updateListLayout();
+                              }}
+                            style={{
+                                height: '100%',  
+                                width: '91%',
+                            }}
+                        />
+                    </div>
+                )}
+
+
+
+
                             </CellMeasurer>
                         );
                     }}
                   />
+                </div>
+               
                 )}
             </AutoSizer>
         </SegmentLayout>
