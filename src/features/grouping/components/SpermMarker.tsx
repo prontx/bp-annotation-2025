@@ -31,16 +31,17 @@ const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $len, $to
     z-index: 0;
     height: 100%;
     left: calc(100% + 16px); /* Moves the marker the right of the segment */
-    height: ${$len*$totalHeight}px; /* Adjusted to span multiple segments */
+    height: ${$len*($totalHeight+8)-8}px; /* Adjusted to span multiple segments */
     
-    
+    color:#646464;
     
     & > span {
         writing-mode: vertical-lr;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        background: ${theme.layers[$layer].background};
+        // background: ${theme.layers[$layer].background};
+        background: #1F1F1F;
         border-radius: 16px;
         display: inline-block;
         width: 32px;
@@ -52,10 +53,11 @@ const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $len, $to
         content: "";
         position: absolute;
         height: 100%;
-        width: 4px;
+        width: 1px;
         left: 50%;
         transform: translateX(-2px);
-        background: ${theme.layers[$layer].background};
+        // background: ${theme.layers[$layer].background};
+        background: #2D5D7B;
         border-radius: 2px;
         top: 0;
         z-index: -1;
