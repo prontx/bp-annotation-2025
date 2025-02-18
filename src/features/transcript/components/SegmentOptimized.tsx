@@ -44,7 +44,7 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     border-radius: 10px;
     border: 1px solid #646464;
     // background: ${theme.layers[$layer].background};
-    background: #646464;
+    background: #1f1f1f;
     height: fit-content !important;
 
     max-width: 91%; 
@@ -167,7 +167,7 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
             ref={containerRef}
             onClick={handleSegmentClick}
         >
-                <div style={{display: "flex", gap: "8px", alignItems: "center"}}>
+                <div style={{display: "flex", gap: "8px", alignItems: "center", color: "white"}}>
                     <SpeakerSelection
                         $layer={(!groupEditing && isCursorIn) ? $layer +2 : $layer+1}
                         segmentID={segmentID}
@@ -175,7 +175,7 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                     />
                     {time2FormatedString(data.start)} – {time2FormatedString(data.end)}
                     <SegmentActions
-                        style={{marginLeft: "auto"}}
+                        style={{marginLeft: "auto", backgroundColor: "transparent"}}
                         $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
                         deleteHandler={handleDelete}
                         mergeHandler={handleMerge}
@@ -186,6 +186,7 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                         $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
                         onClick={handlePlayPause}
                         icon={isPlaying ? <PauseRoundedIcon /> : <PlayArrowRoundedIcon />}
+                        style={{ backgroundColor: "#1f1f1f" }}
                     />
                     <SegmentText
                         segmentID={segmentID}

@@ -49,14 +49,14 @@ const SpeakerSelection: FC<SpeakerSelectionProps> = ({$layer, regionReloadCallba
 
     return (
         <Menu {...props}>
-            <MenuButton $layer={$layer}>
+            <MenuButton $layer={$layer} style={{ backgroundColor: "#1f1f1f", color: "white" }}>
                 <SpeakerItem speakerID={value?.id || "?"} color={value?.color}>
                     {value?.label}
                 </SpeakerItem>
-                <span className="dropdownArrow" aria-hidden>▾</span>
+                <span className="dropdownArrow" aria-hidden style={{ backgroundColor: "#1f1f1f", color: "white" }}>▾</span>
             </MenuButton>
-            <MenuPopover $layer={$layer}>
-                <MenuItems $layer={$layer}>
+            <MenuPopover $layer={$layer} >
+                <MenuItems $layer={$layer} >
                     {choices.map((choice) => (
                         <MenuItem key={choice.id} onSelect={() => handleSelect(choice.id)} onClick={e => e.stopPropagation()}>
                             <SpeakerItem speakerID={choice?.id || "?"} color={choice?.color}>

@@ -24,10 +24,11 @@ const StyledSegmentText = styled.textarea<Layer>` ${({theme, $layer}) => css`
     
     font-size: 1rem;
     font-family: Arial;
-    color: currentColor;
+    // color: currentColor;
     padding: 2px 8px;
     width: 100%;
-    background: ${theme.layers[$layer].background};
+    // background: ${theme.layers[$layer].background};
+    background: #363636;
     height: 2.75rem !important;
     resize: vertical;
     margin-top: 4px;
