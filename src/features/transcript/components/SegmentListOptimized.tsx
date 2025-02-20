@@ -160,8 +160,14 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                             onMouseOver={selecting ? () => setHoverID(segmentID) : undefined}
                             segmentID={segmentID}
                             $layer={$layer+1}
-                            regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
-                            // onResize={measure}  // Pass measure to SegmentOptimized
+                            regionsReloadCallback={() => {
+                                // waveformRegionsRef.current.getRegions()
+                                // waveformRegionsRef.current.clearRegions()
+                                waveformRegionsRef.current.getRegions().find(region => region.id === segmentID)?.remove()
+                                // useLoadRegions(wavesurfer, waveformRegionsRef);
+                            }}
+                            // onResize={measure}  
+                            // waveformRegionsRef={waveformRegionsRef} // Pass the ref as a prop
                             onResize={() => {
                                 updateListLayout();
                               }}

@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback } from "react";
 // Redux
 import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
-import { createSegment, mapRegion2Segment, selectSegments, updateSegment } from "../../transcript/redux/transcriptSlice";
+import { createSegment, mapRegion2Segment, selectSegments, updateSegment, clearDeletedRegions } from "../../transcript/redux/transcriptSlice";
 import { selectSpeaker2Color } from "../../transcript/redux/transcriptSlice";
 
 // WaveSurfer
@@ -33,6 +33,8 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
 
      // Select `region2ID` from Redux state
      const region2ID = useSelector((state: RootState) => state.transcript.region2ID);
+
+     const deletedRegions = useSelector((state: RootState) => state.transcript.deletedRegions);
 
 
     // Function to load visible regions
@@ -270,6 +272,20 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         //   }
         // });
     //   }, [wavesurfer, segments, speaker2color, dispatch, waveformRegionsRef]);
+
+     useEffect(() => {
+        if (deletedRegions.length > 0 && waveformRegionsRef.current) {
+            // Remove regions from wavesurfer
+            deletedRegions.forEach(regionID => {
+                const region = waveformRegionsRef.current.getRegions().find(r => r.id === regionID);
+                if (region) region.remove();
+            });
+            
+            // Clear processed deletions
+            dispatch(clearDeletedRegions());
+        }
+    }, [deletedRegions, dispatch, waveformRegionsRef]);
+
 
     useEffect(() => {
         if (!wavesurfer.current || !segments.keys) return

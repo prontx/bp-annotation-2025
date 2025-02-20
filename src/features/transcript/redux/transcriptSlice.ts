@@ -41,7 +41,7 @@ const initialState: Transcript = {
     groups: [],
     region2ID: {},
     mostRecentSpeaker: "",
-
+    deletedRegions: [],
 }
 
 export const transcriptSlice = createSlice({
@@ -131,20 +131,48 @@ export const transcriptSlice = createSlice({
                 )
             }
         },
-        deleteSegment: (state, action: PayloadAction<string>) => {
-            const segmentID = action.payload 
-            const idx = state.segments.keys.findIndex(key => key === segmentID)
-            if (idx >= 0 && idx < state.segments.keys.length){
-                state.segments.keys.splice(idx, 1)
-            }
+        // deleteSegment: (state, action: PayloadAction<string>) => {
+        //     console.log("deletin)")
+        //     const segmentID = action.payload 
+        //     const idx = state.segments.keys.findIndex(key => key === segmentID)
+        //     if (idx >= 0 && idx < state.segments.keys.length){
+        //         state.segments.keys.splice(idx, 1)
+        //     }
 
-            let regionID = segment2RegionID(state.region2ID, segmentID)
-            delete state.segments.entities[segmentID]
-            if (regionID){                
-                // delete regionID from id lookup
-                delete state.region2ID[regionID]
+        //     let regionID = segment2RegionID(state.region2ID, segmentID)
+        //     delete state.segments.entities[segmentID]
+        //     if (regionID){                
+        //         // delete regionID from id lookup
+        //         delete state.region2ID[regionID]
+        //     }
+        // },
+
+        deleteSegment: (state, action: PayloadAction<string>) => {
+            const segmentID = action.payload;
+            
+            // 1. Remove from Redux state
+            const idx = state.segments.keys.findIndex(key => key === segmentID);
+            if (idx >= 0) {
+                state.segments.keys.splice(idx, 1);
             }
+            delete state.segments.entities[segmentID];
+        
+            // 2. Remove region mapping
+            const regionID = Object.entries(state.region2ID)
+                .find(([_, segID]) => segID === segmentID)?.[0];
+            if (regionID) {
+                delete state.region2ID[regionID];
+            }
+            
+            if(!regionID) return;
+            // 3. Add temporary field to trigger WaveSurfer cleanup
+            state.deletedRegions.push(regionID); //
         },
+
+        clearDeletedRegions: (state) => {
+            state.deletedRegions = [];
+        },
+
         mergeSegment: (state, action: PayloadAction<string>) => {
             const id = action.payload
             const keys = state.segments.keys
@@ -241,7 +269,7 @@ export const transcriptSlice = createSlice({
     }
 })
 
-export const { createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, mergeSegment, mapRegion2Segment, setSpecialChar,
+export const { createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, clearDeletedRegions, mergeSegment, mapRegion2Segment, setSpecialChar,
             setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, updateSpeaker, deleteSpeaker } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript
