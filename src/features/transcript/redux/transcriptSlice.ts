@@ -111,14 +111,20 @@ export const transcriptSlice = createSlice({
             
             let segment = null
             
-            if (type && key){
-                segment = state.segments.entities[key]
-                state.segments.entities[key] = {...segment, ...change}
-
-                state.segments.entities[key].speaker = change.speaker || "";
-
-                // Update the mostRecentSpeaker whenever a segment's speaker is updated
-                state.mostRecentSpeaker = change.speaker || "";
+            if (type && key) {
+                const currentSegment = state.segments.entities[key];
+                
+                // Merge changes while preserving existing speaker
+                state.segments.entities[key] = {
+                    ...currentSegment,
+                    ...change,
+                    speaker: change.speaker !== undefined ? change.speaker : currentSegment.speaker
+                };
+        
+                // Only update mostRecentSpeaker if speaker changed
+                if (change.speaker) {
+                    state.mostRecentSpeaker = change.speaker;
+                }
             }
 
             console.log("updated segment: " + JSON.stringify(segment))
