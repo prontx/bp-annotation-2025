@@ -29,7 +29,7 @@ const StyledSegmentText = styled.textarea<Layer>` ${({theme, $layer}) => css`
     width: 100%;
     // background: ${theme.layers[$layer].background};
     background: #363636;
-    height: 2.75rem !important;
+    height: 2.75rem;
     resize: vertical;
     margin-top: 4px;
     
