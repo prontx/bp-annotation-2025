@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useState, useEffect } from "react"
 
 // style
 import styled, { css } from "styled-components"
@@ -15,23 +15,23 @@ import Layer from "../../../types/Layer"
 
 interface SpermMarkerProps extends Layer {
     groupID: string,
-    segmentHeights: number,
+    // segmentHeights: number,
+    segmentID: string, 
 }
 
 interface StyledMarkerProps extends Layer {
-    $len: number,
+    // $len: number,
     $totalHeight: number,
 }
 
-const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $len, $totalHeight}) => css`
+const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $totalHeight}) => css`
     border-radius: 16px;
-    grid-row: span ${$len};
     overflow: hidden;
     position: relative;
     z-index: 0;
-    height: 100%;
+    // height: 100%;
     left: calc(100% + 16px); /* Moves the marker the right of the segment */
-    height: ${$len*($totalHeight+8)-8}px; /* Adjusted to span multiple segments */
+    height: ${$totalHeight}px; /* Adjusted to span multiple segments */
     
     color:#646464;
     
@@ -64,18 +64,45 @@ const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $len, $to
     }
 `}`
 
-const SpermMarker: FC<SpermMarkerProps> = ({groupID, $layer, segmentHeights}) => {
+const SpermMarker: FC<SpermMarkerProps> = ({groupID, $layer, segmentID}) => {
     const group = useSelector((state: RootState) => selectGroupByID(state)(groupID))
-    const groupLen = useSelector((state: RootState) => selectGroupLen(state)(group?.startSegmentID, group?.endSegmentID))
+    const [totalHeight, setTotalHeight] = useState(0)
 
-    if (!group)
-        return null
+    useEffect(() => {
+        if (!group || group.startSegmentID !== segmentID) return
+
+        const calculateHeight = () => {
+            const startSegment = document.querySelector(`[data-segment-id="${group.startSegmentID}"]`)
+            const endSegment = document.querySelector(`[data-segment-id="${group.endSegmentID}"]`)
+
+            if (startSegment && endSegment) {
+                const startRect = startSegment.getBoundingClientRect()
+                const endRect = endSegment.getBoundingClientRect()
+                setTotalHeight(endRect.bottom - startRect.top)
+            }
+        }
+
+        // Initial calculation
+        calculateHeight()
+
+        // Set up resize observers
+        const resizeObserver = new ResizeObserver(calculateHeight)
+        const startSegment = document.querySelector(`[data-segment-id="${group.startSegmentID}"]`)
+        const endSegment = document.querySelector(`[data-segment-id="${group.endSegmentID}"]`)
+
+        if (startSegment) resizeObserver.observe(startSegment)
+        if (endSegment) resizeObserver.observe(endSegment)
+
+        return () => {
+            resizeObserver.disconnect()
+        }
+    }, [group, segmentID])
+
+    if (!group || group.startSegmentID !== segmentID) return null
 
     return (
-        <StyledMarker $layer={$layer} $len={groupLen} $totalHeight={segmentHeights}>
-            <span>
-                {group.title}
-            </span>
+        <StyledMarker $layer={$layer} $totalHeight={totalHeight}>
+            <span>{group.title}</span>
         </StyledMarker>
     )
 }
