@@ -16,6 +16,8 @@ import { adaptSegments } from "../utils/adaptSegments"
 import { adaptGroups } from "../utils/adaptGroups"
 import { APIErrorResponse } from "../../../types/APIErrorResponse"
 
+import { selectAutosaveEnabled } from "../redux/workspaceSlice"
+
 
 export const useSave = () => {
     const dispatch = useAppDispatch()
@@ -64,8 +66,35 @@ export const useSave = () => {
         setAutoSave(false)
     }, [autoSave, manualSave, changed])
     
+    // useEffect(() => { // auto save signal every 30s
+    //     const intervalID = setInterval(() => setAutoSave(true), 30000)
+    //     return () => clearInterval(intervalID)
+    // }, [])
+
+
+    const autosaveEnabled = useSelector(selectAutosaveEnabled)
+
     useEffect(() => { // auto save signal every 30s
-        // const intervalID = setInterval(() => setAutoSave(true), 30000)
-        // return () => clearInterval(intervalID)
-    }, [])
+        if (!autosaveEnabled) return
+        
+        const intervalID = setInterval(() => setAutoSave(true), 30000)
+        return () => clearInterval(intervalID)
+    }, [autosaveEnabled])
+
+    useEffect(() => { // save listener
+        if (autoSave && !autosaveEnabled) {
+            setAutoSave(false)
+            return
+        }
+
+        if (!manualSave && !autoSave) return
+        
+        if (changed){
+            putTranscript()
+        }
+        setChanged(false)
+        dispatch(saved())
+        setAutoSave(false)
+    }, [autoSave, manualSave, changed, autosaveEnabled])
+    
 }
