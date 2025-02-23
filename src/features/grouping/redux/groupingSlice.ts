@@ -76,7 +76,10 @@ export const groupingSlice = createSlice({
         },
         deleteGroup: (state, action: PayloadAction<{id: string, parentID?: string}>) => {
             const {id, parentID} = action.payload
-            removeGroupFromLookup(state.groups, id, parentID)
+            // Create a copy of the groups 
+            const newGroups = {...state.groups}
+            removeGroupFromLookup(newGroups, id, parentID)
+            state.groups = newGroups
         },
         beginSelecting: (state, action: PayloadAction<"start"|"end"|null>) => {
             state.selecting = action.payload
