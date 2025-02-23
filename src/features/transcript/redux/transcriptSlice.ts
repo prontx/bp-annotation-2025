@@ -42,6 +42,7 @@ const initialState: Transcript = {
     region2ID: {},
     mostRecentSpeaker: "",
     deletedRegions: [],
+    lastCreatedSegmentID: "",
 }
 
 export const transcriptSlice = createSlice({
@@ -95,9 +96,17 @@ export const transcriptSlice = createSlice({
                 words: "",
             };
         
+            // Track the created segment for scrolling
+            state.lastCreatedSegmentID = id; 
+
             // 6. Update mappings
             state.region2ID[regionID] = id;
-            state.mostRecentSpeaker = previousSpeaker; // Track globally
+            state.mostRecentSpeaker = previousSpeaker;
+
+
+            // // 6. Update mappings
+            // state.region2ID[regionID] = id;
+            // state.mostRecentSpeaker = previousSpeaker; // Track globally
         },
 
          // Update the mostRecentSpeaker
@@ -259,6 +268,12 @@ export const transcriptSlice = createSlice({
             const idx = state.speakerTags.findIndex(st => st.id === action.payload)
             state.speakerTags.splice(idx, 1)
         },
+        setLastCreatedSegmentID: (state, action: PayloadAction<string>) => {
+            state.lastCreatedSegmentID = action.payload
+        },
+        resetLastCreatedSegmentID: (state) => {
+            state.lastCreatedSegmentID = null
+        }
     },
     extraReducers(builder) {
         builder.addCase(fetchTranscript.pending, (state, _) => {
@@ -276,7 +291,7 @@ export const transcriptSlice = createSlice({
 })
 
 export const { createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, clearDeletedRegions, mergeSegment, mapRegion2Segment, setSpecialChar,
-            setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, updateSpeaker, deleteSpeaker } = transcriptSlice.actions
+            setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, updateSpeaker, deleteSpeaker, setLastCreatedSegmentID, resetLastCreatedSegmentID } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript
 export const selectTranscriptStatus = (state: RootState) => state.transcript.status
@@ -370,5 +385,7 @@ export const selectSpeakerIDBySegment = createSelector(
     [selectSegmentByID],
     (segmentByID) => (id: string) => segmentByID(id).speaker
 )
+
+export const selectLastCreatedSegmentID = (state: RootState) => state.transcript.lastCreatedSegmentID
 
 export default transcriptSlice.reducer

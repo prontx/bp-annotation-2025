@@ -15,6 +15,7 @@ interface TranscriptCommon {
     text_tags?: TextTag[] | null,
     groups?: GroupLoadingParams[] | null,
     mostRecentSpeaker: string,
+    lastCreatedSegmentID: string | null
 }
 
 export interface TranscriptLoadingParams extends TranscriptCommon {

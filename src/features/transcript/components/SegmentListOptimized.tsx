@@ -1,8 +1,10 @@
-import React, { FC, HTMLAttributes, useState } from "react"
+import React, { FC, HTMLAttributes, useState, useEffect } from "react"
 import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from "react-virtualized"
 // components
 import SegmentOptimized from "./SegmentOptimized"
 // import Segment from "./Segment"
+
+import { usePrevious } from "../../grouping/hooks/usePrevious"
 
 // styles
 import styled, { css } from "styled-components"
@@ -12,7 +14,7 @@ import { scrollableBaseStyles } from "../../../style/scrollableBaseStyles"
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { selectSelecting, chooseSegment } from "../../grouping/redux/groupingSlice";
-import { selectSegmentIDs, selectTranscriptError } from "../redux/transcriptSlice"
+import { selectSegmentIDs, selectTranscriptError, selectLastCreatedSegmentID, resetLastCreatedSegmentID } from "../redux/transcriptSlice"
 import { selectJobError } from "../../workspace/redux/workspaceSlice";
 
 // types
@@ -69,6 +71,50 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
       );
 
 
+      const lastCreatedSegmentID = useSelector(selectLastCreatedSegmentID);
+      const prevSegmentCount = usePrevious(segmentIDs.length);
+      const lastCreatedIndex = segmentIDs.indexOf(lastCreatedSegmentID);
+  
+      // Scroll
+      useEffect(() => {
+          if (!listRef.current || lastCreatedIndex === -1) return;
+  
+          // Only scroll if we have a new segment added (not during initial load)
+          if (prevSegmentCount !== undefined && segmentIDs.length > prevSegmentCount) {
+              // Clear cache for accurate measurements
+              cellCache.current.clearAll();
+              
+              // Waiting for measurements to update
+              requestAnimationFrame(() => {
+                  listRef.current?.scrollToRow(lastCreatedIndex);
+                  listRef.current?.forceUpdateGrid();
+                  dispatch(resetLastCreatedSegmentID());
+              });
+          }
+      }, [lastCreatedIndex, prevSegmentCount, segmentIDs.length, dispatch]);
+
+    //   const lastCreatedSegmentID = useSelector(selectLastCreatedSegmentID)
+    //   // const containerRef = useRef<HTMLDivElement>(null)
+  
+    //   // Scroll to new segments
+    //   useEffect(() => {
+    //       if (lastCreatedSegmentID) {
+    //           const element = document.querySelector(`[data-segment-id="${lastCreatedSegmentID}"]`)
+    //           if (element) {
+    //               element.scrollIntoView({
+    //                   behavior: 'smooth',
+    //                   block: 'nearest'
+    //               })
+    //           }
+    //           dispatch(resetLastCreatedSegmentID())
+    //       }
+    //   }, [lastCreatedSegmentID, dispatch])
+  
+
+
+      
+
+
     if (jobError || transcriptError){
         return (
             <SegmentLayout  $layer={$layer}>
@@ -93,6 +139,9 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                 </div>
             )  
     }  
+
+
+
 
     return (
         <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHoverID("")}>

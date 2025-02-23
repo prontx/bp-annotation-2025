@@ -4,7 +4,7 @@ import { useEffect, useRef, useCallback } from "react";
 import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
 import { createSegment, mapRegion2Segment, selectSegments, updateSegment, clearDeletedRegions } from "../../transcript/redux/transcriptSlice";
-import { selectSpeaker2Color } from "../../transcript/redux/transcriptSlice";
+import { selectSpeaker2Color, resetLastCreatedSegmentID } from "../../transcript/redux/transcriptSlice";
 
 // WaveSurfer
 import WaveSurfer from "wavesurfer.js";
@@ -66,27 +66,23 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         });
     }, [wavesurfer, segments, speaker2color, dispatch, waveformRegionsRef]);
 
-    // Function to handle region creation (for creating segments)
-    const handleRegionCreated = useCallback(
-        (region: Region) => {
-            const regionEnd = Math.max(region.start + 0.1, region.end);
-            
-            region.setOptions({
-                start: region.start,
-                end: regionEnd,
-                drag: true,
-                color: rgba(speaker2color[mostRecentSpeaker] || "#c6c6c6", 0.4),
-            });
-
-            dispatch(createSegment({
-                regionID: uuid(),
-                start: region.start,
-                end: regionEnd,
-            }));
-        },
-        [dispatch, speaker2color, mostRecentSpeaker] // Add to dependencies
-    );
+    // Function to handle region creation 
+    const handleRegionCreated = useCallback((region: Region) => {
+        const regionEnd = Math.max(region.start + 0.1, region.end);
+        
+        region.setOptions({
+            start: region.start,
+            end: regionEnd,
+            drag: true,
+            color: rgba(speaker2color[mostRecentSpeaker] || "#c6c6c6", 0.4),
+        });
     
+        dispatch(createSegment({
+            regionID: uuid(),
+            start: region.start,
+            end: regionEnd,
+        }));
+    }, [dispatch, speaker2color, mostRecentSpeaker]);
     
     const handleSegmentMove = useCallback(
         (region: Region) => {
@@ -273,6 +269,13 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         // });
     //   }, [wavesurfer, segments, speaker2color, dispatch, waveformRegionsRef]);
 
+
+    // const timeToPixelPosition = (time: number, wavesurfer: WaveSurfer): number => {
+    //     const wrapper = wavesurfer.getWrapper();
+    //     const duration = wavesurfer.getDuration();
+    //     return (time / duration) * wrapper.scrollWidth;
+    // };
+
      useEffect(() => {
         if (deletedRegions.length > 0 && waveformRegionsRef.current) {
             // Remove regions from wavesurfer
@@ -312,7 +315,11 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                     }
                     return;
                 }
-                handleRegionCreated(region);
+                
+                // Use requestAnimationFrame to ensure DOM updates
+                requestAnimationFrame(() => {
+                    handleRegionCreated(region);
+                });
             });
             
             waveformRegionsRef.current.on("region-updated", (region: Region) => {
