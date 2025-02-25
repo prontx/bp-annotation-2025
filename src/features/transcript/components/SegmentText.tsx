@@ -27,8 +27,8 @@ const StyledSegmentText = styled.textarea<Layer>` ${({theme, $layer}) => css`
     // color: currentColor;
     padding: 2px 8px;
     width: 100%;
-    // background: ${theme.layers[$layer].background};
-    background: #363636;
+    background: ${theme.layers[$layer].background};
+    // background: #363636;
     height: 2.75rem;
     resize: vertical;
     margin-top: 4px;
