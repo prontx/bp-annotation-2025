@@ -40,6 +40,27 @@ const BaseStyle = createGlobalStyle`
         // background: ${({theme}) => theme.gray100};
         background: #363636;
     }
+    /* Chrome */
+    ::-webkit-scrollbar {
+      width: 8px;  
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      background-clip: content-box;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #666;
+    }
 `
 
 const AppLayout = styled.div`
