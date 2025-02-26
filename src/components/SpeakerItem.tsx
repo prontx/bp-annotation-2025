@@ -35,7 +35,7 @@ const StyledSpeakerItem = styled.span<{$color: string}>`
 
 const SpeakerItem: FC<SpeakerItemProps> = ({speakerID, color, ...props}) => {
     return (
-        <StyledSpeakerItem $color={color || "#c6c6c6"} {...props}>
+        <StyledSpeakerItem $color={color || "#FB3640"} {...props}>
             <span className="icon">
                 {speakerID}
             </span>

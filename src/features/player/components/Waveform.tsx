@@ -40,7 +40,7 @@ const WaveformContainer = styled.div<Layer>` ${({theme, $layer}) => css`
         padding: 0 4px;
         background: ${theme.layers[$layer+1].background};
         border-radius: 4px;
-        height: 96px;
+        height: 96px;  
     }
 `}`
 
