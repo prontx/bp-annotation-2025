@@ -17,13 +17,12 @@ const TagContainer = styled.div<{ $layer: number, $color?: string }>`
     margin: 2px;
     border-radius: 10px;
     cursor: pointer;
-    background: ${({ theme, $layer, $color }) => 
-        $color || theme.layers[$layer].background};
+    background: #1f1f1f;
     border: 1px solid ${({ theme }) => theme.textSecondary};
 `;
 
 const Checkbox = styled.input.attrs({ type: "checkbox" })`
-    accent-color: green;
+    accent-color: #35C073;
 `;
 
 export const TagComponent: FC<TagProps> = ({ tag, checked, onToggle, $layer }) => (

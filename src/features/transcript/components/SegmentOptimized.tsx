@@ -164,34 +164,30 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
         return null
     
     return (<>
-    <SegmentLayout
-     data-segment-id={segmentID}
-            $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
-            className={`
-                ${className}
-                ${(segmentID === startSegmentID || segmentID === endSegmentID) ? "selected" : ""}`}
-            {...props}
-            ref={containerRef}
-            onClick={handleSegmentClick}
-        >
+    <SegmentLayout data-segment-id={segmentID} $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
+                   className={`${className} ${(segmentID === startSegmentID || segmentID === endSegmentID) ? "selected" : ""}`}
+                   {...props} ref={containerRef} onClick={handleSegmentClick}>
+
                 <div style={{display: "flex", gap: "8px", alignItems: "center", color: "white", flexWrap: "nowrap", overflow: "hidden", flexShrink: 1,
                 minWidth: 0 }}>
-                    <SpeakerSelection
-                        $layer={(!groupEditing && isCursorIn) ? $layer +2 : $layer+1}
-                        segmentID={segmentID}
-                        regionReloadCallback={regionsReloadCallback}
-                        style={{ flexShrink: 0}}
-                    />
-                    <div style={{ 
-        whiteSpace: "nowrap", // Keep timestamp text in single line
-        flexShrink: 0 // Prevent wrapping
-    }}>
-        {time2FormatedString(data.start)} - {time2FormatedString(data.end)} 
 
-    </div>
+                    {/* Speaker + Time */}
+                    <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 1, minWidth: 0, overflow: "hidden", width: "400px"}}>
+                             <SpeakerSelection
+                                $layer={(!groupEditing && isCursorIn) ? $layer +2 : $layer+1}
+                                segmentID={segmentID}
+                                regionReloadCallback={regionsReloadCallback}
+                                style={{ flexShrink: 0}}
+                            />
+                            <div style={{ whiteSpace: "nowrap", // Keep timestamp text in single line 
+                                         flexShrink: 0 // Prevent wrapping 
+                            }}>
+                                {time2FormatedString(data.start)} - {time2FormatedString(data.end)} 
+                            </div>       
+                    </div>
                     
                     {/* Tags */}
-                    <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginLeft: "60%" }}>
+                    <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginLeft: "55%" }}>
                         {segmentTags.map(tag => (
                             <TagComponent
                                 key={tag.id}
@@ -214,6 +210,7 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                         // }}
                     />
                 </div>
+
                 <div style={{display: "flex"}}>
                     <Button
                         $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
@@ -230,9 +227,6 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                 <div style={{ position: "absolute", left: "100%", top: 0, height: "100%", overflow: "visible" }}>
                     {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id}  segmentID={segmentID}/>)}
                 </div>
-
-
-            
 
         </SegmentLayout>
         
