@@ -30,11 +30,16 @@ import { rgba } from "@carbon/colors"
 import { time2FormatedString } from "../../../utils/time2FormatedString";
 import { useScrollToSegment } from "../hooks/useScrollToSegment";
 
+import { SegmentTag } from "../types/Tag";
+import { TagComponent } from "./TagComponent";
 
 interface SegmentProps extends Layer, React.HTMLAttributes<HTMLDivElement> {
     segmentID: string,
     regionsReloadCallback: () => void,
     onResize: () => void,
+    segmentTags: SegmentTag[];
+    appliedTags: string[];
+    onTagToggle: (tagID: string) => void;
 }
 
 const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
@@ -80,7 +85,8 @@ const SegmentLayout = styled.div<Layer>` ${({theme, $layer}) => css`
     }
 `}`
 
-const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, onResize, className, ...props}) => {
+const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCallback, onResize, className, segmentTags,
+    appliedTags, onTagToggle, ...props}) => {
     const data = useSelector((state: RootState) => selectSegmentByID(state)(segmentID))
     const dispatch = useAppDispatch()
     const [isPlaying, setIsPlaying] = useState(false)
@@ -168,18 +174,44 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
             ref={containerRef}
             onClick={handleSegmentClick}
         >
-                <div style={{display: "flex", gap: "8px", alignItems: "center", color: "white"}}>
+                <div style={{display: "flex", gap: "8px", alignItems: "center", color: "white", flexWrap: "nowrap", overflow: "hidden", flexShrink: 1,
+                minWidth: 0 }}>
                     <SpeakerSelection
                         $layer={(!groupEditing && isCursorIn) ? $layer +2 : $layer+1}
                         segmentID={segmentID}
                         regionReloadCallback={regionsReloadCallback}
+                        style={{ flexShrink: 0}}
                     />
-                    {time2FormatedString(data.start)} – {time2FormatedString(data.end)}
+                    <div style={{ 
+        whiteSpace: "nowrap", // Keep timestamp text in single line
+        flexShrink: 0 // Prevent wrapping
+    }}>
+        {time2FormatedString(data.start)} - {time2FormatedString(data.end)} 
+
+    </div>
+                    
+                    {/* Tags */}
+                    <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginLeft: "60%" }}>
+                        {segmentTags.map(tag => (
+                            <TagComponent
+                                key={tag.id}
+                                tag={tag}
+                                $layer={$layer + 1}
+                                checked={appliedTags.includes(tag.id)}
+                                onToggle={() => onTagToggle(tag.id)}
+                            />
+                        ))}
+                    </div>
                     <SegmentActions
-                        style={{marginLeft: "auto", backgroundColor: "transparent"}}
+                        style={{marginLeft: "auto", backgroundColor: "transparent", flexShrink: 0}} 
                         $layer={(!groupEditing && isCursorIn) ? $layer+1 : $layer}
                         deleteHandler={handleDelete}
                         mergeHandler={handleMerge}
+                        // style={{ 
+                        //     marginLeft: "auto", 
+                        //     backgroundColor: "transparent",
+                        //     flexShrink: 0 // Keep actions aligned right
+                        // }}
                     />
                 </div>
                 <div style={{display: "flex"}}>
@@ -198,6 +230,9 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                 <div style={{ position: "absolute", left: "100%", top: 0, height: "100%", overflow: "visible" }}>
                     {memberGroupIDs && memberGroupIDs.map(id => <SpermMarker key={id} $layer={$layer} groupID={id}  segmentID={segmentID}/>)}
                 </div>
+
+
+            
 
         </SegmentLayout>
         

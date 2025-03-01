@@ -28,6 +28,9 @@ import { selectJobStatus } from "../../workspace/redux/workspaceSlice";
 
 import { ClipLoader } from 'react-spinners';
 
+import { SegmentTag } from "../types/Tag"
+
+import { selectSegmentTags, toggleSegmentTag, selectSegments } from "../redux/transcriptSlice";
 
 interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
@@ -58,8 +61,10 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     // Use a properly typed ref for the List component
     const listRef = React.useRef<List | null>(null);
 
-
+    const segments = useSelector(selectSegments);
     const jobStatus = useSelector(selectJobStatus)  
+
+    const segmentTags = useSelector(selectSegmentTags) || [];
 
     const cellCache = React.useRef(
         new CellMeasurerCache({
@@ -141,7 +146,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     }  
 
 
-
+   
 
     return (
         <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHoverID("")}>
@@ -157,6 +162,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                     rowCount={segmentIDs.length}
                     rowRenderer={({ key, index, style, parent }) => {
                         const segmentID = segmentIDs[index];
+                        const segment = segments.entities[segmentID];
                     
                         return (
                             <CellMeasurer
@@ -224,6 +230,15 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                                 height: '100%',  
                                 width: '91%',
                             }}
+                            segmentTags={segmentTags}
+                        appliedTags={segment?.segment_tags || []}
+                        onTagToggle={(tagID: string) => {
+                            dispatch(toggleSegmentTag({
+                                segmentID,
+                                tagID
+                            }));
+                            updateListLayout();
+                        }}
                         />
                     </div>
                 )}

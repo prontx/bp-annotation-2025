@@ -11,7 +11,7 @@ import type { Transcript, TranscriptLoadingParams } from "../types/Transcript"
 import type { RootState } from '../../../redux/store'
 import type { SegmentUpdatePayload, SegmentCreationPayload } from '../types/SegmentActionPayload'
 import { Segment } from '../types/Segment'
-import { SpeakerTag } from '../types/Tag'
+import { SpeakerTag, SegmentTag } from '../types/Tag'
 import { Lookup } from '../../../types/Lookup'
 import { APIErrorResponse } from '../../../types/APIErrorResponse'
 
@@ -34,6 +34,7 @@ const initialState: Transcript = {
     specialChar: "",
     lastFocusedSegment: "",
     speakerTags: [],
+    segment_tags: [],
     segments: {
         keys: [],
         entities: {},
@@ -232,6 +233,9 @@ export const transcriptSlice = createSlice({
         setSpeakersFromHistory: (state, action: PayloadAction<SpeakerTag[]>) => {
             state.speakerTags = action.payload
         },
+        setSegmentTagsFromHistory: (state, action: PayloadAction<SegmentTag[]>) => {
+            state.segment_tags = action.payload
+        },
         updateSpeaker: (state, action: PayloadAction<SpeakerTag>) => {
             if (!state.speakerTags)
                 state.speakerTags = []
@@ -273,7 +277,22 @@ export const transcriptSlice = createSlice({
         },
         resetLastCreatedSegmentID: (state) => {
             state.lastCreatedSegmentID = null
-        }
+        },
+        toggleSegmentTag: (state, action: PayloadAction<{segmentID: string, tagID: string}>) => {
+            const { segmentID, tagID } = action.payload;
+            const segment = state.segments.entities[segmentID];
+            
+            if (segment) {
+                const index = segment.segment_tags.indexOf(tagID);
+                if (index === -1) {
+                    // Add tag
+                    segment.segment_tags.push(tagID);
+                } else {
+                    // Remove tag
+                    segment.segment_tags.splice(index, 1);
+                }
+            }
+        },    
     },
     extraReducers(builder) {
         builder.addCase(fetchTranscript.pending, (state, _) => {
@@ -291,7 +310,7 @@ export const transcriptSlice = createSlice({
 })
 
 export const { createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, clearDeletedRegions, mergeSegment, mapRegion2Segment, setSpecialChar,
-            setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, updateSpeaker, deleteSpeaker, setLastCreatedSegmentID, resetLastCreatedSegmentID } = transcriptSlice.actions
+            setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, setSegmentTagsFromHistory, updateSpeaker, deleteSpeaker, setLastCreatedSegmentID, resetLastCreatedSegmentID, toggleSegmentTag } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript
 export const selectTranscriptStatus = (state: RootState) => state.transcript.status
@@ -385,6 +404,8 @@ export const selectSpeakerIDBySegment = createSelector(
     [selectSegmentByID],
     (segmentByID) => (id: string) => segmentByID(id).speaker
 )
+export const selectSegmentTags = (state: RootState) => 
+    state.transcript.segment_tags || [];
 
 export const selectLastCreatedSegmentID = (state: RootState) => state.transcript.lastCreatedSegmentID
 

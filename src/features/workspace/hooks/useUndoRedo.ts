@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { useAppDispatch } from "../../../redux/hooks"
 import { useSelector } from "react-redux"
 import { selectHistory, selectShouldTriggerUpdate } from "../redux/workspaceSlice"
-import { setSegmentsFromHistory, setSpeakersFromHistory } from "../../transcript/redux/transcriptSlice"
+import { setSegmentsFromHistory, setSpeakersFromHistory, setSegmentTagsFromHistory } from "../../transcript/redux/transcriptSlice"
 import { setGroupingFromHistory } from "../../grouping/redux/groupingSlice"
 
 // types
@@ -23,6 +23,7 @@ export const useUndoRedo = (waveformRegionsRef: React.MutableRefObject<RegionsPl
         dispatch(setSegmentsFromHistory(current.transcript.segments))
         dispatch(setSpeakersFromHistory(current.transcript.speaker_tags))
         dispatch(setGroupingFromHistory(current.grouping))
+        dispatch(setSegmentTagsFromHistory(current.transcript.segment_tags))
         waveformRegionsRef.current.clearRegions()
     }, [current, shouldTriggerUpdate, waveformRegionsRef])
 }
