@@ -4,7 +4,7 @@ import { useEffect, useRef, useCallback } from "react";
 import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
 import { createSegment, mapRegion2Segment, selectSegments, updateSegment, clearDeletedRegions } from "../../transcript/redux/transcriptSlice";
-import { selectSpeaker2Color, resetLastCreatedSegmentID } from "../../transcript/redux/transcriptSlice";
+import { selectSpeaker2Color, resetLastCreatedSegmentID, setActiveSegmentId, resetActiveSegmentId } from "../../transcript/redux/transcriptSlice";
 
 // WaveSurfer
 import WaveSurfer from "wavesurfer.js";
@@ -17,6 +17,14 @@ import { rgba } from "@carbon/colors";
 import type { RootState } from "../../../redux/store"
 
 import { v4 as uuid } from 'uuid'
+
+
+const scrollToSegmentEvent = (segmentID: string) => {
+    const event = new CustomEvent('scrollToSegment', { 
+      detail: { segmentID } 
+    });
+    window.dispatchEvent(event);
+  };
 
 const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>, 
                         waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
@@ -103,11 +111,24 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             color: rgba(speaker2color[mostRecentSpeaker] || "red", 0.4),
         });
     
+        const segmentID = uuid(); 
+        
+        region.on('click', () => {
+            dispatch({
+                type: 'transcript/mapRegion2Segment',
+                payload: {
+                    segmentID: segmentID,
+                    regionID: region.id
+                }
+            });
+        });
+    
         dispatch(createSegment({
-            regionID: uuid(),
+            regionID: region.id, // Match region ID format
             start: region.start,
             end: regionEnd,
         }));
+    
     }, [dispatch, speaker2color, mostRecentSpeaker]);
     
     const handleSegmentMove = useCallback(
@@ -255,52 +276,45 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     
 
     // Function to handle click and load segments at the clicked position
-    const handleClick = () => {
-        const currentTime = wavesurfer.current?.getCurrentTime() || 0;
-        segments.keys.forEach((key) => {
-            const segment = segments.entities[key];
-            if (segment.start <= currentTime && segment.end >= currentTime && !renderedSegments.current.has(key)) {
-                // Load segment if it is clicked
-                const region = waveformRegionsRef.current.addRegion({
-                    start: segment.start,
-                    end: segment.end,
-                    drag: false,
-                    minLength: 0.1,
-                    color: rgba(speaker2color[segment.speaker] || "red", 0.4),
-                });
-                dispatch(mapRegion2Segment({ segmentID: key, regionID: region.id }));
-                renderedSegments.current.add(key); // Mark segment as rendered
-            }
-        });
-    };
-
-    // another option using callback, just in case:
+const handleClick = () => {
+    const currentTime = wavesurfer.current?.getCurrentTime() || 0;
     
-    // const handleClick = useCallback(() => {
-        // const currentTime = wavesurfer.current?.getCurrentTime() || 0;
-        // segments.keys.forEach((key) => {
-        //   const segment = segments.entities[key];
-        //   if (segment.start <= currentTime && segment.end >= currentTime && !renderedSegments.current.has(key)) {
-            // Load segment if it is clicked
-            // const region = waveformRegionsRef.current.addRegion({
-            //   start: segment.start,
-            //   end: segment.end,
-            //   drag: false,
-            //   minLength: 0.1,
-            //   color: rgba(speaker2color[segment.speaker] || "#c6c6c6", 0.4),
-            // });
-            // dispatch(mapRegion2Segment({ segmentID: key, regionID: region.id }));
-            // renderedSegments.current.add(key); // Mark segment as rendered
-        //   }
-        // });
-    //   }, [wavesurfer, segments, speaker2color, dispatch, waveformRegionsRef]);
+    // Find exact matching segment
+    const clickedSegment = segments.keys.find(key => {
+        const segment = segments.entities[key];
+        return segment && 
+               segment.start <= currentTime && 
+               segment.end >= currentTime;
+    });
 
+    if (!clickedSegment) {
+        console.log("No segment found at:", currentTime);
+        return;
+    }
 
-    // const timeToPixelPosition = (time: number, wavesurfer: WaveSurfer): number => {
-    //     const wrapper = wavesurfer.getWrapper();
-    //     const duration = wavesurfer.getDuration();
-    //     return (time / duration) * wrapper.scrollWidth;
-    // };
+    //  Force region creation if missing
+    if (!renderedSegments.current.has(clickedSegment)) {
+        const region = waveformRegionsRef.current.addRegion({
+            id: `region-${clickedSegment}`, 
+            start: segments.entities[clickedSegment].start,
+            end: segments.entities[clickedSegment].end,
+            drag: false,
+            minLength: 0.1,
+            color: rgba(speaker2color[segments.entities[clickedSegment].speaker] || "red", 0.4),
+        });
+        renderedSegments.current.add(clickedSegment);
+    }
+
+    // Trigger scroll like in createSegment
+    dispatch({
+        type: 'transcript/mapRegion2Segment',
+        payload: {
+            segmentID: clickedSegment,
+            regionID: `region-${clickedSegment}` // Match region ID format
+        }
+    });
+};
+
 
      useEffect(() => {
         if (deletedRegions.length > 0 && waveformRegionsRef.current) {
@@ -365,6 +379,8 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                     handleResize(region);  // Resizing (only start or end changed)
                 }
             });
+
+            
             
         }
     

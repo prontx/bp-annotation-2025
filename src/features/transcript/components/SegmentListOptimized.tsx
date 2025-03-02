@@ -30,7 +30,7 @@ import { ClipLoader } from 'react-spinners';
 
 import { SegmentTag } from "../types/Tag"
 
-import { selectSegmentTags, toggleSegmentTag, selectSegments } from "../redux/transcriptSlice";
+import { selectSegmentTags, toggleSegmentTag, selectSegments, selectActiveSegmentId, resetActiveSegmentId } from "../redux/transcriptSlice";
 
 interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
@@ -79,44 +79,27 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
       const lastCreatedSegmentID = useSelector(selectLastCreatedSegmentID);
       const prevSegmentCount = usePrevious(segmentIDs.length);
       const lastCreatedIndex = segmentIDs.indexOf(lastCreatedSegmentID);
-  
-      // Scroll
-      useEffect(() => {
-          if (!listRef.current || lastCreatedIndex === -1) return;
-  
-          // Only scroll if we have a new segment added (not during initial load)
-          if (prevSegmentCount !== undefined && segmentIDs.length > prevSegmentCount) {
-              // Clear cache for accurate measurements
-              cellCache.current.clearAll();
-              
-              // Waiting for measurements to update
-              requestAnimationFrame(() => {
-                  listRef.current?.scrollToRow(lastCreatedIndex);
-                  listRef.current?.forceUpdateGrid();
-                  dispatch(resetLastCreatedSegmentID());
-              });
-          }
-      }, [lastCreatedIndex, prevSegmentCount, segmentIDs.length, dispatch]);
-
-    //   const lastCreatedSegmentID = useSelector(selectLastCreatedSegmentID)
-    //   // const containerRef = useRef<HTMLDivElement>(null)
-  
-    //   // Scroll to new segments
-    //   useEffect(() => {
-    //       if (lastCreatedSegmentID) {
-    //           const element = document.querySelector(`[data-segment-id="${lastCreatedSegmentID}"]`)
-    //           if (element) {
-    //               element.scrollIntoView({
-    //                   behavior: 'smooth',
-    //                   block: 'nearest'
-    //               })
-    //           }
-    //           dispatch(resetLastCreatedSegmentID())
-    //       }
-    //   }, [lastCreatedSegmentID, dispatch])
+      const activeSegmentId = useSelector(selectActiveSegmentId);
   
 
-
+        useEffect(() => {
+            if (!lastCreatedSegmentID || !listRef.current) return;
+        
+            // Find index 
+            const index = segments.keys.indexOf(lastCreatedSegmentID);
+            console.log("Scroll target index:", index);
+        
+            if (index === -1) return;
+        
+            // Force re-measurement
+            cellCache.current.clear(index, 0);
+            listRef.current.recomputeGridSize({ rowIndex: index });
+        
+            setTimeout(() => {
+                listRef.current?.scrollToRow(index);
+                dispatch(resetLastCreatedSegmentID());
+            }, 50); 
+        }, [lastCreatedSegmentID, segments.keys, dispatch]);
       
 
 
