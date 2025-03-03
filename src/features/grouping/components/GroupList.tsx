@@ -1,4 +1,5 @@
 import { FC } from "react"
+import { useMemo } from "react"
 
 // components
 import GroupExpandable from "./GroupExpandable"
@@ -35,17 +36,20 @@ const GroupListContainer = styled.div<Layer>`
 
 const GroupList: FC<Layer & React.HTMLAttributes<HTMLDivElement>> = ({$layer, ...props}) => {
     const groupIDs = useSelector(selectGroupIDs)
+    const memoizedGroups = useMemo(() => groupIDs, [groupIDs])
     const groupTags = useSelector(selectGroupTags)
 
     return (
         <GroupListContainer $layer={$layer} {...props}>
-            {groupIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer}/>)}
-            {(groupTags !== undefined)
-                ? <GroupForm $layer={$layer+1} />
-                : "Nepodařilo se načíst metadata."
-            }
+            {memoizedGroups.map(id => (
+                <GroupExpandable key={id} groupID={id} $layer={$layer}/>
+            ))}
+            {groupTags !== undefined ? (
+                <GroupForm $layer={$layer + 1} />
+            ) : (
+                "Nepodařilo se načíst metadata."
+            )}
         </GroupListContainer>
     )
 }
-
 export default GroupList

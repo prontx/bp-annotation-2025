@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, selectSegmentIDs } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying, setTime } from "../../player/redux/playbackSlice";
-import { selectGroupsByStartSegment, selectIsEditing, selectStartEndSegmentIDs, updateGroupSegmentReferences } from "../../grouping/redux/groupingSlice";
+import { selectGroupsByStartSegment, selectIsEditing, selectStartEndSegmentIDs, updateGroupSegmentReferences, deleteGroup } from "../../grouping/redux/groupingSlice";
 
 // types
 import type Layer from "../../../types/Layer"
@@ -149,9 +149,16 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
     }
 
     const handleDelete = () => {
-        dispatch(updateGroupSegmentReferences({segmentID: segmentID, segmentKeys: segmentIDs}))
-        regionsReloadCallback()
-        dispatch(deleteSegment(segmentID))
+        // delete groups associated with segment
+    dispatch(updateGroupSegmentReferences({
+        segmentID: segmentID,
+        segmentKeys: segmentIDs,
+        isMerge: false // specifying this isn't a merge
+    }))
+    
+    // deleting the actual segment
+    dispatch(deleteSegment(segmentID))
+    regionsReloadCallback()
     }
     
     const handleMerge = () => {

@@ -9,21 +9,13 @@ import { addGroupToSegmentMapping } from "./segment2GroupManipulations";
 
 
 const time2SegmentID = (time: number, segments: Lookup<Segment>, type: "start"|"end"): string => {
-    const tolerance = 0.05; // Increase tolerance if necessary to accommodate boundary cases.
+    const tolerance = 0.00001 
     
-    // Find the segment that starts or ends close to the desired time
-    const segmentID = segments.keys.find(key => {
-        const segment = segments.entities[key];
-        console.log(`Checking segment ${key}:`, segment);
-        const difference = Math.abs(segment[type] - time);
-        
-        // Match the segment if the difference is within tolerance or if it's the exact segment we want.
-        return difference < tolerance || segment[type] === time;
-    });
-
-    console.log(`Mapping time ${time} to segment ID:`, segmentID || "No match found");
-    return segmentID || ""; // If no match, return empty string.
-}
+    return segments.keys.find(key => {
+        const segment = segments.entities[key]
+        return Math.abs(segment[type] - time) < tolerance
+    }) || ""
+}   
 
 
 const adaptGroup = (group: GroupLoadingParams, entities: Record<string, Group>, segments: Lookup<Segment>, parentID: string|undefined): string => {
@@ -33,7 +25,13 @@ const adaptGroup = (group: GroupLoadingParams, entities: Record<string, Group>, 
     const startSegmentID = time2SegmentID(start, segments, "start");
     const endSegmentID = time2SegmentID(end, segments, "end");
 
-    // Check if the start/end segment IDs are valid before creating the group
+     // Adding validation
+     if (!startSegmentID || !endSegmentID) {
+        console.warn(`Skipping invalid group with missing segments (start: ${startSegmentID}, end: ${endSegmentID})`)
+        return "" // Return empty ID to skip
+    }
+
+
     const transformedGroup: Group = {
         ...GroupCommon,
         id: id,
@@ -49,12 +47,9 @@ const adaptGroup = (group: GroupLoadingParams, entities: Record<string, Group>, 
 
 
 const adaptGroupArr = (groupArr: GroupLoadingParams[], entities: Record<string, Group>, segments: Lookup<Segment>, parentID: string|undefined): string[] => {
-    let IDs: string[] = []
-    groupArr.forEach(rawGroup => {
-        const id = adaptGroup(rawGroup, entities, segments, parentID)
-        IDs.push(id)
-    })
-    return IDs
+    return groupArr
+        .map(rawGroup => adaptGroup(rawGroup, entities, segments, parentID))
+        .filter(id => id !== "") // Filtering out invalid groups
 }
 
 export const adaptGroups = (groups: GroupLoadingParams[]|null|undefined, segments: Lookup<Segment>) => {

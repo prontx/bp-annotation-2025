@@ -131,48 +131,44 @@ export const groupingSlice = createSlice({
         },
         updateGroupSegmentReferences: (state, action: PayloadAction<{segmentID: string, segmentKeys: string[], isMerge?: boolean}>) => {
             const {segmentID, segmentKeys, isMerge} = action.payload
-            let starts = state.startSegment2Group[segmentID] // groupIDs where the segment is the start segment
-            let ends = state.endSegment2Group[segmentID] // groupIDs where the segment is the end segment
-            if (!starts && !ends)
-                return
-            
-            const idx = segmentKeys.findIndex(key => key === segmentID)
-            if (idx === -1)
-                return
-            
-            starts = starts ? [...starts] : []
-            for (let start of starts){
-                removeGroupFromSegmentMapping(state.startSegment2Group, segmentID, start)
-                if (idx < segmentKeys.length - 1 && !ends?.includes(start)){ // use next segment as start
-                    const nextSegmentID = segmentKeys[idx+1]
-                    if (state.groups.entities[start])
-                        state.groups.entities[start].startSegmentID = nextSegmentID
-                    addGroupToSegmentMapping(state.startSegment2Group, nextSegmentID, start)
-                } else { // delete single segment group
-                    removeGroupFromSegmentMapping(state.endSegment2Group, segmentID, start)
-                    removeGroupFromLookup(state.groups, start)
+            const groupsToDelete = new Set<string>()
+        
+            // Unified processing of all affected groups
+            const processGroup = (groupID: string, isStart: boolean) => {
+                const group = state.groups.entities[groupID]
+                if (!group) return
+        
+                // Clean mappings FIRST
+                removeGroupFromSegmentMapping(
+                    isStart ? state.startSegment2Group : state.endSegment2Group,
+                    segmentID,
+                    groupID
+                )
+        
+                const idx = segmentKeys.indexOf(segmentID)
+                const shouldDelete = !isMerge && 
+                    group.startSegmentID === segmentID && 
+                    group.endSegmentID === segmentID
+        
+                if (shouldDelete) {
+                    groupsToDelete.add(groupID)
+                } else {
+                    // ...
                 }
             }
-            
-            ends = ends ? [...ends] : []
-            ends.forEach(end => {
-                removeGroupFromSegmentMapping(state.endSegment2Group, segmentID, end)
-                if(isMerge && idx < segmentKeys.length - 1){ // use next segment as end
-                    const nextSegmentID = segmentKeys[idx+1]
-                    state.groups.entities[end].endSegmentID = nextSegmentID
-                    addGroupToSegmentMapping(state.endSegment2Group, nextSegmentID, end)
-                }
-                else if (idx > 0){ // use prev segment as end
-                    const prevSegmentID = segmentKeys[idx-1]
-                    if (state.groups.entities[end]){
-                        state.groups.entities[end].endSegmentID = prevSegmentID
-                        addGroupToSegmentMapping(state.endSegment2Group, prevSegmentID, end)
-                    }
-                } else { // remove group
-                    removeGroupFromLookup(state.groups, end)
-                }
+        
+            // Process start groups
+            (state.startSegment2Group[segmentID] || []).forEach(id => processGroup(id, true));
+            // Process end groups
+            (state.endSegment2Group[segmentID] || []).forEach(id => processGroup(id, false))
+        
+            // Atomic deletion
+            groupsToDelete.forEach(groupID => {
+                removeGroupFromSegmentMapping(state.startSegment2Group, segmentID, groupID)
+                removeGroupFromSegmentMapping(state.endSegment2Group, segmentID, groupID)
+                removeGroupFromLookup(state.groups, groupID)
             })
-        },
+        }
     },
 })
 
