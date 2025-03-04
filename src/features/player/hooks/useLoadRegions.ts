@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { createSegment, mapRegion2Segment, selectSegments, updateSegment, clearDeletedRegions } from "../../transcript/redux/transcriptSlice";
 import { selectSpeaker2Color, resetLastCreatedSegmentID, setActiveSegmentId, resetActiveSegmentId } from "../../transcript/redux/transcriptSlice";
 
+
 // WaveSurfer
 import WaveSurfer from "wavesurfer.js";
 import RegionsPlugin, {Region} from "wavesurfer.js/plugins/regions";
@@ -31,6 +32,10 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     const dispatch = useAppDispatch();
     const segments = useSelector(selectSegments);
     const speaker2color = useSelector(selectSpeaker2Color);
+
+    const containerRef = useRef<HTMLElement | null>(null);
+
+
     
     const mostRecentSpeaker = useSelector(
         (state: RootState) => state.transcript.mostRecentSpeaker
@@ -53,6 +58,16 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
 
     // Function to load visible regions
     const loadVisibleRegions = useCallback(() => {
+
+        if (!wavesurfer.current) return;
+        const container = wavesurfer.current.getWrapper();
+        if (!container) return;
+    
+        // Track container for resize observer
+        containerRef.current = container;
+
+
+
         const visibleRangeStart = wavesurfer.current?.getCurrentTime() || 0;
         const containerWidth = wavesurfer.current?.getWrapper().clientWidth || 0;
         const duration = wavesurfer.current?.getDuration() || 0;
@@ -62,6 +77,14 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         if (!speaker2color || Object.keys(speaker2color).length === 0) {
             return;  
         }
+
+
+        // Add 10% padding to visible range
+    const visiblePadding = duration * 0.1;
+    const visibleRange = {
+        start: Math.max(0, visibleRangeStart - visiblePadding),
+        end: Math.min(duration, visibleRangeStart + (containerWidth / (containerWidth / duration)) + visiblePadding)
+    };
 
         segments.keys.forEach((key) => {
             const segment = segments.entities[key];
@@ -74,10 +97,13 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             }
 
             if (
-                segment.start < visibleRangeEnd &&
-                segment.end > visibleRangeStart &&
+                segment.start < visibleRange.end &&
+                segment.end > visibleRange.start &&
                 !renderedSegments.current.has(key)
             ) {
+                 // Force re-render even if previously rendered
+                renderedSegments.current.delete(key);
+                
                 // Remove existing region if present
                 const existingRegion = waveformRegionsRef.current.getRegions()
                     .find(r => r.id === region2ID[key]);
@@ -99,6 +125,8 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             }
         });
     }, [wavesurfer, segments, speaker2color, dispatch, waveformRegionsRef, region2ID]);
+
+    
 
     // Function to handle region creation 
     const handleRegionCreated = useCallback((region: Region) => {
