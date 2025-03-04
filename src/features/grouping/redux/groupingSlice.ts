@@ -129,46 +129,71 @@ export const groupingSlice = createSlice({
             state.parentSegmentIDs.start = ""
             state.parentSegmentIDs.end = ""
         },
-        updateGroupSegmentReferences: (state, action: PayloadAction<{segmentID: string, segmentKeys: string[], isMerge?: boolean}>) => {
-            const {segmentID, segmentKeys, isMerge} = action.payload
-            const groupsToDelete = new Set<string>()
-        
-            // Unified processing of all affected groups
-            const processGroup = (groupID: string, isStart: boolean) => {
-                const group = state.groups.entities[groupID]
-                if (!group) return
-        
-                // Clean mappings FIRST
-                removeGroupFromSegmentMapping(
-                    isStart ? state.startSegment2Group : state.endSegment2Group,
-                    segmentID,
-                    groupID
-                )
-        
-                const idx = segmentKeys.indexOf(segmentID)
-                const shouldDelete = !isMerge && 
-                    group.startSegmentID === segmentID && 
-                    group.endSegmentID === segmentID
-        
-                if (shouldDelete) {
-                    groupsToDelete.add(groupID)
-                } else {
-                    // ...
-                }
-            }
-        
-            // Process start groups
-            (state.startSegment2Group[segmentID] || []).forEach(id => processGroup(id, true));
-            // Process end groups
-            (state.endSegment2Group[segmentID] || []).forEach(id => processGroup(id, false))
-        
-            // Atomic deletion
+        updateGroupSegmentReferences: (
+            state,
+            action: PayloadAction<{ segmentID: string, segmentKeys: string[], isMerge?: boolean }>
+          ) => {
+            const { segmentID, segmentKeys } = action.payload;
+            
+            const affectedGroupIDs = new Set<string>([
+              ...(state.startSegment2Group[segmentID] || []),
+              ...(state.endSegment2Group[segmentID] || []),
+            ]);
+          
+            const groupsToDelete = new Set<string>();
+          
+            affectedGroupIDs.forEach(groupID => {
+              const group = state.groups.entities[groupID];
+              if (!group) return;
+          
+              // Remove segmentID from the group's segment list
+              const updatedSegments = [group.startSegmentID, ...group.childrenIDs, group.endSegmentID]
+                .filter(id => id !== segmentID);
+          
+              if (updatedSegments.length === 0) {
+                // If no segments remain, we mark them for deletion
+                groupsToDelete.add(groupID);
+                return;
+              }
+          
+              // Finding the new start and end segment IDs based on segmentKeys order
+              const newStartID = updatedSegments[0];
+              const newEndID = updatedSegments[updatedSegments.length - 1];
+          
+              if (group.startSegmentID !== newStartID) {
+                // Remove old mapping and update start segment
+                removeGroupFromSegmentMapping(state.startSegment2Group, group.startSegmentID, groupID);
+                group.startSegmentID = newStartID;
+                addGroupToSegmentMapping(state.startSegment2Group, newStartID, groupID);
+              }
+          
+              if (group.endSegmentID !== newEndID) {
+                removeGroupFromSegmentMapping(state.endSegment2Group, group.endSegmentID, groupID);
+                group.endSegmentID = newEndID;
+                addGroupToSegmentMapping(state.endSegment2Group, newEndID, groupID);
+              }
+          
+              // Ensure childrenIDs list is updated too
+              group.childrenIDs = updatedSegments.slice(1, -1);
+            });
+          
+            // Delete empty groups
             groupsToDelete.forEach(groupID => {
-                removeGroupFromSegmentMapping(state.startSegment2Group, segmentID, groupID)
-                removeGroupFromSegmentMapping(state.endSegment2Group, segmentID, groupID)
-                removeGroupFromLookup(state.groups, groupID)
-            })
-        }
+              removeGroupFromLookup(state.groups, groupID);
+              Object.keys(state.startSegment2Group).forEach(key => {
+                state.startSegment2Group[key] = state.startSegment2Group[key].filter(id => id !== groupID);
+                if (state.startSegment2Group[key].length === 0) delete state.startSegment2Group[key];
+              });
+              Object.keys(state.endSegment2Group).forEach(key => {
+                state.endSegment2Group[key] = state.endSegment2Group[key].filter(id => id !== groupID);
+                if (state.endSegment2Group[key].length === 0) delete state.endSegment2Group[key];
+              });
+            });
+          },
+          
+          
+          
+          
     },
 })
 
