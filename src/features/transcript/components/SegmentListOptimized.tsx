@@ -32,6 +32,15 @@ import { SegmentTag } from "../types/Tag"
 
 import { selectSegmentTags, toggleSegmentTag, selectSegments, selectActiveSegmentId, resetActiveSegmentId } from "../redux/transcriptSlice";
 
+import {
+    ArrayQueue,
+    ConstantBackoff,
+    Websocket,
+    WebsocketBuilder,
+    WebsocketEvent,
+  } from "websocket-ts";
+
+
 interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
 }
@@ -74,6 +83,51 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
             defaultHeight: 81,
         })
       );
+
+
+      // Initialize WebSocket with buffering and 1s reconnection delay
+// const ws = new WebsocketBuilder("ws://localhost:8080")
+// .withBuffer(new ArrayQueue())           // buffer messages when disconnected
+// .withBackoff(new ConstantBackoff(1000)) // retry every 1s
+// .build();
+
+
+// // Function to output & echo received messages
+// const echoOnMessage = (i: Websocket, ev: MessageEvent) => {
+//     console.log(`received message: ${ev.data}`);
+//     i.send(`echo: ${ev.data}`);
+//   };
+
+//   // Add event listeners
+// ws.addEventListener(WebsocketEvent.open, () => console.log("opened!"));
+// ws.addEventListener(WebsocketEvent.close, () => console.log("closed!"));
+// ws.addEventListener(WebsocketEvent.message, echoOnMessage);
+
+
+    const chatSocket = new WebSocket('ws://localhost:8000/ws/testos/');
+        
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const message = data['message'];
+        console.log(message)
+        // Handle incoming message
+    };
+    
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+    
+    // Send message to server
+    function sendMessage(message: any) {
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+    }
+    
+    chatSocket.onopen = function(e) {
+        sendMessage("Hello ws");
+    }
+
 
 
       const lastCreatedSegmentID = useSelector(selectLastCreatedSegmentID);
