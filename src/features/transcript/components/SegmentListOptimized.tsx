@@ -104,29 +104,29 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
 // ws.addEventListener(WebsocketEvent.message, echoOnMessage);
 
 
-    const chatSocket = new WebSocket('ws://localhost:8000/ws/testos/');
+    // const chatSocket = new WebSocket('ws://localhost:8000/ws/testos/');
         
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        const message = data['message'];
-        console.log(message)
-        // Handle incoming message
-    };
+    // chatSocket.onmessage = function(e) {
+    //     const data = JSON.parse(e.data);
+    //     const message = data['message'];
+    //     console.log(message)
+    //     // Handle incoming message
+    // };
     
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-    };
+    // chatSocket.onclose = function(e) {
+    //     console.error('Chat socket closed unexpectedly');
+    // };
     
-    // Send message to server
-    function sendMessage(message: any) {
-        chatSocket.send(JSON.stringify({
-            'message': message
-        }));
-    }
+    // // Send message to server
+    // function sendMessage(message: any) {
+    //     chatSocket.send(JSON.stringify({
+    //         'message': message
+    //     }));
+    // }
     
-    chatSocket.onopen = function(e) {
-        sendMessage("Hello ws");
-    }
+    // chatSocket.onopen = function(e) {
+    //     sendMessage("Hello ws");
+    // }
 
 
 

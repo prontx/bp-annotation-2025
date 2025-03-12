@@ -28,6 +28,7 @@ import { useHotkeys } from "./features/workspace/hooks/useHotkeys"
 //notifications
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { connectWebsocket, isConnected, isDisconnected, sendMessage } from "./features/connection/websocket"
 
 
 const BaseStyle = createGlobalStyle`
@@ -94,6 +95,18 @@ const SideBar = styled.aside`
 `
 
 function App() {
+    if(isDisconnected()) {
+        connectWebsocket("ws://localhost:8000/ws/testos/", {
+            onReady: (e) => {
+                console.log("Websocket server connected")
+                sendMessage('loadJob', '123')
+            },
+            onMessage: (e) => {
+                console.log("Message received", e)
+            }
+        })
+    }
+    
     useFetchJob()
     useFetchTranscript()
     useLoadGroups()
