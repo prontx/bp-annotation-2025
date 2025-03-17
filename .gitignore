@@ -25,3 +25,5 @@ dist-ssr
 
 src/testing/
 src/app.config.ts
+
+collab_writing/.env

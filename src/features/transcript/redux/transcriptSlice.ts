@@ -146,6 +146,8 @@ export const transcriptSlice = createSlice({
                     state.segments.entities[a].start - state.segments.entities[b].start
                 )
             }
+
+            console.log("provedena zmena" + JSON.stringify(change))
         },
         // deleteSegment: (state, action: PayloadAction<string>) => {
         //     console.log("deletin)")
@@ -299,15 +301,21 @@ export const transcriptSlice = createSlice({
         },   
         setActiveSegmentId: (state, action: PayloadAction<string>) => {
             state.activeSegmentId = action.payload;
-          },
-          resetActiveSegmentId: (state) => {
-            state.activeSegmentId = null;
-          }, 
-
-
-setLastClickedSegmentID: (state, action: PayloadAction<string>) => {
-    state.lastCreatedSegmentID = action.payload; // Reuse existing field
-},
+        },
+        resetActiveSegmentId: (state) => {
+          state.activeSegmentId = null;
+        },
+        loadTranscriptData: (state, action: PayloadAction<TranscriptLoadingParams>) => {
+            const {segments, speaker_tags, ...transcriptCommon} = action.payload
+            const transformedSegments = adaptSegments(segments)
+            const transformedTags = adaptSpeakers(speaker_tags)
+            state.segments = transformedSegments
+            state.speakerTags = transformedTags
+            state.status = "success"
+        },
+        setLastClickedSegmentID: (state, action: PayloadAction<string>) => {
+            state.lastCreatedSegmentID = action.payload; // Reuse existing field
+        },
     },
     extraReducers(builder) {
         builder.addCase(fetchTranscript.pending, (state, _) => {
@@ -324,7 +332,7 @@ setLastClickedSegmentID: (state, action: PayloadAction<string>) => {
     }
 })
 
-export const { createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, clearDeletedRegions, mergeSegment, mapRegion2Segment, setSpecialChar,
+export const { loadTranscriptData, createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, clearDeletedRegions, mergeSegment, mapRegion2Segment, setSpecialChar,
             setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, setSegmentTagsFromHistory, updateSpeaker, deleteSpeaker, setLastCreatedSegmentID, resetLastCreatedSegmentID, toggleSegmentTag, setActiveSegmentId, resetActiveSegmentId } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript

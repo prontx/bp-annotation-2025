@@ -9,6 +9,8 @@ import SegmentListOptimized from "./features/transcript/components/SegmentListOp
 import GroupList from "./features/grouping/components/GroupList"
 import SpeakerList from "./features/transcript/components/SpeakerList"
 import SpecialChars from "./features/transcript/components/SpecialChars"
+import { loadJobData, selectJobID } from "./features/workspace/redux/workspaceSlice"
+import { useSelector } from "react-redux"
 
 // wavesurfer
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
@@ -28,7 +30,12 @@ import { useHotkeys } from "./features/workspace/hooks/useHotkeys"
 //notifications
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { connectWebsocket, isConnected, isDisconnected, sendMessage } from "./features/connection/websocket"
+import { socket } from "./features/connection/websocket"
+import { BaseMessage, LoadJobMessage, MessageType } from "./features/connection/messages"
+import { useAppDispatch } from "./redux/hooks"
+import { Job } from "./features/workspace/types/Job"
+import { loadTranscriptData } from "./features/transcript/redux/transcriptSlice"
+import { TranscriptLoadingParams } from "./features/transcript/types/Transcript"
 
 
 const BaseStyle = createGlobalStyle`
@@ -95,20 +102,44 @@ const SideBar = styled.aside`
 `
 
 function App() {
-    if(isDisconnected()) {
-        connectWebsocket("ws://localhost:8000/ws/testos/", {
-            onReady: (e) => {
-                console.log("Websocket server connected")
-                sendMessage('loadJob', '123')
-            },
-            onMessage: (e) => {
-                console.log("Message received", e)
+    const dispatch = useAppDispatch()
+
+    const params = new URLSearchParams(window.location.search)
+    const JOB_ID = params.get('job_id')
+    console.log("Using JOB_ID:" + JSON.stringify(JOB_ID))
+
+
+    if(socket.isDisconnected()) {
+        socket.onReady = (e) => {
+            console.log("Websocket server connected")
+            if (JOB_ID !== null) {
+                console.log("Sending loadJob request")
+                socket.send(new LoadJobMessage(JOB_ID))
             }
-        })
+        }
+
+        socket.onMessage = (e) => {
+            const message = BaseMessage.fromJson(e.data)
+            
+            switch(message.messageType) {
+                case MessageType.LoadJob:
+                    console.log("loaded")
+                    const jobData: Job = message.data.jobData as Job
+                    const transcriptData: TranscriptLoadingParams = message.data.transcriptData as TranscriptLoadingParams
+                    dispatch(loadJobData(jobData))
+                    dispatch(loadTranscriptData(transcriptData))
+                    //useLoadGroups()
+                    break
+            }
+        }
+
+        socket.connect("ws://localhost:8000/ws/testos/")
     }
     
-    useFetchJob()
-    useFetchTranscript()
+    
+
+    //useFetchJob()
+    //useFetchTranscript()
     useLoadGroups()
     const waveformRegionsRef = useRef<RegionsPlugin>(RegionsPlugin.create())
     useHistory(waveformRegionsRef)

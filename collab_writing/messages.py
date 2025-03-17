@@ -1,0 +1,52 @@
+from dataclasses import dataclass, fields
+from dataclasses_json import dataclass_json, DataClassJsonMixin
+from typing import Any, Dict, Optional
+import json
+import enum
+
+class MessageType(enum.Enum):
+    LoadJob = "LoadJob"
+
+@dataclass
+class BaseMessage(DataClassJsonMixin):
+    messageType: MessageType
+    data: dict = None
+    
+    @classmethod
+    def from_json(cls, json_str: str, **kwargs) -> 'BaseMessage':
+        data = json.loads(json_str)
+        return cls.from_dict(data, **kwargs)
+
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any], **kwargs) -> 'BaseMessage':
+        message_type = data.get("messageType")
+
+        message_classes = {
+            MessageType.LoadJob: LoadJobMessage,
+        }
+        
+        try:
+            message_type = MessageType[message_type]
+            message_class = message_classes[message_type]
+        except:
+            message_class = BaseMessage
+
+
+        if message_class == LoadJobMessage:
+            data["data"] = LoadJobMessageData.from_dict(data["data"])
+
+        return message_class(**data)
+    
+@dataclass_json
+@dataclass
+class LoadJobMessageData:
+    jobId: str = None
+    jobData: Optional[dict] = None
+    transcriptData: Optional[dict] = None
+    
+@dataclass_json
+@dataclass
+class LoadJobMessage(BaseMessage):
+    messageType: MessageType = MessageType.LoadJob
+    data: LoadJobMessageData = None

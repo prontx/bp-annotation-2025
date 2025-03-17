@@ -1,50 +1,93 @@
-import { Websocket, WebsocketEvent } from "websocket-ts";
+import { BaseMessage } from "./messages";
 
-var ws: WebSocket | null;
+class Socket {
+    socket: WebSocket | null
+    #onReady: ((event: Event) => void) | null;
+    #onMessage: ((event: MessageEvent) => void) | null;
+    #onClose: ((event: Event) => void) | null;
+    #onError: ((event: Event) => void) | null;
 
-interface WebsocketOptions {
-    onReady?: (event: Event) => void;
-    onMessage?: (event: MessageEvent) => void;
-    onClose?: (event: CloseEvent) => void;
-    onError?: (event: Event) => void;
-}
+    public set onReady(cb: (event: Event) => void) {
+        this.#onReady = cb
 
-export function connectWebsocket(url: string, options: WebsocketOptions) {
-    ws = new WebSocket(url)
-
-    ws.onmessage = options.onMessage || null
-    ws.onerror = options.onError || null
-    ws.onclose = options.onClose || null
-    ws.onopen = options.onReady || null
-}
-
-export function disconnectWebsocket() {
-    ws = null
-}
-
-export function sendMessage(messageType: string, data: any) {
-    if(!ws || !isConnected()) {
-        throw new Error("Websocket is not open");
+        if(this.socket) {
+            this.socket.onopen = cb
+        }
     }
 
-    ws.send(JSON.stringify({
-        'messageType': messageType,
-        'data': data,
-    }));
-}
+    public set onMessage(cb: (event: MessageEvent) => void) {
+        this.#onMessage = cb
 
-export function isConnected() {
-    if(!ws) {
-        return false
+        if(this.socket) {
+            this.socket.onmessage = cb
+        }
     }
 
-    return ws.readyState === WebSocket.OPEN
+    public set onClose(cb: (event: Event) => void) {
+        this.#onClose = cb
+
+        if(this.socket) {
+            this.socket.onclose = cb
+        }
+    }
+
+    public set onError(cb: (event: Event) => void) {
+        this.#onError = cb
+
+        if(this.socket) {
+            this.socket.onerror = cb
+        }
+    }
+
+    constructor() {
+        this.socket = null
+
+        this.#onReady = null
+        this.#onMessage = null
+        this.#onClose = null
+        this.#onError = null
+    }
+
+    public connect(url: string) {
+        if(!this.socket) {
+            this.socket = new WebSocket(url)
+            this.socket.onopen = this.#onReady || null
+            this.socket.onclose = this.#onClose || null
+            this.socket.onerror = this.#onError || null
+            this.socket.onmessage = this.#onMessage || null
+        }
+    }
+
+    public disconnect() {
+        if(this.socket) {
+            this.socket.close()
+            this.socket = null
+        }
+    }
+
+    public send(message: BaseMessage) {
+        if(!this.socket) {
+            throw new Error("Websocket is not open");
+        }
+
+        this.socket.send(message.toJson());
+    }
+
+    public isConnected() {
+        if(!this.socket) {
+            return false
+        }
+
+        return this.socket.readyState === WebSocket.OPEN
+    }
+
+    public isDisconnected() {
+        if(!this.socket) {
+            return true
+        }
+        
+        return this.socket.readyState === WebSocket.CLOSED
+    }
 }
 
-export function isDisconnected() {
-    if(!ws) {
-        return true
-    }
-    
-    return ws.readyState === WebSocket.CLOSED
-}
+export var socket = new Socket()

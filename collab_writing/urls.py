@@ -19,8 +19,12 @@ from django.urls import path
 
 from django.urls import include
 from collab_writing import views, routing
+from .waveform import FetchDataView
+from . import views
+from .views import proxy_to_api
+
 
 urlpatterns = [
     ...,
-    path('', include(routing.websocket_urlpatterns))
+    path('', include(routing.websocket_urlpatterns)),
 ]
