@@ -6,6 +6,7 @@ import enum
 
 class MessageType(enum.Enum):
     LoadJob = "LoadJob"
+    SaveTranscript = "SaveTranscript"
 
 @dataclass
 class BaseMessage(DataClassJsonMixin):
@@ -24,6 +25,7 @@ class BaseMessage(DataClassJsonMixin):
 
         message_classes = {
             MessageType.LoadJob: LoadJobMessage,
+            MessageType.SaveTranscript: SaveTranscriptMessage,
         }
         
         try:
@@ -35,6 +37,9 @@ class BaseMessage(DataClassJsonMixin):
 
         if message_class == LoadJobMessage:
             data["data"] = LoadJobMessageData.from_dict(data["data"])
+            
+        if message_class == SaveTranscriptMessage:
+            data["data"] = SaveTranscriptMessageData.from_dict(data["data"])    
 
         return message_class(**data)
     
@@ -44,9 +49,25 @@ class LoadJobMessageData:
     jobId: str = None
     jobData: Optional[dict] = None
     transcriptData: Optional[dict] = None
+    groupsData: Optional[dict] = None
     
 @dataclass_json
 @dataclass
 class LoadJobMessage(BaseMessage):
     messageType: MessageType = MessageType.LoadJob
     data: LoadJobMessageData = None
+    
+@dataclass_json
+@dataclass
+class SaveTranscriptMessageData:
+    jobId: str = None
+    jobData: Optional[dict] = None
+    transcriptData: Optional[dict] = None
+    groupsData: Optional[dict] = None
+
+@dataclass_json
+@dataclass
+class SaveTranscriptMessage(BaseMessage):
+    messageType: MessageType = MessageType.SaveTranscript
+    data: SaveTranscriptMessageData = None
+

@@ -37,8 +37,9 @@ export const groupingSlice = createSlice({
     initialState,
     reducers: {
         loadGroups: (state, action: PayloadAction<{transformedGroups: Lookup<Group>, startSegment2Group: Record<string, string[]>, endSegment2Group: Record<string, string[]>}>) => {
+            console.log("511 " + JSON.stringify(action))
             const { transformedGroups, startSegment2Group, endSegment2Group } = action.payload
-            state.groups = transformedGroups
+            state.groups = transformedGroups || {}
             state.startSegment2Group = startSegment2Group
             state.endSegment2Group = endSegment2Group
         },
@@ -54,14 +55,17 @@ export const groupingSlice = createSlice({
 
             // create or update a group entity
             const id = action.payload.id || uuid()
-            state.groups.entities[id] = {
-                id: id,
-                ...action.payload,
-                childrenIDs: action.payload.id ? state.groups.entities[id].childrenIDs : [],
+            if (state.groups.entities) 
+            {
+                state.groups.entities[id] = {
+                    id: id,
+                    ...action.payload,
+                    childrenIDs: action.payload.id ? state.groups.entities[id].childrenIDs : [],
+                } || {}
             }
             
             // insert key
-            if (!action.payload.id){
+            if (!action.payload.id && state.groups.keys){
                 if (!action.payload.parentID){
                     state.groups.keys.push(id)
                 } else {
@@ -208,7 +212,7 @@ export const selectSelecting = (state: RootState) => state.grouping.selecting
 export const selectParentStartEndSegmentIDs = (state: RootState) => state.grouping.parentSegmentIDs
 export const selectIsEditing = (state: RootState) => state.grouping.isEditing
 export const selectGroupsByStartSegment = createSelector(
-    (state: RootState) => state.grouping.startSegment2Group,
+    (state: RootState) => state.grouping.startSegment2Group || {},
     (mapping) => (segmentID: string) => mapping[segmentID]
 )
 export const selectStartEndSegment2Group = createSelector(

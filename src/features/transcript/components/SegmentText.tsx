@@ -73,6 +73,10 @@ const SegmentText: FC<SegmentTextProps> = ({segmentID, ...props}) => {
     }
 
     const updateGlobalState = (text: string) => {
+        console.log("711 " + segmentID + text)
+        document.dispatchEvent(new CustomEvent('change-segment-text', {
+            detail: { segmentID, text }
+          }))
         dispatch(updateSegment({
             type: "id",
             key: segmentID,

@@ -19,6 +19,7 @@ class JobClientConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             message = BaseMessage.from_json(text_data)
+            print(f"Parsed message type: {message.messageType}")
             
             print("Received:", message)
             
@@ -28,11 +29,42 @@ class JobClientConsumer(AsyncWebsocketConsumer):
                 
                 message.data.jobData = channel.job_data
                 message.data.transcriptData = channel.transcript_data
+                message.data.groupsData = channel.group_data
+                
+                print("111 \n\n\n\n\n" + str(message.data.transcriptData) + str(channel.transcript_data))
                 
                 await self.send(text_data=message.to_json())
                 
                 client = store.job_manager.get_client(self)
-                client.channel.broadcast(message, ignore=[client])
+                await client.channel.broadcast(message, ignore=[client])
+                
+            elif isinstance(message, SaveTranscriptMessage):
+                message: SaveTranscriptMessage = message
+                print("Handling save request")
+                client = store.job_manager.get_client(self)
+                if not client or not client.channel:
+                    print("No client/channel found")
+                    return
+
+                try:                    
+                    # Save using the updated data:
+                    client.channel.save_transcript()
+                    
+                    # message.data.jobData = client.channel.job_data
+                    # message.data.transcriptData = client.channel.transcript_data 
+                    # message.data.groupsData = client.channel.group_data
+                    
+                    print("Save successful")
+                    print("112 \n\n\n\n\n" + str(message.data.transcriptData))
+                    await self.send(text_data=message.to_json())
+                    await client.channel.broadcast(message, ignore=[client])
+
+                except Exception as e:
+                    print(f"Save failed: {str(e)}")
+                
+
+                # await self.send(response.to_json())  
+            
         except SpokenDataException as e:
             print("Request error:", e)
         except Exception as e:

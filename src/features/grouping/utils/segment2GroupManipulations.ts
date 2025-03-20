@@ -1,8 +1,10 @@
 export const addGroupToSegmentMapping = (segment2Group: Record<string, string[]>, segmentID: string, groupID: string) => {
-    if (!segment2Group[segmentID]){
-        segment2Group[segmentID] = [groupID]
-    } else if (!segment2Group[segmentID].includes(groupID)){
-        segment2Group[segmentID].push(groupID)
+    if (segment2Group) {
+        if (!segment2Group[segmentID]){
+            segment2Group[segmentID] = [groupID]
+        } else if (!segment2Group[segmentID].includes(groupID)){
+            segment2Group[segmentID].push(groupID)
+        }
     }
 }
 

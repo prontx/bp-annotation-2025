@@ -140,6 +140,12 @@ export const transcriptSlice = createSlice({
             console.log("updated segment: " + JSON.stringify(segment))
             console.log("entities: " + JSON.stringify(state.segments.entities[key]))
 
+            const entitiez = state.segments.entities[key]
+
+            document.dispatchEvent(new CustomEvent('update-segment-entities', {
+                detail: { entitiez }
+            }))
+
              // ensure keys stay ordered on start change
              if (change.start){
                 state.segments.keys = state.segments.keys.sort((a, b) =>
@@ -148,6 +154,8 @@ export const transcriptSlice = createSlice({
             }
 
             console.log("provedena zmena" + JSON.stringify(change))
+
+            // document.dispatchEvent(new CustomEvent('change-segment-text'))
         },
         // deleteSegment: (state, action: PayloadAction<string>) => {
         //     console.log("deletin)")

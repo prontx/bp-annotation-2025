@@ -9,8 +9,9 @@ import SegmentListOptimized from "./features/transcript/components/SegmentListOp
 import GroupList from "./features/grouping/components/GroupList"
 import SpeakerList from "./features/transcript/components/SpeakerList"
 import SpecialChars from "./features/transcript/components/SpecialChars"
-import { loadJobData, selectJobID } from "./features/workspace/redux/workspaceSlice"
+import { delayedSave, loadJobData, saved, selectJobID, setError } from "./features/workspace/redux/workspaceSlice"
 import { useSelector } from "react-redux"
+import { loadGroups } from "./features/grouping/redux/groupingSlice"
 
 // wavesurfer
 import RegionsPlugin from "wavesurfer.js/plugins/regions"
@@ -31,12 +32,14 @@ import { useHotkeys } from "./features/workspace/hooks/useHotkeys"
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { socket } from "./features/connection/websocket"
-import { BaseMessage, LoadJobMessage, MessageType } from "./features/connection/messages"
+import { BaseMessage, LoadJobMessage, MessageType, SaveTranscriptMessage } from "./features/connection/messages"
 import { useAppDispatch } from "./redux/hooks"
 import { Job } from "./features/workspace/types/Job"
-import { loadTranscriptData } from "./features/transcript/redux/transcriptSlice"
+import { loadTranscriptData, selectGroupsRaw, selectSegments, selectTranscriptStatus } from "./features/transcript/redux/transcriptSlice"
 import { TranscriptLoadingParams } from "./features/transcript/types/Transcript"
-
+import { adaptGroups } from "./features/workspace/utils/adaptGroups"
+import { save } from "./features/workspace/redux/workspaceSlice"
+import { RootState } from "./redux/store"
 
 const BaseStyle = createGlobalStyle`
     body {
@@ -115,11 +118,47 @@ function App() {
             if (JOB_ID !== null) {
                 console.log("Sending loadJob request")
                 socket.send(new LoadJobMessage(JOB_ID))
+                // socket.send(new SaveTranscriptMessage(JOB_ID))
+
+                const handleManualSave = () => {
+                    console.log("Manual save triggered")
+                    if(JOB_ID) {
+                      
+                    }   
+                }
+                document.addEventListener('manual-save', handleManualSave)
+
+                const handleSegmentEdit = (e: Event) => {
+                    const customEvent = e as CustomEvent<{ segmentID: string; text: string }>;
+                    console.log("Save segment event received:", customEvent.detail);
+                    console.log("Segment text change triggered")
+                    if(JOB_ID) {                       
+                    }   
+                }
+                document.addEventListener('change-segment-text', handleSegmentEdit)
+
+                const handleUpdateEntities = (e: Event) => {
+                    const customEvent = e as CustomEvent<{ entitiez: any; }>;
+                    console.log("411 ", customEvent.detail.entitiez);
+                    socket.send(new SaveTranscriptMessage(JOB_ID, customEvent.detail.entitiez, {}))
+
+                }
+
+                document.addEventListener('update-segment-entities', handleUpdateEntities)
+
+                // Cleanup
+                return () => {
+                    document.removeEventListener('manual-save', handleManualSave)
+                    document.removeEventListener('change-segment-text', handleSegmentEdit)
+                    document.removeEventListener('update-segment-entities', handleUpdateEntities)
+                }
             }
         }
 
         socket.onMessage = (e) => {
             const message = BaseMessage.fromJson(e.data)
+            console.log("WebSocket Message received:", message);
+
             
             switch(message.messageType) {
                 case MessageType.LoadJob:
@@ -128,7 +167,19 @@ function App() {
                     const transcriptData: TranscriptLoadingParams = message.data.transcriptData as TranscriptLoadingParams
                     dispatch(loadJobData(jobData))
                     dispatch(loadTranscriptData(transcriptData))
-                    //useLoadGroups()
+                    const groupsData = message.data.groupsData
+                    dispatch(loadGroups(groupsData))
+
+                    console.log("412 " + JSON.stringify(transcriptData))
+
+                    // useLoadGroups() 
+                    break
+
+                case MessageType.SaveTranscript:
+                    console.log("Save response received");
+                    break
+
+                default:
                     break
             }
         }
@@ -136,14 +187,13 @@ function App() {
         socket.connect("ws://localhost:8000/ws/testos/")
     }
     
-    
 
     //useFetchJob()
     //useFetchTranscript()
-    useLoadGroups()
+    // useLoadGroups()
     const waveformRegionsRef = useRef<RegionsPlugin>(RegionsPlugin.create())
     useHistory(waveformRegionsRef)
-    useSave()
+    // useSave()
     useHotkeys()
 
     return (<>

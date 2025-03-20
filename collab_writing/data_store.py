@@ -20,14 +20,18 @@ class JobChannel:
         self.clients: List[JobClient] = []
         self.job_data = None
         self.transcript_data = None
+        self.group_data = None
         
         if load_data:
             self.load_job()
         
     def load_job(self):
         api = SpokenDataAPI(api_key=os.getenv('SPOKENDATA_API_KEY'))
+        
         self.job_data = api.get_job(self.job_id)
         self.transcript_data = api.get_transcript(self.job_id)
+        self.group_data = api.get_groups(self.job_id)
+        print("211" + str(self.transcript_data))
 
     async def add_client(self, client: JobClient):
         client.channel = self
@@ -47,6 +51,26 @@ class JobChannel:
                 continue
             
             await client.consumer.send(message)
+    
+    #async ??        
+    def save_transcript(self):
+        api = SpokenDataAPI(api_key=os.getenv('SPOKENDATA_API_KEY'))
+        response = api.put_transcript(
+            job_id=self.job_id,
+            transcript_data={
+                'speaker_tags': self.transcript_data.get('speaker_tags', []),
+                'segments': self.transcript_data.get('segments', []),
+                'groups': self.group_data or []
+            }
+        )
+            
+        self.transcript_data = api.get_transcript(self.job_id)
+        self.group_data = api.get_groups(self.job_id)
+        print("Data refreshed after save")
+        print("212" + str(self.transcript_data))
+
+        # print("Data refreshed after save" + str(self.transcript_data))
+        # print("lorem ipsum" + str(response) + str(api.get_transcript(job_id=self.job_id)))
         
 class JobManager:
     def __init__(self):

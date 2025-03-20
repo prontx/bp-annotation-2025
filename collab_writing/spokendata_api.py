@@ -28,6 +28,29 @@ class SpokenDataAPI:
         self._check_response(response)
         return response.json()
     
+    def get_groups(self, job_id):
+        response = requests.get(self._url(f'jobs/{job_id}/transcript'), headers=self._default_headers)
+        self._check_response(response)
+        print("312 " + str(response.json()["groups"]))
+        return response.json()["groups"]
+    
+    def put_transcript(self, job_id: str, transcript_data: dict):
+        """Update transcript data for a job"""
+        url = self._url(f'jobs/{job_id}/transcript')
+        
+        print("311 " + str(transcript_data))
+        
+        response = requests.put(
+            url,
+            headers={
+                **self._default_headers,
+                'Content-Type': 'application/json'
+            },
+            json=transcript_data
+        )
+        
+        self._check_response(response)
+        return response.json()
     
 class SpokenDataException(Exception):
     """SpokenData API """

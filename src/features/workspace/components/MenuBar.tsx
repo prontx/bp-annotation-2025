@@ -21,6 +21,8 @@ import { historyRedo, historyUndo } from "../redux/workspaceSlice"
 // types
 import Layer from "../../../types/Layer"
 import HotkeyList from "./HotkeyList"
+import { socket } from "../../connection/websocket"
+import { SaveTranscriptMessage } from "../../connection/messages"
 
 
 const MenuBarContainer = styled.nav<Layer>`
@@ -80,7 +82,10 @@ const MenuBar : FC<React.HTMLAttributes<HTMLDivElement> & Layer> = ({$layer, ...
             <h1>{title}</h1>
             <MenuItemsContainer>
                 <Button $layer={$layer} onClick={handleNavigateToCatalogue}>Zpět do karty</Button>
-                <Button $layer={$layer} onClick={() => dispatch(delayedSave(5))}>Uložit</Button>
+                <Button $layer={$layer} onClick={() => {
+                    console.log("Dispatching manual save");
+                    document.dispatchEvent(new CustomEvent('manual-save'))
+                }}>Uložit</Button>
                 <Menu>
                     <MenuButton $layer={$layer}>Úpravy</MenuButton>
                     <MenuPopover $layer={$layer+1}>

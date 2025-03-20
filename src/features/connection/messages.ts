@@ -1,6 +1,7 @@
 
 export enum MessageType {
     LoadJob = "LoadJob",
+    SaveTranscript = "SaveTranscript",
 }
 
 export class BaseMessage {
@@ -33,6 +34,7 @@ export class LoadJobMessage extends BaseMessage {
     declare data: {
         jobData: object
         jobTranscript: object
+        jobGroups: object
     } | any
 
     constructor(job_id: string) {
@@ -40,4 +42,28 @@ export class LoadJobMessage extends BaseMessage {
             jobId: job_id
         })
     }
+}
+
+export class SaveTranscriptMessage extends BaseMessage {
+    declare data: {
+        jobData: object
+        jobTranscript: object
+        jobGroups: object
+    } | any
+
+    // constructor(job_id: string, extraData?: object) {
+    //     super(MessageType.SaveTranscript, {
+    //         jobId: job_id,
+    //         ...(extraData || {})
+    //     });
+    // }
+
+    constructor(job_id: string, transcriptData: object, groupsData: object, jobData?: object) {
+        super(MessageType.SaveTranscript, {
+          jobId: job_id,
+          transcriptData: transcriptData,
+          groupsData: groupsData,
+          jobData: jobData,
+        });
+      }
 }
