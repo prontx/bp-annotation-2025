@@ -24,6 +24,7 @@ class SpokenDataAPI:
         return response.json()
     
     def get_transcript(self, job_id):
+        print("Validating headers " +str(self._default_headers))
         response = requests.get(self._url(f'jobs/{job_id}/transcript'), headers=self._default_headers)
         self._check_response(response)
         return response.json()
@@ -38,7 +39,7 @@ class SpokenDataAPI:
         """Update transcript data for a job"""
         url = self._url(f'jobs/{job_id}/transcript')
         
-        print("311 " + str(transcript_data))
+        print("311 " + str(transcript_data) + " " + str(url))
         
         response = requests.put(
             url,
@@ -48,6 +49,9 @@ class SpokenDataAPI:
             },
             json=transcript_data
         )
+        
+        print("313 " + str(response) + str(self._check_response(response)))
+        
         
         self._check_response(response)
         return response.json()

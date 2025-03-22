@@ -27,3 +27,5 @@ src/testing/
 src/app.config.ts
 
 collab_writing/.env
+data_structure.json
+collab_writing/test.py

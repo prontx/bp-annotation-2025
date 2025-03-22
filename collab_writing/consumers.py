@@ -48,7 +48,7 @@ class JobClientConsumer(AsyncWebsocketConsumer):
 
                 try:                    
                     # Save using the updated data:
-                    client.channel.save_transcript()
+                    client.channel.save_transcript(message.data.transcriptData)
                     
                     # message.data.jobData = client.channel.job_data
                     # message.data.transcriptData = client.channel.transcript_data 
@@ -61,14 +61,17 @@ class JobClientConsumer(AsyncWebsocketConsumer):
 
                 except Exception as e:
                     print(f"Save failed: {str(e)}")
+                    raise
                 
 
                 # await self.send(response.to_json())  
             
         except SpokenDataException as e:
             print("Request error:", e)
+            raise 
         except Exception as e:
             print("Unable to parse message:", e)
+            raise 
         
 
         #print(f"Sending {message_json}")
