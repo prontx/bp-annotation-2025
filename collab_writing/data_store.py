@@ -135,55 +135,41 @@ class JobChannel:
                 for word in updated_segment['words'].split()
             ]
 
-        # Create working copy
         new_transcript = self.transcript_data.copy()
         existing_segments = new_transcript.get('segments', [])
 
-        # Match parameters
-        match_tolerance = 0.1  # 100ms tolerance for time comparisons
+        # Match using time boundaries only (100ms tolerance)
+        match_tolerance = 0.1
         updated_start = updated_segment.get('start')
         updated_end = updated_segment.get('end')
-        updated_speaker = updated_segment.get('speaker', '')
-        
-        print("\n MATCHING PARAMETERS:")
-        print(f"Looking for: start={updated_start}±{match_tolerance}, "
-              f"end={updated_end}±{match_tolerance}, speaker='{updated_speaker}'")
-        print("Existing segments:")
-        for i, seg in enumerate(existing_segments):
-            print(f"{i}: start={seg.get('start')} end={seg.get('end')} "
-                  f"speaker='{seg.get('speaker')}' words={seg.get('words')}")
 
-        # Find existing segment using time boundaries + speaker
+        # Find existing segment index
         found_index = -1
         for i, seg in enumerate(existing_segments):
             time_match = (
                 abs(seg.get('start', 0) - updated_start) < match_tolerance and
                 abs(seg.get('end', 0) - updated_end) < match_tolerance
             )
-            speaker_match = seg.get('speaker', '') == updated_speaker
-
-            if time_match and speaker_match:
+            if time_match:
                 found_index = i
                 break
             
-        # Update logic
+        # Update or append logic
         if found_index != -1:
-            print(f" Replacing segment at index {found_index}")
-            existing_segments[found_index] = updated_segment
+            print(f" Updating existing segment at {found_index} (speaker change)")
+            existing_segments[found_index] = updated_segment  # Full replace
         else:
             print(" Appending new segment")
             existing_segments.append(updated_segment)
 
-        # Finalize and save
         new_transcript['segments'] = existing_segments
         new_transcript['groups'] = self.group_data
-    
+
         response = api.put_transcript(
             job_id=self.job_id,
             transcript_data=new_transcript
         )
 
-        # Update local state
         self.transcript_data = api.get_transcript(self.job_id)
         self.group_data = api.get_groups(self.job_id)
 
