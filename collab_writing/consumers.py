@@ -56,6 +56,9 @@ class JobClientConsumer(AsyncWebsocketConsumer):
                     
                     print("Save successful")
                     print("112 \n\n\n\n\n" + str(message.data.transcriptData))
+                    
+                    print("999 " + str(client.channel.transcript_data))
+                    
                     await self.send(text_data=message.to_json())
                     await client.channel.broadcast(message, ignore=[client])
 

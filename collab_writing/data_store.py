@@ -85,9 +85,48 @@ class JobChannel:
     #     # print("TRANSSCRIPT AFTER: " + str(self.transcript_data))
         
         
+    # def save_transcript(self, updated_data: dict):
+    #     api = SpokenDataAPI(api_key=os.getenv('SPOKENDATA_API_KEY'))
+        
+    #     # Process the updated segment
+    #     updated_segment = updated_data.copy()
+    #     if isinstance(updated_segment.get('words'), str):
+    #         updated_segment['words'] = [
+    #             {'label': word, 'start': None, 'end': None, 'confidence': None, 'text_tags': []}
+    #             for word in updated_segment['words'].split()
+    #         ]
+        
+    #     # Merge with existing transcript structure
+    #     new_transcript = self.transcript_data.copy()
+    #     # print("new_transcript before appending " + str(new_transcript))
+    #     # new_transcript['segments'].append(updated_segment)
+    #     # print("new_transcript after appending " + str(new_transcript))
+        
+    #     print(f"Transcript before insertion: {new_transcript['segments']} \n\n\n The thing we want to insert {updated_segment}")
+        
+    #     new_transcript['segments'].append(updated_segment)  # Array of segments
+    #     new_transcript['groups'] = self.group_data
+        
+    #     print(f"Transcript after insertion: {new_transcript['segments']}")
+        
+    #     response = api.put_transcript(
+    #         job_id=self.job_id,
+    #         transcript_data=new_transcript  # Send merged structure
+    #     )
+        
+    #     # Updating local state after PUT
+    #     self.transcript_data = api.get_transcript(self.job_id)
+    #     self.group_data = api.get_groups(self.job_id)
+        
+    #     # self.transcript_data = new_transcript['segments']
+    #     # self.group_data = new_transcript['groups']
+        
+    #     print(f"992 {self.transcript_data}")
+    
+    
     def save_transcript(self, updated_data: dict):
         api = SpokenDataAPI(api_key=os.getenv('SPOKENDATA_API_KEY'))
-        
+
         # Process the updated segment
         updated_segment = updated_data.copy()
         if isinstance(updated_segment.get('words'), str):
@@ -95,18 +134,56 @@ class JobChannel:
                 {'label': word, 'start': None, 'end': None, 'confidence': None, 'text_tags': []}
                 for word in updated_segment['words'].split()
             ]
-        
-        # Merge with existing transcript structure
+
+        # Create working copy
         new_transcript = self.transcript_data.copy()
-        new_transcript['segments'] = [updated_segment]  # Array of segments
-        new_transcript['groups'] = self.group_data
+        existing_segments = new_transcript.get('segments', [])
+
+        # Match parameters
+        match_tolerance = 0.1  # 100ms tolerance for time comparisons
+        updated_start = updated_segment.get('start')
+        updated_end = updated_segment.get('end')
+        updated_speaker = updated_segment.get('speaker', '')
         
+        print("\n MATCHING PARAMETERS:")
+        print(f"Looking for: start={updated_start}±{match_tolerance}, "
+              f"end={updated_end}±{match_tolerance}, speaker='{updated_speaker}'")
+        print("Existing segments:")
+        for i, seg in enumerate(existing_segments):
+            print(f"{i}: start={seg.get('start')} end={seg.get('end')} "
+                  f"speaker='{seg.get('speaker')}' words={seg.get('words')}")
+
+        # Find existing segment using time boundaries + speaker
+        found_index = -1
+        for i, seg in enumerate(existing_segments):
+            time_match = (
+                abs(seg.get('start', 0) - updated_start) < match_tolerance and
+                abs(seg.get('end', 0) - updated_end) < match_tolerance
+            )
+            speaker_match = seg.get('speaker', '') == updated_speaker
+
+            if time_match and speaker_match:
+                found_index = i
+                break
+            
+        # Update logic
+        if found_index != -1:
+            print(f" Replacing segment at index {found_index}")
+            existing_segments[found_index] = updated_segment
+        else:
+            print(" Appending new segment")
+            existing_segments.append(updated_segment)
+
+        # Finalize and save
+        new_transcript['segments'] = existing_segments
+        new_transcript['groups'] = self.group_data
+    
         response = api.put_transcript(
             job_id=self.job_id,
-            transcript_data=new_transcript  # Send merged structure
+            transcript_data=new_transcript
         )
-        
-        # Updating local state after PUT
+
+        # Update local state
         self.transcript_data = api.get_transcript(self.job_id)
         self.group_data = api.get_groups(self.job_id)
 

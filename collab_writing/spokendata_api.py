@@ -1,4 +1,5 @@
 import requests
+# from .data_store import store
 
 class SpokenDataAPI:
     def __init__(self, api_key: str, server_url: str = 'https://api.spokendata.com/v2'):
@@ -52,6 +53,9 @@ class SpokenDataAPI:
         
         print("313 " + str(response) + str(self._check_response(response)))
         
+       
+
+       
         
         self._check_response(response)
         return response.json()
