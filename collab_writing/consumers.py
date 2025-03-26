@@ -33,10 +33,15 @@ class JobClientConsumer(AsyncWebsocketConsumer):
                 
                 print("111 \n\n\n\n\n" + str(message.data.transcriptData) + str(channel.transcript_data))
                 
-                await self.send(text_data=message.to_json())
+                
+                serialized_message = message.to_json()
+                await self.send(text_data=serialized_message)
+                
+                # await self.send(text_data=message.to_json())
                 
                 client = store.job_manager.get_client(self)
-                await client.channel.broadcast(message, ignore=[client])
+
+                await client.channel.broadcast(serialized_message, ignore=[client])
                 
             elif isinstance(message, SaveTranscriptMessage):
                 message: SaveTranscriptMessage = message
@@ -60,7 +65,7 @@ class JobClientConsumer(AsyncWebsocketConsumer):
                     print("999 " + str(client.channel.transcript_data))
                     
                     await self.send(text_data=message.to_json())
-                    await client.channel.broadcast(message, ignore=[client])
+                    await client.channel.broadcast(message.to_json(), ignore=[client])
 
                 except Exception as e:
                     print(f"Save failed: {str(e)}")

@@ -50,7 +50,7 @@ class JobChannel:
             if client in ignore:
                 continue
             
-            await client.consumer.send(message)
+            await client.consumer.send(text_data=message)
     
     #async ??        
     # def save_transcript(self, updated_data: dict):

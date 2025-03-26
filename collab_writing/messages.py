@@ -43,6 +43,9 @@ class BaseMessage(DataClassJsonMixin):
 
         return message_class(**data)
     
+    def to_json(self):
+        return self.json()
+    
 @dataclass_json
 @dataclass
 class LoadJobMessageData:
