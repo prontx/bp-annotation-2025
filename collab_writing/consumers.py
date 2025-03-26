@@ -31,7 +31,7 @@ class JobClientConsumer(AsyncWebsocketConsumer):
                 message.data.transcriptData = channel.transcript_data
                 message.data.groupsData = channel.group_data
                 
-                print("111 \n\n\n\n\n" + str(message.data.transcriptData) + str(channel.transcript_data))
+                # print("111 \n\n\n\n\n" + str(message.data.transcriptData) + str(channel.transcript_data))
                 
                 
                 serialized_message = message.to_json()
@@ -60,9 +60,9 @@ class JobClientConsumer(AsyncWebsocketConsumer):
                     # message.data.groupsData = client.channel.group_data
                     
                     print("Save successful")
-                    print("112 \n\n\n\n\n" + str(message.data.transcriptData))
+                    # print("112 \n\n\n\n\n" + str(message.data.transcriptData))
                     
-                    print("999 " + str(client.channel.transcript_data))
+                    # print("999 " + str(client.channel.transcript_data))
                     
                     await self.send(text_data=message.to_json())
                     await client.channel.broadcast(message.to_json(), ignore=[client])

@@ -41,6 +41,7 @@ import { adaptGroups } from "./features/workspace/utils/adaptGroups"
 import { save } from "./features/workspace/redux/workspaceSlice"
 import { RootState } from "./redux/store"
 
+
 const BaseStyle = createGlobalStyle`
     body {
         font-family: Inter, system-ui, Helvetica, Arial, sans-serif;
@@ -177,6 +178,8 @@ function App() {
 
                 case MessageType.SaveTranscript:
                     console.log("Save response received");
+                    if (JOB_ID) socket.send(new LoadJobMessage(JOB_ID));
+
                     break
 
                 default:

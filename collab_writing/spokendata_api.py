@@ -33,14 +33,14 @@ class SpokenDataAPI:
     def get_groups(self, job_id):
         response = requests.get(self._url(f'jobs/{job_id}/transcript'), headers=self._default_headers)
         self._check_response(response)
-        print("312 " + str(response.json()["groups"]))
+        # print("312 " + str(response.json()["groups"]))
         return response.json()["groups"]
     
     def put_transcript(self, job_id: str, transcript_data: dict):
         """Update transcript data for a job"""
         url = self._url(f'jobs/{job_id}/transcript')
         
-        print("311 " + str(transcript_data) + " " + str(url))
+        # print("311 " + str(transcript_data) + " " + str(url))
         
         response = requests.put(
             url,

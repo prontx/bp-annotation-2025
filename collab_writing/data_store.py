@@ -31,7 +31,7 @@ class JobChannel:
         self.job_data = api.get_job(self.job_id)
         self.transcript_data = api.get_transcript(self.job_id)
         self.group_data = api.get_groups(self.job_id)
-        print("211" + str(self.transcript_data))
+        # print("211" + str(self.transcript_data))
 
     async def add_client(self, client: JobClient):
         client.channel = self
