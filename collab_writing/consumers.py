@@ -71,6 +71,23 @@ class JobClientConsumer(AsyncWebsocketConsumer):
                     print(f"Save failed: {str(e)}")
                     raise
                 
+            elif isinstance(message, DeleteSegmentMessage):
+                message: DeleteSegmentMessage = message
+                print("Handling segment deletion")
+                client = store.job_manager.get_client(self)
+                if not client or not client.channel:
+                    print("No client/channel found")
+                    return
+
+                try:
+                    client.channel.delete_segment(message.data.transcriptData)
+                    print("Segment deletion successful")
+                    await self.send(text_data=message.to_json())
+                    await client.channel.broadcast(message.to_json(), ignore=[client])
+                    
+                except Exception as e:
+                    print(f"Segment deletion failed: {str(e)}")
+                    raise
 
                 # await self.send(response.to_json())  
             

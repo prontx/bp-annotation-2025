@@ -32,10 +32,10 @@ import { useHotkeys } from "./features/workspace/hooks/useHotkeys"
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { socket } from "./features/connection/websocket"
-import { BaseMessage, LoadJobMessage, MessageType, SaveTranscriptMessage } from "./features/connection/messages"
+import { BaseMessage, DeleteSegmentMessage, LoadJobMessage, MessageType, SaveTranscriptMessage } from "./features/connection/messages"
 import { useAppDispatch } from "./redux/hooks"
 import { Job } from "./features/workspace/types/Job"
-import { loadTranscriptData, selectGroupsRaw, selectSegments, selectTranscriptStatus } from "./features/transcript/redux/transcriptSlice"
+import { deleteSegment, loadTranscriptData, selectGroupsRaw, selectSegments, selectTranscriptStatus } from "./features/transcript/redux/transcriptSlice"
 import { TranscriptLoadingParams } from "./features/transcript/types/Transcript"
 import { adaptGroups } from "./features/workspace/utils/adaptGroups"
 import { save } from "./features/workspace/redux/workspaceSlice"
@@ -147,11 +147,21 @@ function App() {
 
                 document.addEventListener('update-segment-entities', handleUpdateEntities)
 
+
+                const handleSegmentDelete = (e: Event) => { 
+                    const customEvent = e as CustomEvent<{ entitiez: any; }>;
+                    console.log("411 ", customEvent.detail.entitiez);
+                    socket.send(new DeleteSegmentMessage(JOB_ID, customEvent.detail.entitiez, {}))
+                }
+                document.addEventListener('delete-segment', handleSegmentDelete)
+
+
                 // Cleanup
                 return () => {
                     document.removeEventListener('manual-save', handleManualSave)
                     document.removeEventListener('change-segment-text', handleSegmentEdit)
                     document.removeEventListener('update-segment-entities', handleUpdateEntities)
+                    document.removeEventListener('delete-segment', handleSegmentDelete)
                 }
             }
         }

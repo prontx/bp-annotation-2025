@@ -181,6 +181,7 @@ export const transcriptSlice = createSlice({
             if (idx >= 0) {
                 state.segments.keys.splice(idx, 1);
             }
+            const backup = state.segments.entities[segmentID];
             delete state.segments.entities[segmentID];
         
             // 2. Remove region mapping
@@ -193,6 +194,15 @@ export const transcriptSlice = createSlice({
             if(!regionID) return;
             // 3. Add temporary field to trigger WaveSurfer cleanup
             state.deletedRegions.push(regionID); //
+
+           
+
+            const entitiez = backup; 
+            console.log("Smth is happening" + JSON.stringify(backup))
+
+            document.dispatchEvent(new CustomEvent('delete-segment', {
+                detail: { entitiez }
+            }))
         },
 
         clearDeletedRegions: (state) => {

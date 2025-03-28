@@ -51,79 +51,7 @@ class JobChannel:
                 continue
             
             await client.consumer.send(text_data=message)
-    
-    #async ??        
-    # def save_transcript(self, updated_data: dict):
-    #     api = SpokenDataAPI(api_key=os.getenv('SPOKENDATA_API_KEY'))
-    #     print("777 TRANSSCRIPT BEFORE:" + str(self.transcript_data))
-    #     print("778 " + str(updated_data))
         
-        
-    #     processed_segment = updated_data.copy()
-    #     if isinstance(processed_segment.get('words'), str):
-    #         processed_segment['words'] = [
-    #             {'label': word, 'start': None, 'end': None, 'confidence': None, 'text_tags': []}
-    #             for word in processed_segment['words'].split()
-    #         ]
-        
-    #     response = api.put_transcript(
-    #         job_id=self.job_id,
-    #         transcript_data={
-    #             'speaker_tags': self.transcript_data.get('speaker_tags', []),
-    #             # 'segments': self.transcript_data.get('segments', []),
-    #             'segments': [processed_segment],
-    #             # 'segments': updated_data,
-    #             'groups': self.group_data
-    #         }
-    #     )
-        
-    #     print("779 PUT RESPONSE: " + str(response))
-    #     updated_transscript = api.get_transcript(self.job_id)
-    #     print(f"TRANSSCRIPT AFTER: {updated_transscript}")
-    #     self.transcript_data = updated_transscript
-    #     self.group_data = api.get_groups(self.job_id)
-    #     # print("TRANSSCRIPT AFTER: " + str(self.transcript_data))
-        
-        
-    # def save_transcript(self, updated_data: dict):
-    #     api = SpokenDataAPI(api_key=os.getenv('SPOKENDATA_API_KEY'))
-        
-    #     # Process the updated segment
-    #     updated_segment = updated_data.copy()
-    #     if isinstance(updated_segment.get('words'), str):
-    #         updated_segment['words'] = [
-    #             {'label': word, 'start': None, 'end': None, 'confidence': None, 'text_tags': []}
-    #             for word in updated_segment['words'].split()
-    #         ]
-        
-    #     # Merge with existing transcript structure
-    #     new_transcript = self.transcript_data.copy()
-    #     # print("new_transcript before appending " + str(new_transcript))
-    #     # new_transcript['segments'].append(updated_segment)
-    #     # print("new_transcript after appending " + str(new_transcript))
-        
-    #     print(f"Transcript before insertion: {new_transcript['segments']} \n\n\n The thing we want to insert {updated_segment}")
-        
-    #     new_transcript['segments'].append(updated_segment)  # Array of segments
-    #     new_transcript['groups'] = self.group_data
-        
-    #     print(f"Transcript after insertion: {new_transcript['segments']}")
-        
-    #     response = api.put_transcript(
-    #         job_id=self.job_id,
-    #         transcript_data=new_transcript  # Send merged structure
-    #     )
-        
-    #     # Updating local state after PUT
-    #     self.transcript_data = api.get_transcript(self.job_id)
-    #     self.group_data = api.get_groups(self.job_id)
-        
-    #     # self.transcript_data = new_transcript['segments']
-    #     # self.group_data = new_transcript['groups']
-        
-    #     print(f"992 {self.transcript_data}")
-    
-    
     def save_transcript(self, updated_data: dict):
         api = SpokenDataAPI(api_key=os.getenv('SPOKENDATA_API_KEY'))
 
@@ -172,7 +100,52 @@ class JobChannel:
 
         self.transcript_data = api.get_transcript(self.job_id)
         self.group_data = api.get_groups(self.job_id)
+        
+    def delete_segment(self, deleted_data: dict):
+        api = SpokenDataAPI(api_key=os.getenv('SPOKENDATA_API_KEY'))
 
+        # Process the updated segment
+        deleted_segment = deleted_data.copy()
+        if isinstance(deleted_segment.get('words'), str):
+            deleted_segment['words'] = [
+                {'label': word, 'start': None, 'end': None, 'confidence': None, 'text_tags': []}
+                for word in deleted_segment['words'].split()
+            ]
+
+        new_transcript = self.transcript_data.copy()
+        existing_segments = new_transcript.get('segments', [])
+
+        # Match using time boundaries only (100ms tolerance)
+        match_tolerance = 0.1
+        updated_start = deleted_segment.get('start')
+        updated_end = deleted_segment.get('end')
+
+        # Find deleted segment index
+        found_index = -1
+        for i, seg in enumerate(existing_segments):
+            time_match = (
+                abs(seg.get('start', 0) - updated_start) < match_tolerance and
+                abs(seg.get('end', 0) - updated_end) < match_tolerance
+            )
+            if time_match:
+                found_index = i
+                break
+        
+        # Delete logic
+        if found_index != -1:
+            print(f" Deleting segment at {found_index}")
+            existing_segments.pop(found_index)
+            
+        new_transcript['segments'] = existing_segments
+        new_transcript['groups'] = self.group_data
+
+        response = api.put_transcript(
+            job_id=self.job_id,
+            transcript_data=new_transcript
+        )
+
+        self.transcript_data = api.get_transcript(self.job_id)
+        self.group_data = api.get_groups(self.job_id)
 
 class JobManager:
     def __init__(self):

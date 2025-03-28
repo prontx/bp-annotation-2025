@@ -139,6 +139,8 @@ export const groupingSlice = createSlice({
           ) => {
             const { segmentID, segmentKeys } = action.payload;
             
+            if(!state.startSegment2Group || !state.endSegment2Group) return;
+
             const affectedGroupIDs = new Set<string>([
               ...(state.startSegment2Group[segmentID] || []),
               ...(state.endSegment2Group[segmentID] || []),

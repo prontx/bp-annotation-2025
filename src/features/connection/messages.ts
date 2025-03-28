@@ -2,6 +2,7 @@
 export enum MessageType {
     LoadJob = "LoadJob",
     SaveTranscript = "SaveTranscript",
+    DeleteSegment = "DeleteSegment",
 }
 
 export class BaseMessage {
@@ -60,6 +61,30 @@ export class SaveTranscriptMessage extends BaseMessage {
 
     constructor(job_id: string, transcriptData: object, groupsData: object, jobData?: object) {
         super(MessageType.SaveTranscript, {
+          jobId: job_id,
+          transcriptData: transcriptData,
+          groupsData: groupsData,
+          jobData: jobData,
+        });
+      }
+}
+
+export class DeleteSegmentMessage extends BaseMessage {
+    declare data: {
+        jobData: object
+        jobTranscript: object
+        jobGroups: object
+    } | any
+
+    // constructor(job_id: string, extraData?: object) {
+    //     super(MessageType.SaveTranscript, {
+    //         jobId: job_id,
+    //         ...(extraData || {})
+    //     });
+    // }
+
+    constructor(job_id: string, transcriptData: object, groupsData: object, jobData?: object) {
+        super(MessageType.DeleteSegment, {
           jobId: job_id,
           transcriptData: transcriptData,
           groupsData: groupsData,
