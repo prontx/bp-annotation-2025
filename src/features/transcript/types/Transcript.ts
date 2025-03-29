@@ -21,7 +21,7 @@ interface TranscriptCommon {
 
 export interface TranscriptLoadingParams extends TranscriptCommon {
     speaker_tags?: SpeakerTag[] | null,
-    segments?: SegmentLoadingParams[] | null,
+    segments?: SegmentLoadingParams |  null,
 }
 
 export interface Transcript extends TranscriptCommon {

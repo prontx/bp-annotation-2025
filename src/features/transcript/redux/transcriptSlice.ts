@@ -21,6 +21,7 @@ import { segment2RegionID } from '../utils/segment2RegionID'
 import { adaptSegments } from '../utils/adaptSegments'
 import { adaptSpeakers } from '../utils/adaptSpeakers'
 import { createFetchAsyncThunk } from '../../../utils/createFetchAsyncThunk'
+import { adaptGroups } from '../../workspace/utils/adaptGroups'
 
 
 export const fetchTranscript = createFetchAsyncThunk<TranscriptLoadingParams>("transcript", "transcript")
@@ -324,12 +325,15 @@ export const transcriptSlice = createSlice({
           state.activeSegmentId = null;
         },
         loadTranscriptData: (state, action: PayloadAction<TranscriptLoadingParams>) => {
-            const {segments, speaker_tags, ...transcriptCommon} = action.payload
+            console.log("777 " + JSON.stringify(action.payload))
+            const {segments, speaker_tags, groups, ...transcriptCommon} = action.payload
             const transformedSegments = adaptSegments(segments)
             const transformedTags = adaptSpeakers(speaker_tags)
             state.segments = transformedSegments
             state.speakerTags = transformedTags
             state.status = "success"
+            state.groups = groups
+            console.log("1111: " + JSON.stringify(state.groups) + "\n\n" + JSON.stringify(groups))
         },
         setLastClickedSegmentID: (state, action: PayloadAction<string>) => {
             state.lastCreatedSegmentID = action.payload; // Reuse existing field

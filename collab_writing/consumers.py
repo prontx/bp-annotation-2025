@@ -54,16 +54,7 @@ class JobClientConsumer(AsyncWebsocketConsumer):
                 try:                    
                     # Save using the updated data:
                     client.channel.save_transcript(message.data.transcriptData)
-                    
-                    # message.data.jobData = client.channel.job_data
-                    # message.data.transcriptData = client.channel.transcript_data 
-                    # message.data.groupsData = client.channel.group_data
-                    
-                    print("Save successful")
-                    # print("112 \n\n\n\n\n" + str(message.data.transcriptData))
-                    
-                    # print("999 " + str(client.channel.transcript_data))
-                    
+                    print("Save successful")                    
                     await self.send(text_data=message.to_json())
                     await client.channel.broadcast(message.to_json(), ignore=[client])
 
