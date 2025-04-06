@@ -334,6 +334,10 @@ export const transcriptSlice = createSlice({
             state.status = "success"
             state.groups = groups
             console.log("1111: " + JSON.stringify(state.groups) + "\n\n" + JSON.stringify(groups))
+            console.log("2222" + JSON.stringify(segments) + "\n\n" + JSON.stringify(transformedSegments))
+            document.dispatchEvent(new CustomEvent('load-segments', {
+                detail: { segments, transformedSegments }
+            }))
         },
         setLastClickedSegmentID: (state, action: PayloadAction<string>) => {
             state.lastCreatedSegmentID = action.payload; // Reuse existing field

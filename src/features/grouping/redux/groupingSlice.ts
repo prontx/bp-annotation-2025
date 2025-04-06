@@ -51,6 +51,7 @@ export const groupingSlice = createSlice({
 
             if (action.payload.id){
                 const old = state.groups.entities[action.payload.id]
+                
                 if (old.startSegmentID !== action.payload.startSegmentID)
                     state.startSegment2Group[old.startSegmentID] = state.startSegment2Group[old.startSegmentID].filter(groupID => groupID !== action.payload.id)
                 if (old.endSegmentID !== action.payload.endSegmentID)
@@ -77,12 +78,19 @@ export const groupingSlice = createSlice({
                 }
             }
 
+            console.log("55555 " + JSON.stringify(state.startSegment2Group) + " " + JSON.stringify(state.endSegment2Group)) 
+
             // add new records to {start|end}Segment2Group
             const {startSegmentID, endSegmentID} = action.payload
             addGroupToSegmentMapping(state.startSegment2Group, startSegmentID, id)
             addGroupToSegmentMapping(state.endSegment2Group, endSegmentID, id)
 
-            console.log("Printing groups " + JSON.stringify(state.groups))
+            console.log("Printing groups " + JSON.stringify(state.groups.entities[id]))
+            const gr = state.groups.entities[id]
+
+            document.dispatchEvent(new CustomEvent('save-groups', {
+                detail: { gr }
+            }))
         },
         deleteGroup: (state, action: PayloadAction<{id: string, parentID?: string}>) => {
             const {id, parentID} = action.payload
