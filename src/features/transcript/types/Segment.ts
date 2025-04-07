@@ -1,7 +1,6 @@
 import { Word } from "./Word"
 
 interface SegmentCommon {
-    id?: string;  // Add optional ID
     start: number,
     end: number,
     speaker: string,
