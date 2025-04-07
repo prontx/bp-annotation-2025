@@ -22,27 +22,26 @@ const adaptGroup = (group: GroupLoadingParams, entities: Record<string, Group>, 
     const { start, end, children, ...GroupCommon } = group;
     const id = uuid();
 
-    // const startSegmentID = time2SegmentID(start, segments, "start");
-    // const endSegmentID = time2SegmentID(end, segments, "end");
+    let startSegmentID = time2SegmentID(start, segments, "start");
+    let endSegmentID = time2SegmentID(end, segments, "end");
 
-    
+    // If we can't find exact matches, find the closest segments
+    if (!startSegmentID) {
+        // Find first segment that starts after the group's start time
+        const segment = segments.keys.find(key => segments.entities[key].start >= start);
+        startSegmentID = segment || segments.keys[0];
+    }
 
-    //  // Adding validation
-    //  if (!startSegmentID || !endSegmentID) {
-    //     console.warn(`Skipping invalid group with missing segments (start: ${startSegmentID}, end: ${endSegmentID})`)
-    //     return "" // Return empty ID to skip
-    // }
-
-    const startSegmentID = time2SegmentID(start, segments, "start") || segments.keys[0]; // Fallback to the first segment
-    const endSegmentID = time2SegmentID(end, segments, "end") || segments.keys[segments.keys.length - 1]; // Fallback to the last segment
-
+    if (!endSegmentID) {
+        // Find last segment that ends before the group's end time
+        const matchingSegments = segments.keys.filter(key => segments.entities[key].end <= end);
+        endSegmentID = matchingSegments[matchingSegments.length - 1] || segments.keys[segments.keys.length - 1];
+    }
 
     if (!startSegmentID && !endSegmentID) {
         console.warn(`Skipping invalid group with missing both start and end segments (start: ${startSegmentID}, end: ${endSegmentID})`);
         return ""; // Only deleting the group if both start & end are missing
     }
-    
-
 
     const transformedGroup: Group = {
         ...GroupCommon,

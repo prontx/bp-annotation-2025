@@ -166,12 +166,12 @@ export const groupingSlice = createSlice({
                 group.startSegmentID = newStartID;
                 addGroupToSegmentMapping(state.startSegment2Group, newStartID, groupID);
               }
-          
-              if (group.endSegmentID !== newEndID) {
-                removeGroupFromSegmentMapping(state.endSegment2Group, group.endSegmentID, groupID);
-                group.endSegmentID = newEndID;
-                addGroupToSegmentMapping(state.endSegment2Group, newEndID, groupID);
-              }
+
+                if (newEndID && group.endSegmentID !== newEndID) {
+                    removeGroupFromSegmentMapping(state.endSegment2Group, group.endSegmentID, groupID);
+                    group.endSegmentID = newEndID;
+                    addGroupToSegmentMapping(state.endSegment2Group, newEndID, groupID);
+                }
           
               // Ensure childrenIDs list is updated too
               group.childrenIDs = updatedSegments.slice(1, -1);
