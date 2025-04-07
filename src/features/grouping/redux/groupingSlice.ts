@@ -42,13 +42,9 @@ export const groupingSlice = createSlice({
             state.groups = transformedGroups || {}
             state.startSegment2Group = startSegment2Group
             state.endSegment2Group = endSegment2Group
-            console.log("555 " + JSON.stringify(state) + "\n\n" + JSON.stringify(transformedGroups) + JSON.stringify(startSegment2Group) + JSON.stringify(endSegment2Group))
         },
         createOrUpdateGroup: (state, action: PayloadAction<GroupCreationPayload>) => {
             // remove old records from {start|end}Segment2Group if {start|end}SegmentID changed
-            if (!state.startSegment2Group || !state.endSegment2Group) return;
-            console.log("Group creation!!")
-
             if (action.payload.id){
                 const old = state.groups.entities[action.payload.id]
                 if (old.startSegmentID !== action.payload.startSegmentID)
@@ -81,8 +77,6 @@ export const groupingSlice = createSlice({
             const {startSegmentID, endSegmentID} = action.payload
             addGroupToSegmentMapping(state.startSegment2Group, startSegmentID, id)
             addGroupToSegmentMapping(state.endSegment2Group, endSegmentID, id)
-
-            console.log("Printing groups " + JSON.stringify(state.groups))
         },
         deleteGroup: (state, action: PayloadAction<{id: string, parentID?: string}>) => {
             const {id, parentID} = action.payload

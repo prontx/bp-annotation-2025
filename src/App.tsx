@@ -37,10 +37,9 @@ import { useAppDispatch } from "./redux/hooks"
 import { Job } from "./features/workspace/types/Job"
 import { deleteSegment, loadTranscriptData, selectGroupsRaw, selectSegments, selectTranscriptStatus } from "./features/transcript/redux/transcriptSlice"
 import { TranscriptLoadingParams } from "./features/transcript/types/Transcript"
-import { adaptGroups } from "./features/grouping/utils/adaptGroups"
+import { adaptGroups } from "./features/workspace/utils/adaptGroups"
 import { save } from "./features/workspace/redux/workspaceSlice"
 import { RootState } from "./redux/store"
-import { adaptSegments } from "./features/transcript/utils/adaptSegments"
 
 
 const BaseStyle = createGlobalStyle`
@@ -180,14 +179,7 @@ function App() {
                     dispatch(loadJobData(jobData))
                     dispatch(loadTranscriptData(transcriptData))
                     const groupsData = message.data.groupsData
-                    console.log("444     " + JSON.stringify(groupsData) + "\n\n" + JSON.stringify(transcriptData))
-                
-                    const transformedSegments = adaptSegments(transcriptData.segments as any)
-
-                    const transformedData = adaptGroups(groupsData, transformedSegments)
-                    console.log("888" + JSON.stringify(transformedData))
-
-                    dispatch(loadGroups(transformedData))
+                    dispatch(loadGroups(groupsData))
 
                     console.log("412 " + JSON.stringify(transcriptData))
 
