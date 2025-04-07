@@ -37,18 +37,13 @@ export const groupingSlice = createSlice({
     initialState,
     reducers: {
         loadGroups: (state, action: PayloadAction<{transformedGroups: Lookup<Group>, startSegment2Group: Record<string, string[]>, endSegment2Group: Record<string, string[]>}>) => {
-            console.log("511 " + JSON.stringify(action))
             const { transformedGroups, startSegment2Group, endSegment2Group } = action.payload
-            state.groups = transformedGroups || {}
+            state.groups = transformedGroups
             state.startSegment2Group = startSegment2Group
             state.endSegment2Group = endSegment2Group
-            console.log("555 " + JSON.stringify(state) + "\n\n" + JSON.stringify(transformedGroups) + JSON.stringify(startSegment2Group) + JSON.stringify(endSegment2Group))
         },
         createOrUpdateGroup: (state, action: PayloadAction<GroupCreationPayload>) => {
             // remove old records from {start|end}Segment2Group if {start|end}SegmentID changed
-            if (!state.startSegment2Group || !state.endSegment2Group) return;
-            console.log("Group creation!!")
-
             if (action.payload.id){
                 const old = state.groups.entities[action.payload.id]
                 if (old.startSegmentID !== action.payload.startSegmentID)
@@ -59,17 +54,14 @@ export const groupingSlice = createSlice({
 
             // create or update a group entity
             const id = action.payload.id || uuid()
-            if (state.groups.entities) 
-            {
-                state.groups.entities[id] = {
-                    id: id,
-                    ...action.payload,
-                    childrenIDs: action.payload.id ? state.groups.entities[id].childrenIDs : [],
-                } || {}
+            state.groups.entities[id] = {
+                id: id,
+                ...action.payload,
+                childrenIDs: action.payload.id ? state.groups.entities[id].childrenIDs : [],
             }
             
             // insert key
-            if (!action.payload.id && state.groups.keys){
+            if (!action.payload.id){
                 if (!action.payload.parentID){
                     state.groups.keys.push(id)
                 } else {
@@ -81,8 +73,6 @@ export const groupingSlice = createSlice({
             const {startSegmentID, endSegmentID} = action.payload
             addGroupToSegmentMapping(state.startSegment2Group, startSegmentID, id)
             addGroupToSegmentMapping(state.endSegment2Group, endSegmentID, id)
-
-            console.log("Printing groups " + JSON.stringify(state.groups))
         },
         deleteGroup: (state, action: PayloadAction<{id: string, parentID?: string}>) => {
             const {id, parentID} = action.payload
@@ -145,8 +135,6 @@ export const groupingSlice = createSlice({
           ) => {
             const { segmentID, segmentKeys } = action.payload;
             
-            if(!state.startSegment2Group || !state.endSegment2Group) return;
-
             const affectedGroupIDs = new Set<string>([
               ...(state.startSegment2Group[segmentID] || []),
               ...(state.endSegment2Group[segmentID] || []),
@@ -220,7 +208,7 @@ export const selectSelecting = (state: RootState) => state.grouping.selecting
 export const selectParentStartEndSegmentIDs = (state: RootState) => state.grouping.parentSegmentIDs
 export const selectIsEditing = (state: RootState) => state.grouping.isEditing
 export const selectGroupsByStartSegment = createSelector(
-    (state: RootState) => state.grouping.startSegment2Group || {},
+    (state: RootState) => state.grouping.startSegment2Group,
     (mapping) => (segmentID: string) => mapping[segmentID]
 )
 export const selectStartEndSegment2Group = createSelector(

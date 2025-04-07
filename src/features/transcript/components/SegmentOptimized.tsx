@@ -194,7 +194,7 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                     </div>
                     
                     {/* Tags */}
-                    <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginLeft: "55%" }}>
+                    <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", marginLeft: "50%" }}>
                         {segmentTags.map(tag => (
                             <TagComponent
                                 key={tag.id}

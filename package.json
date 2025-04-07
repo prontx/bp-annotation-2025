@@ -34,9 +34,7 @@
     "react-virtualized": "^9.22.5",
     "styled-components": "^6.0.8",
     "uuid": "^9.0.1",
-    "wavesurfer.js": "^7.3.4",
-    "websocket-ts": "^2.2.1",
-    "ws": "^8.18.1"
+    "wavesurfer.js": "^7.3.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

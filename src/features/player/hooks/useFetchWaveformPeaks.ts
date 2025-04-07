@@ -26,7 +26,6 @@ export const useFetchWaveformPeaks = () => {
 
         const fetchWaveformPeaks = async () => {
             try {
-                console.log("fetching peaks " + url)   
                 const { data } = await axios.get<waveformDataResponse>(url)
                 setPeaks([data.data])
             } catch (err) {
@@ -38,7 +37,3 @@ export const useFetchWaveformPeaks = () => {
 
     return peaks
 }
-
-
-
-

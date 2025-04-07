@@ -32,15 +32,6 @@ import { SegmentTag } from "../types/Tag"
 
 import { selectSegmentTags, toggleSegmentTag, selectSegments, selectActiveSegmentId, resetActiveSegmentId } from "../redux/transcriptSlice";
 
-import {
-    ArrayQueue,
-    ConstantBackoff,
-    Websocket,
-    WebsocketBuilder,
-    WebsocketEvent,
-  } from "websocket-ts";
-
-
 interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
 }
@@ -85,8 +76,6 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
       );
 
 
-
-
       const lastCreatedSegmentID = useSelector(selectLastCreatedSegmentID);
       const prevSegmentCount = usePrevious(segmentIDs.length);
       const lastCreatedIndex = segmentIDs.indexOf(lastCreatedSegmentID);
@@ -95,8 +84,6 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
 
         useEffect(() => {
             if (!lastCreatedSegmentID || !listRef.current) return;
-
-            console.log("611")
         
             // Find index 
             const index = segments.keys.indexOf(lastCreatedSegmentID);
@@ -212,6 +199,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                             segmentID={segmentID}
                             $layer={$layer+1}
                             regionsReloadCallback={() => {
+                                
                                 // waveformRegionsRef.current.getRegions()
                                 // waveformRegionsRef.current.clearRegions()
                                 waveformRegionsRef.current.getRegions().find(region => region.id === segmentID)?.remove()

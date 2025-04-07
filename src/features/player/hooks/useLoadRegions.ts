@@ -35,7 +35,6 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
 
     const containerRef = useRef<HTMLElement | null>(null);
 
-
     
     const mostRecentSpeaker = useSelector(
         (state: RootState) => state.transcript.mostRecentSpeaker

@@ -21,7 +21,6 @@ import { segment2RegionID } from '../utils/segment2RegionID'
 import { adaptSegments } from '../utils/adaptSegments'
 import { adaptSpeakers } from '../utils/adaptSpeakers'
 import { createFetchAsyncThunk } from '../../../utils/createFetchAsyncThunk'
-import { adaptGroups } from '../../workspace/utils/adaptGroups'
 
 
 export const fetchTranscript = createFetchAsyncThunk<TranscriptLoadingParams>("transcript", "transcript")
@@ -141,22 +140,12 @@ export const transcriptSlice = createSlice({
             console.log("updated segment: " + JSON.stringify(segment))
             console.log("entities: " + JSON.stringify(state.segments.entities[key]))
 
-            const entitiez = state.segments.entities[key]
-
-            document.dispatchEvent(new CustomEvent('update-segment-entities', {
-                detail: { entitiez }
-            }))
-
              // ensure keys stay ordered on start change
              if (change.start){
                 state.segments.keys = state.segments.keys.sort((a, b) =>
                     state.segments.entities[a].start - state.segments.entities[b].start
                 )
             }
-
-            console.log("provedena zmena" + JSON.stringify(change))
-
-            // document.dispatchEvent(new CustomEvent('change-segment-text'))
         },
         // deleteSegment: (state, action: PayloadAction<string>) => {
         //     console.log("deletin)")
@@ -177,12 +166,12 @@ export const transcriptSlice = createSlice({
         deleteSegment: (state, action: PayloadAction<string>) => {
             const segmentID = action.payload;
             
+            
             // 1. Remove from Redux state
             const idx = state.segments.keys.findIndex(key => key === segmentID);
             if (idx >= 0) {
                 state.segments.keys.splice(idx, 1);
             }
-            const backup = state.segments.entities[segmentID];
             delete state.segments.entities[segmentID];
         
             // 2. Remove region mapping
@@ -195,15 +184,6 @@ export const transcriptSlice = createSlice({
             if(!regionID) return;
             // 3. Add temporary field to trigger WaveSurfer cleanup
             state.deletedRegions.push(regionID); //
-
-           
-
-            const entitiez = backup; 
-            console.log("Smth is happening" + JSON.stringify(backup))
-
-            document.dispatchEvent(new CustomEvent('delete-segment', {
-                detail: { entitiez }
-            }))
         },
 
         clearDeletedRegions: (state) => {
@@ -320,24 +300,15 @@ export const transcriptSlice = createSlice({
         },   
         setActiveSegmentId: (state, action: PayloadAction<string>) => {
             state.activeSegmentId = action.payload;
-        },
-        resetActiveSegmentId: (state) => {
-          state.activeSegmentId = null;
-        },
-        loadTranscriptData: (state, action: PayloadAction<TranscriptLoadingParams>) => {
-            console.log("777 " + JSON.stringify(action.payload))
-            const {segments, speaker_tags, groups, ...transcriptCommon} = action.payload
-            const transformedSegments = adaptSegments(segments)
-            const transformedTags = adaptSpeakers(speaker_tags)
-            state.segments = transformedSegments
-            state.speakerTags = transformedTags
-            state.status = "success"
-            state.groups = groups
-            console.log("1111: " + JSON.stringify(state.groups) + "\n\n" + JSON.stringify(groups))
-        },
-        setLastClickedSegmentID: (state, action: PayloadAction<string>) => {
-            state.lastCreatedSegmentID = action.payload; // Reuse existing field
-        },
+          },
+          resetActiveSegmentId: (state) => {
+            state.activeSegmentId = null;
+          }, 
+
+
+setLastClickedSegmentID: (state, action: PayloadAction<string>) => {
+    state.lastCreatedSegmentID = action.payload; // Reuse existing field
+},
     },
     extraReducers(builder) {
         builder.addCase(fetchTranscript.pending, (state, _) => {
@@ -354,7 +325,7 @@ export const transcriptSlice = createSlice({
     }
 })
 
-export const { loadTranscriptData, createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, clearDeletedRegions, mergeSegment, mapRegion2Segment, setSpecialChar,
+export const { createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, clearDeletedRegions, mergeSegment, mapRegion2Segment, setSpecialChar,
             setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, setSegmentTagsFromHistory, updateSpeaker, deleteSpeaker, setLastCreatedSegmentID, resetLastCreatedSegmentID, toggleSegmentTag, setActiveSegmentId, resetActiveSegmentId } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript

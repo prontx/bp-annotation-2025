@@ -15,7 +15,6 @@ import Layer from "../../../types/Layer"
 import { useInsertSpecialChars } from "../hooks/useInsertSpecialChars"
 
 
-
 interface SegmentTextProps extends Layer, TextareaHTMLAttributes<HTMLTextAreaElement>{
     segmentID: string,
 }
@@ -59,7 +58,6 @@ const SegmentText: FC<SegmentTextProps> = ({segmentID, ...props}) => {
 
     useEffect(() => {
         setText(words)
-        
     }, [words])
 
     useInsertSpecialChars(textAreaRef, segmentID, text, setText)
@@ -68,15 +66,9 @@ const SegmentText: FC<SegmentTextProps> = ({segmentID, ...props}) => {
         setText(e.target.value)
         if (textAreaRef.current)
             textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`
-
-
     }
 
     const updateGlobalState = (text: string) => {
-        console.log("711 " + segmentID + text)
-        document.dispatchEvent(new CustomEvent('change-segment-text', {
-            detail: { segmentID, text }
-          }))
         dispatch(updateSegment({
             type: "id",
             key: segmentID,

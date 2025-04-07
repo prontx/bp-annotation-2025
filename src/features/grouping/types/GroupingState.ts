@@ -7,12 +7,12 @@ export interface GroupingState {
     selectedSegmentIDs: {
         start: string,
         end: string,
-    },  
+    },
     parentSegmentIDs: {
         start: string,
         end: string,
     },
     groups: Lookup<Group>,
-    startSegment2Group: Record<string, string[]>|null,
-    endSegment2Group: Record<string, string[]>|null,
+    startSegment2Group: Record<string, string[]>,
+    endSegment2Group: Record<string, string[]>,
 }

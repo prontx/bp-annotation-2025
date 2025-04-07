@@ -99,19 +99,6 @@ export const workspaceSlice = createSlice({
             console.log("autosave enabled.")
             state.autosaveEnabled = action.payload
         },
-        loadJobData: (state, action: PayloadAction<Job>) => {
-            const {id, title, duration, user_interface, url} = action.payload
-            state.jobID = id
-            state.title = title
-            state.duration = duration
-            state.loadingStatus = "done"
-            state.groupTags = user_interface?.group_tags || []
-            state.groupTagShortlist = user_interface?.group_tag_shortlist || []
-            if (url){
-                state.url = url
-                console.log("url: " + JSON.stringify(url))
-            }
-        }
     },
     extraReducers(builder) {
         builder.addCase(fetchJob.pending, (state, _) => {
@@ -126,7 +113,6 @@ export const workspaceSlice = createSlice({
             state.groupTagShortlist = user_interface?.group_tag_shortlist || []
             if (url){
                 state.url = url
-                console.log("url: " + JSON.stringify(url))
             }
         }).addCase(fetchJob.rejected, (state, action) => {
             state.loadingStatus = "error"
@@ -163,7 +149,7 @@ export const delayedSave = (delay = 5) => (dispatch: any) => {
 
 
 
-export const { loadJobData, save, saved, enableHistory, historyPush, historyUndo, historyRedo, resetShouldTriggerUpdate, setError, setAutosaveEnabled } = workspaceSlice.actions
+export const { save, saved, enableHistory, historyPush, historyUndo, historyRedo, resetShouldTriggerUpdate, setError, setAutosaveEnabled } = workspaceSlice.actions
 
 export const selectJobID = (state: RootState) => state.workspace.jobID
 export const selectManualSave = (state: RootState) => state.workspace.manualSave
