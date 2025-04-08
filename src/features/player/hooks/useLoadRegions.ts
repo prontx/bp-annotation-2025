@@ -46,14 +46,14 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
      // Select `region2ID` from Redux state
      const region2ID = useSelector((state: RootState) => state.transcript.region2ID);
 
-     const deletedRegions = useSelector((state: RootState) => state.transcript.deletedRegions);
+    const deletedRegions = useSelector((state: RootState) => state.transcript.deletedRegions);
 
     // handle color updates
     useEffect(() => {
         renderedSegments.current.clear();
         waveformRegionsRef.current.clearRegions();
         loadVisibleRegions();
-    }, [speaker2color]); 
+    }, [speaker2color, segments.entities]); 
 
     // Function to load visible regions
     const loadVisibleRegions = useCallback(() => {
