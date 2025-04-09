@@ -44,6 +44,15 @@ const initialState: Transcript = {
     mostRecentSpeaker: "",
     deletedRegions: [],
     lastCreatedSegmentID: "",
+    specialChars: {
+        default: [
+            'ḁ́', 'a̬', 'á̬', 'e̬', 'é̬', 'ẹ', 'ẹ́', 'o̬', 'ó̬', 
+            'ọ', 'ọ́', 'u̯', 'ə', 'Ḁ́', 'A̬', 'Á̬', 'E̬', 'É̬',
+            'Ẹ', 'Ẹ́', 'O̬', 'Ó̬', 'Ọ', 'Ọ́', 'U̯', 'Ə', 'ł', 
+            'ł́', 'Ł', 'Ł́', '’', '„', '[]', '{}', '*', '#', '–', '…', '‿'
+        ],
+        custom: JSON.parse(localStorage.getItem('customSpecialChars') || '[]'),
+    },
 }
 
 export const transcriptSlice = createSlice({
@@ -222,6 +231,21 @@ export const transcriptSlice = createSlice({
         setSpecialChar: (state, action: PayloadAction<string>) => {
             state.specialChar = action.payload
         },
+        addCustomChar: (state, action: PayloadAction<string>) => {
+            if (!state.specialChars.custom.includes(action.payload)) {
+                state.specialChars.custom.push(action.payload);
+                state.specialChar = action.payload;
+                try {
+                    localStorage.setItem('customSpecialChars', JSON.stringify(state.specialChars.custom));
+                }
+                catch(error) {
+                    console.error("Error saving custom special characters to localStorage:", error);
+                }
+            }
+        },
+        removeCustomChar: (state, action: PayloadAction<string>) => {
+            state.specialChars.custom = state.specialChars.custom.filter(c => c !== action.payload);
+        },
         setLastFocusedSegment: (state, action: PayloadAction<string>) => {
             state.lastFocusedSegment = action.payload
         },
@@ -325,7 +349,7 @@ setLastClickedSegmentID: (state, action: PayloadAction<string>) => {
     }
 })
 
-export const { createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, clearDeletedRegions, mergeSegment, mapRegion2Segment, setSpecialChar,
+export const { createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, clearDeletedRegions, mergeSegment, mapRegion2Segment, setSpecialChar, addCustomChar, removeCustomChar,
             setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, setSegmentTagsFromHistory, updateSpeaker, deleteSpeaker, setLastCreatedSegmentID, resetLastCreatedSegmentID, toggleSegmentTag, setActiveSegmentId, resetActiveSegmentId } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript

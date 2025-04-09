@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useState } from "react"
 
 // components
 import NamedContainer from "../../../components/NamedContainer"
@@ -9,10 +9,12 @@ import { clickableBaseStyles } from "../../../style/clickableBaseStyles"
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks"
-import { setSpecialChar } from "../redux/transcriptSlice"
+import { addCustomChar, setSpecialChar } from "../redux/transcriptSlice"
 
 // types
 import Layer from "../../../types/Layer"
+import { useSelector } from "react-redux"
+import { RootState } from "../../../redux/store"
 
 
 const SpecialCharLaylout = styled.div`
@@ -51,56 +53,73 @@ const CharIcon = styled.span<Layer>` ${({theme, $layer}) => css`
 
 const SpecialChars: FC<Layer> = ({$layer}) => {
     const dispatch = useAppDispatch()
+    const [newChar, setNewChar] = useState('');
+    const { default: defaultChars, custom: customChars } = useSelector(
+        (state: RootState) => state.transcript.specialChars
+    );
+
+    // Function to group characters into rows
+    const groupChars = (chars: string[], groupSize = 50) => {
+        const groups = [];
+        for (let i = 0; i < chars.length; i += groupSize) {
+            groups.push(chars.slice(i, i + groupSize));
+        }
+        return groups;
+    };
+
 
     return (
         <NamedContainer name="Speciální znaky" $layer={$layer}>
             <SpecialCharLaylout className="body">
-                <div>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("ḁ́"))}>ḁ́</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("a̬"))}>a̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("á̬"))}>á̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("e̬"))}>e̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("é̬"))}>é̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("ẹ"))}>ẹ</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("ẹ́"))}>ẹ́</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("o̬"))}>o̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("ó̬"))}>ó̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("ọ"))}>ọ</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("ọ́"))}>ọ́</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("u̯"))}>u̯</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("ə"))}>ə</CharIcon>
-                </div>
-                <div>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ḁ́"))}>Ḁ́</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("A̬"))}>A̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Á̬"))}>Á̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("E̬"))}>E̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("É̬"))}>É̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ẹ"))}>Ẹ</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ẹ́"))}>Ẹ́</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("O̬"))}>O̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ó̬"))}>Ó̬</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ọ"))}>Ọ</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ọ́"))}>Ọ́</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("U̯"))}>U̯</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ə"))}>Ə</CharIcon>
-                </div>
-                <div>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("ł"))}>ł</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("ł́"))}>ł́</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ł"))}>Ł</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("Ł́"))}>Ł́</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("’"))}>’</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("„"))}>„</CharIcon>
-                </div>
-                <div>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("[]"))}>{"[]"}</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("{}"))}>{"{}"}</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("*"))}>*</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("#"))}>#</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("–"))}>–</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("…"))}>…</CharIcon>
-                    <CharIcon $layer={$layer+1} onClick={() => dispatch(setSpecialChar("‿"))}>⠀‿⠀</CharIcon>
+                {/* Default Characters */}
+                {groupChars(defaultChars).map((group, groupIndex) => (
+                    <div key={`default-${groupIndex}`}>
+                        {group.map((char) => (
+                            <CharIcon 
+                                key={char}
+                                $layer={$layer + 1} 
+                                onClick={() => dispatch(setSpecialChar(char))}
+                            >
+                                {char}
+                            </CharIcon>
+                        ))}
+                    </div>
+                ))}
+
+                {/* Custom Characters */}
+                {customChars.length > 0 && groupChars(customChars).map((group, groupIndex) => (
+                    <div key={`custom-${groupIndex}`}>
+                        {group.map((char) => (
+                            <CharIcon
+                                key={char}
+                                $layer={$layer + 1}
+                                onClick={() => dispatch(setSpecialChar(char))}
+                            >
+                                {char}
+                            </CharIcon>
+                        ))}
+                    </div>
+                ))}
+
+                {/* Add Custom Character Input */}
+                <div style={{ marginTop: '1rem', display: 'flex', gap: '8px' }}>
+                    <input 
+                        value={newChar}
+                        onChange={(e) => setNewChar(e.target.value)}
+                        placeholder="Vlastní znak"
+                        style={{ flexGrow: 1, height: "25px", background: "#1F1F1F", color: "white", borderRadius: "5px", borderColor:"#1F1F1F",  padding: "4px", marginBottom: "10px" }}
+                    />
+                    <button
+                        onClick={() => {
+                            if (newChar.trim()) {
+                                dispatch(addCustomChar(newChar.trim()));
+                                setNewChar('');
+                            }
+                        }}
+                        style={{ flexShrink: 0, height: "25px", background: "#1F1F1F", color: "white", borderRadius: "5px", borderColor:"#1F1F1F", padding: "4px 8px" }}
+                    >
+                        Přidat
+                    </button>
                 </div>
             </SpecialCharLaylout>
         </NamedContainer>

@@ -31,5 +31,9 @@ export interface Transcript extends TranscriptCommon {
     specialChar: string,
     lastFocusedSegment: string,
     error?: APIErrorResponse,
-    deletedRegions: string[]; 
+    deletedRegions: string[],
+    specialChars: {
+        default: string[];
+        custom: string[];
+    };
 }
