@@ -89,7 +89,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             const segment = segments.entities[key];
             if (!segment) return;
 
-            const speakerColor = speaker2color[segment.speaker];
+            const speakerColor = speaker2color[segment.speaker] || "#000000"; // Fallback grey;
             if (!speakerColor) {
                 console.warn(`Missing color for speaker: ${segment.speaker}`);
                 return;
