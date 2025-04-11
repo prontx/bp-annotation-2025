@@ -41,6 +41,7 @@ const initialState: Workspace = {
     },
     manualSave: false,
     autosaveEnabled: true, 
+    autosaveInterval: 5,
 }
 
 export const workspaceSlice = createSlice({
@@ -99,6 +100,10 @@ export const workspaceSlice = createSlice({
             console.log("autosave enabled.")
             state.autosaveEnabled = action.payload
         },
+        setAutosaveTime: (state, action: PayloadAction<number>) => {
+            console.log("autosave time set.")
+            state.autosaveInterval = action.payload;
+        },
     },
     extraReducers(builder) {
         builder.addCase(fetchJob.pending, (state, _) => {
@@ -149,7 +154,7 @@ export const delayedSave = (delay = 5) => (dispatch: any) => {
 
 
 
-export const { save, saved, enableHistory, historyPush, historyUndo, historyRedo, resetShouldTriggerUpdate, setError, setAutosaveEnabled } = workspaceSlice.actions
+export const { save, saved, enableHistory, historyPush, historyUndo, historyRedo, resetShouldTriggerUpdate, setError, setAutosaveEnabled, setAutosaveTime } = workspaceSlice.actions
 
 export const selectJobID = (state: RootState) => state.workspace.jobID
 export const selectManualSave = (state: RootState) => state.workspace.manualSave
@@ -163,6 +168,7 @@ export const selectAudioURL = (state: RootState) => state.workspace.url.mp3
 export const selectWaveformURL = (state: RootState) => state.workspace.url.waveform_data
 export const selectJobError = (state: RootState) => state.workspace.error
 export const selectAutosaveEnabled = (state: RootState) => state.workspace.autosaveEnabled
+export const selectAutosaveInterval = (state: RootState) => state.workspace.autosaveInterval
 export const selectHistory = createSelector(
     [(state: RootState) => state.workspace.history],
     (history) => history.snapshots[history.pointer]

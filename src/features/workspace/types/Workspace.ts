@@ -11,5 +11,6 @@ export interface Workspace extends Pick<Job, "title"|"duration"|"url"> {
     groupTagShortlist: GroupTag[],
     history: History,
     manualSave: boolean,
-    autosaveEnabled: boolean
+    autosaveEnabled: boolean,
+    autosaveInterval: number,
 }

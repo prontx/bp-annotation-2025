@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { useAppDispatch } from "../../../redux/hooks"
 import { selectSegments, selectSpeakers } from "../../transcript/redux/transcriptSlice"
-import { saved, selectJobID, selectManualSave, setError } from "../redux/workspaceSlice"
+import { saved, selectJobID, selectManualSave, setError, selectAutosaveInterval } from "../redux/workspaceSlice"
 import { selectGroups } from "../../grouping/redux/groupingSlice"
 
 // types
@@ -28,6 +28,7 @@ export const useSave = () => {
     const [changed, setChanged] = useState(false)
     const [autoSave, setAutoSave] = useState(false)
     const manualSave = useSelector(selectManualSave)
+    const autosaveInterval = useSelector(selectAutosaveInterval)
 
     const putTranscript = async () => {
         // transform segments and groups from local representation to API JSON format
@@ -77,9 +78,9 @@ export const useSave = () => {
     useEffect(() => { // auto save signal every 30s
         if (!autosaveEnabled) return
         
-        const intervalID = setInterval(() => setAutoSave(true), 30000)
+        const intervalID = setInterval(() => setAutoSave(true), autosaveInterval*10000)
         return () => clearInterval(intervalID)
-    }, [autosaveEnabled])
+    }, [autosaveEnabled, autosaveInterval])
 
     useEffect(() => { // save listener
         if (autoSave && !autosaveEnabled) {
@@ -95,6 +96,6 @@ export const useSave = () => {
         setChanged(false)
         dispatch(saved())
         setAutoSave(false)
-    }, [autoSave, manualSave, changed, autosaveEnabled])
+    }, [autoSave, manualSave, changed, autosaveEnabled, autosaveInterval])
     
 }

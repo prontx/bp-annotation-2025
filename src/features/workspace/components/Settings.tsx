@@ -12,7 +12,7 @@ import { Checkbox } from "@mui/material"
 import { useAppDispatch } from "../../../redux/hooks"
 import { useSelector } from "react-redux"
 import { selectSkipLength, setSkipLength } from "../../player/redux/playbackSlice"
-import { selectAutosaveEnabled, setAutosaveEnabled } from "../redux/workspaceSlice"
+import { selectAutosaveEnabled, setAutosaveEnabled, setAutosaveTime, selectAutosaveInterval } from "../redux/workspaceSlice"
 
 // types
 import Layer from "../../../types/Layer"
@@ -34,6 +34,7 @@ const Settings: FC<SettingsProps> = ({$layer, closeCallback}) => {
     const dispatch = useAppDispatch()
     const skipLength = useSelector(selectSkipLength)
     const autosaveEnabled = useSelector(selectAutosaveEnabled)
+    const autosaveInterval = useSelector(selectAutosaveInterval)
 
     return (
         <NamedContainer style={{width: "clamp(400px, 800px, 40%)", margin: "64px auto"}} name={"Nastavení"} $layer={$layer} closeCallback={closeCallback}>
@@ -63,6 +64,16 @@ const Settings: FC<SettingsProps> = ({$layer, closeCallback}) => {
                     />
                     <span>Automatické ukládání</span>
                 </div>
+                <span>Doba po jejíž uplynutí se provede automatické uložení:</span>
+                <IntegerInput
+                    value={autosaveInterval}
+                    $width={"6ch"}
+                    updateGlobalValue={(x) => dispatch(setAutosaveTime(x))}
+                    $layer={$layer+1}
+                    min={1}
+                    max={100}
+                />
+                s
             </SettingsLayout>
         </NamedContainer>
     )
