@@ -145,6 +145,28 @@ export const groupingSlice = createSlice({
             affectedGroupIDs.forEach(groupID => {
               const group = state.groups.entities[groupID];
               if (!group) return;
+
+            // Handling single-segment groups 
+            const isSingleSegment = group.startSegmentID === group.endSegmentID && group.childrenIDs.length === 0;
+                
+            if (isSingleSegment) {
+                if (group.startSegmentID === segmentID) {
+                    groupsToDelete.add(groupID);
+                    return;
+                }
+                // checking if the single segment was modified
+                if (!segmentKeys.includes(group.startSegmentID)) {
+                    groupsToDelete.add(groupID);
+                    return;
+                }
+            }
+
+              if (group.startSegmentID === group.endSegmentID && 
+                 group.childrenIDs.length === 0 && 
+                 group.startSegmentID === segmentID) {
+                   groupsToDelete.add(groupID);
+                   return;
+                 }
           
               // Remove segmentID from the group's segment list
               const updatedSegments = [group.startSegmentID, ...group.childrenIDs, group.endSegmentID]

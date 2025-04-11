@@ -34,7 +34,6 @@ const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $totalHei
     // height: 100%;
     left: calc(100% + 16px); /* Moves the marker the right of the segment */
     height: ${$totalHeight}px; /* Adjusted to span multiple segments */
-    margin-right: ${$index + 2}px;
     
     color:#646464;
     

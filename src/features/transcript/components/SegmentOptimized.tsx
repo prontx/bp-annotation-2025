@@ -231,7 +231,7 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
                         onClick={e => e.stopPropagation()}
                     />
                 </div>
-                <div style={{ position: "absolute", left: "94%", top: 0, height: "100%", overflow: "visible", display: "flex" }}>
+                <div style={{ position: "absolute", left: "98%", top: 0, height: "100%", overflow: "visible" }}>
                     {memberGroupIDs && memberGroupIDs.map((id, index) => <SpermMarker key={id} $layer={$layer} groupID={id}  segmentID={segmentID} $index={index}/>)}
                 </div>
 

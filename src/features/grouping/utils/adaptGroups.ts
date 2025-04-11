@@ -25,6 +25,19 @@ const adaptGroup = (group: GroupLoadingParams, entities: Record<string, Group>, 
     let startSegmentID = time2SegmentID(start, segments, "start");
     let endSegmentID = time2SegmentID(end, segments, "end");
 
+    if (!startSegmentID && !endSegmentID) {
+        console.warn(`Skipping invalid group with missing both start and end segments (start: ${startSegmentID}, end: ${endSegmentID})`);
+        return ""; // Only deleting the group if both start & end are missing
+    }
+
+    // Additional check
+    if (startSegmentID === endSegmentID && children.length === 0) {
+        if (!segments.entities[startSegmentID]) {
+            console.warn(`Removing single-segment group with missing segment: ${startSegmentID}`);
+            return "";
+        }
+    }
+
     // If we can't find exact matches, find the closest segments
     if (!startSegmentID) {
         // Find first segment that starts after the group's start time
@@ -38,11 +51,7 @@ const adaptGroup = (group: GroupLoadingParams, entities: Record<string, Group>, 
         endSegmentID = matchingSegments[matchingSegments.length - 1] || segments.keys[segments.keys.length - 1];
     }
 
-    if (!startSegmentID && !endSegmentID) {
-        console.warn(`Skipping invalid group with missing both start and end segments (start: ${startSegmentID}, end: ${endSegmentID})`);
-        return ""; // Only deleting the group if both start & end are missing
-    }
-
+   
     const transformedGroup: Group = {
         ...GroupCommon,
         id: id,
