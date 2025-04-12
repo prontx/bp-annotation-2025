@@ -1,7 +1,6 @@
 import { Word } from "./Word"
 
 interface SegmentCommon {
-    id?: string;  // Add optional ID
     start: number,
     end: number,
     speaker: string,
@@ -10,9 +9,11 @@ interface SegmentCommon {
 }
 
 export interface SegmentLoadingParams extends SegmentCommon {
+    id?: string;
     words: Word[]|null,
 }
 
 export interface Segment extends SegmentCommon {
     words: string,
+    id?: string;
 }

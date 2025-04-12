@@ -12,7 +12,7 @@ import styled from "styled-components"
 // redux
 import { useSelector } from "react-redux"
 import { deleteGroup, selectGroupByID, selectIsEditing, startEditing } from "../redux/groupingSlice"
-import { selectGroupStartEndByIDs } from "../../transcript/redux/transcriptSlice"
+import { selectGroupStartEndByIDs, selectSegments } from "../../transcript/redux/transcriptSlice"
 import { useAppDispatch } from "../../../redux/hooks"
 
 // types
@@ -22,7 +22,7 @@ import { RootState } from "../../../redux/store"
 // utils
 import { time2FormatedString } from "../../../utils/time2FormatedString.ts"
 import { GroupTag } from "../../transcript/types/Tag.ts"
-
+import { getGroupTimes } from "../../transcript/utils/groupTime.ts"
 
 interface GroupExpandableProps extends React.HTMLAttributes<HTMLDivElement>, Layer {
     groupID: string,
@@ -65,6 +65,13 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
     const globalEditing = useSelector(selectIsEditing)
     const [startTime, endTime] = useSelector((state: RootState) => selectGroupStartEndByIDs(state)(data?.startSegmentID, data?.endSegmentID))
     
+    const group = useSelector((state: RootState) => selectGroupByID(state)(groupID));
+    const segments = useSelector(selectSegments);
+    if (!group) return null;
+
+    // Get actual start/end timestamps from segments!!!
+    const { start, end } = getGroupTimes(group, segments)  || { start: 0, end: 0 };
+
     const handleEditing = () => {
         // @ts-ignore if data is undefined, component returns null and the handler is never called
         dispatch(startEditing(data.parentID))
@@ -80,7 +87,7 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
     return (
         <Expandable title={data.title} $layer={$layer} {...props}>
             <GroupBodyContainer><>
-                <p>{time2FormatedString(startTime)} – {time2FormatedString(endTime)}{data.publish && ", zveřejnit"}</p>
+                <p>{time2FormatedString(start)} – {time2FormatedString(end)}{data.publish && ", zveřejnit"}</p>
                 <TagSet tags={data.tags} $layer={$layer+1} />
                 {data.childrenIDs.map(id => <GroupExpandable key={id} groupID={id} $layer={$layer} parentTags={data.tags}/>)}
                 <GroupForm $layer={$layer+1} parentID={groupID} parentTags={data.tags} />

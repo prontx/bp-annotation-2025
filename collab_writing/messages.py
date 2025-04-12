@@ -8,7 +8,6 @@ class MessageType(enum.Enum):
     LoadJob = "LoadJob"
     SaveTranscript = "SaveTranscript"
     DeleteSegment = "DeleteSegment"
-    SaveGroups = "SaveGroups"
 
 @dataclass
 class BaseMessage(DataClassJsonMixin):
@@ -29,7 +28,6 @@ class BaseMessage(DataClassJsonMixin):
             MessageType.LoadJob: LoadJobMessage,
             MessageType.SaveTranscript: SaveTranscriptMessage,
             MessageType.DeleteSegment: DeleteSegmentMessage,
-            MessageType.SaveGroups: SaveGroupsMessage
         }
         
         try:
@@ -47,9 +45,6 @@ class BaseMessage(DataClassJsonMixin):
             
         if message_class == DeleteSegmentMessage:
             data["data"] = DeleteSegmentMessageData.from_dict(data["data"])   
-        
-        if message_class == SaveGroupsMessage:
-            data["data"] = SaveGroupsMessageData.from_dict(data["data"])   
 
         return message_class(**data)
     
@@ -97,18 +92,4 @@ class DeleteSegmentMessageData:
 class DeleteSegmentMessage(BaseMessage):
     messageType: MessageType = MessageType.DeleteSegment
     data: DeleteSegmentMessageData = None
-    
-@dataclass_json
-@dataclass
-class SaveGroupsMessageData:
-    jobId: str = None
-    jobData: Optional[dict] = None
-    transcriptData: Optional[dict] = None
-    groupsData: Optional[dict] = None
-
-@dataclass_json
-@dataclass
-class SaveGroupsMessage(BaseMessage):
-    messageType: MessageType = MessageType.SaveGroups
-    data: SaveGroupsMessageData = None
 

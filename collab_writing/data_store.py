@@ -146,31 +146,6 @@ class JobChannel:
 
         self.transcript_data = api.get_transcript(self.job_id)
         self.group_data = api.get_groups(self.job_id)
-        
-    def save_groups(self, updated_groups: list):
-        api = SpokenDataAPI(api_key=os.getenv('SPOKENDATA_API_KEY'))
-        
-        try:
-            # Get current transcript data
-            current_transcript = api.get_transcript(self.job_id)
-            
-            # Update groups while preserving other data
-            response = api.put_transcript(
-                job_id=self.job_id,
-                transcript_data={
-                    'speaker_tags': current_transcript.get('speaker_tags', []),
-                    'segments': current_transcript.get('segments', []),
-                    'groups': updated_groups
-                }
-            )
-            
-            # Refresh local state
-            self.transcript_data = api.get_transcript(self.job_id)
-            self.group_data = api.get_groups(self.job_id)
-            
-        except Exception as e:
-            print(f"Error saving groups: {str(e)}")
-            raise
 
 class JobManager:
     def __init__(self):

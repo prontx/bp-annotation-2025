@@ -8,104 +8,94 @@ import { v4 as uuid } from 'uuid'
 import { addGroupToSegmentMapping } from "./segment2GroupManipulations";
 
 
-interface GroupConversionConfig {
-    segments: Lookup<Segment>;
-    strictMode?: boolean;
-}
-
-const TIME_TOLERANCE = 0.01; // 10ms tolerance for timestamp matching
-
-export const convertGroupsForBackend = (
-    frontendGroups: Lookup<Group>,
-    segments: Lookup<Segment>,
-    strictMode: boolean = false
-): GroupLoadingParams[] => {
-    const backendGroups: GroupLoadingParams[] = [];
-    if (!frontendGroups || !frontendGroups.keys) return [];
+const time2SegmentID = (time: number, segments: Lookup<Segment>, type: "start"|"end"): string => {
+    const tolerance = 0.00001;
     
-    frontendGroups.keys.forEach(groupId => {
-        const group = frontendGroups.entities[groupId];
-        const startSegment = segments.entities[group.startSegmentID];
-        const endSegment = segments.entities[group.endSegmentID];
-
-        if (!startSegment || !endSegment) {
-            if (strictMode) {
-                console.error(`Missing segments for group ${groupId}`);
-                return;
-            }
-            console.warn(`Group ${groupId} has invalid segments, preserving with fallback`);
-        }
-
-        backendGroups.push({
-            title: group.title,
-            publish: group.publish,
-            tags: group.tags,
-            start: startSegment?.start || 0,
-            end: endSegment?.end || 0,
-            children: convertGroupsForBackend(
-                { 
-                    keys: group.childrenIDs,
-                    entities: frontendGroups.entities
-                }, 
-                segments,
-                strictMode
-            )
-        });
-    });
-
-    return backendGroups;
+    // Find the closest match within tolerated boundaries..
+    return segments.keys.reduce((closestId, currentId) => {
+        const current = segments.entities[currentId];
+        const currentDiff = Math.abs(current[type] - time);
+        const closestDiff = closestId ? Math.abs(segments.entities[closestId][type] - time) : Infinity;
+        
+        return currentDiff < tolerance && currentDiff < closestDiff ? currentId : closestId;
+    }, "");
 };
 
+const adaptGroup = (group: GroupLoadingParams, entities: Record<string, Group>, segments: Lookup<Segment>, parentID: string|undefined): string => {
+    const { start, end, children, ...GroupCommon } = group;
+    const id = group.id || uuid();
 
+    // Find segments within tolerance (0.001 seconds)
+    const startSegments = Object.values(segments.entities).filter(s => 
+        Math.abs(s.start - start) < 0.001
+    );
+    
+    const endSegments = Object.values(segments.entities).filter(s => 
+        Math.abs(s.end - end) < 0.001
+    );
 
+    if (startSegments.length === 0 || endSegments.length === 0) {
+        console.error("Boundary segments not found for group", {
+            group,
+            startSegments,
+            endSegments
+        });
+        return "";
+    }
 
+    // Take the first match 
+    const startSegmentID = startSegments[0].id;
+    const endSegmentID = endSegments[0].id;
+    if (!startSegmentID || !endSegmentID) return "";
 
-export const adaptGroups = (
-    backendGroups: GroupLoadingParams[] | null | undefined,
-    segments: Lookup<Segment>
-) => {
-    const result = {
-        transformedGroups: { keys: [], entities: {} } as Lookup<Group>,
-        startSegment2Group: {} as Record<string, string[]>,
-        endSegment2Group: {} as Record<string, string[]>
+    const transformedGroup: Group = {
+        ...GroupCommon,
+        id,
+        startSegmentID,
+        endSegmentID,
+        parentID,
+        childrenIDs: adaptGroupArr(children, entities, segments, id)
     };
 
-    backendGroups?.forEach(backendGroup => {
-        // Validate required fields first
-        if (!backendGroup.startSegmentID || !backendGroup.endSegmentID) {
-            console.warn(`Skipping group "${backendGroup.title}" - missing segment IDs`);
-            return;
-        }
-
-        const id = uuid();
-        const startSegmentID = backendGroup.startSegmentID;
-        const endSegmentID = backendGroup.endSegmentID;
-
-        // Validate segment existence
-        if (!segments.entities[startSegmentID] || !segments.entities[endSegmentID]) {
-            console.warn(`Skipping group "${backendGroup.title}" - invalid segment references`);
-            return;
-        }
-
-        const group: Group = {
-            id,
-            title: backendGroup.title,
-            startSegmentID,
-            endSegmentID,
-            publish: backendGroup.publish,
-            tags: backendGroup.tags,
-            childrenIDs: backendGroup.childrenIDs || []
-        };
-
-        result.transformedGroups.keys.push(id);
-        result.transformedGroups.entities[id] = group;
-        
-        // Safe to use non-null assertion here after validation
-        (result.startSegment2Group[startSegmentID!] ??= []).push(id);
-        (result.endSegment2Group[endSegmentID!] ??= []).push(id);
-    });
-
-    return result;
+    entities[id] = transformedGroup;
+    return id;
 };
 
 
+const adaptGroupArr = (groupArr: GroupLoadingParams[], entities: Record<string, Group>, segments: Lookup<Segment>, parentID: string|undefined): string[] => {
+    return groupArr
+        .map(rawGroup => adaptGroup(rawGroup, entities, segments, parentID))
+        .filter(id => id !== "") // Filtering out invalid groups
+}
+
+export const adaptGroups = (groups: GroupLoadingParams[]|null|undefined, segments: Lookup<Segment>) => {
+    const transformedGroups: Lookup<Group> = { keys: [], entities: {}, }
+    
+    // console.log("complete print groups:", groups, "segments:", segments, "transformed groups:", transformedGroups)
+
+    if (!groups)   
+        return {transformedGroups: transformedGroups, startSegment2Group: {}, endSegment2Group: {}}
+
+    
+
+    transformedGroups.keys = adaptGroupArr(groups, transformedGroups.entities, segments, undefined)
+
+    const startSegment2Group: Record<string, string[]> = {}
+    const endSegment2Group: Record<string, string[]> = {}
+    for (let groupID in transformedGroups.entities){
+        const group = transformedGroups.entities[groupID]
+        addGroupToSegmentMapping(startSegment2Group, group.startSegmentID, groupID)
+        addGroupToSegmentMapping(endSegment2Group, group.endSegmentID, groupID)
+    }
+
+    console.log("Calling adaptGroups with groups:", JSON.stringify(groups), "segments:", JSON.stringify(segments));
+
+    if (!groups || groups.length === 0) {
+        console.warn("No groups available, keeping existing state.");
+        return { transformedGroups, startSegment2Group, endSegment2Group };
+    }
+    
+
+
+    return {transformedGroups: transformedGroups, startSegment2Group: startSegment2Group, endSegment2Group: endSegment2Group}
+}

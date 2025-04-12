@@ -3,23 +3,27 @@ import { Segment, SegmentLoadingParams } from "../types/Segment"
 import { segmentWords2String } from "../../../utils/segmentWords2String"
 import { v4 as uuid } from 'uuid'
 
-
-export const adaptSegments = (segments: SegmentLoadingParams[] | null | undefined): Lookup<Segment> => {
-    const transformed: Lookup<Segment> = { keys: [], entities: {} };
+export const adaptSegments = (segments: SegmentLoadingParams[]|null|undefined) => {
+    const transformedSegments: Lookup<Segment> = {
+        keys: [],
+        entities: {},
+    }
     
-    segments?.forEach(segment => {
-        // Preserve original ID or generate new one
-        const id = segment.id || uuid();
+    segments?.forEach(segmentRaw => {
+        // If UUID isn't provided, I'll generate my own one.. 
+        const id = segmentRaw.id || `seg-${segmentRaw.start}-${segmentRaw.end}`;
         
-        transformed.entities[id] = {
-            ...segment,
+        const segment: Segment = {
+            ...segmentRaw,
             id,
-            words: segmentWords2String(segment.words),
-            start: Number(segment.start.toFixed(1)),
-            end: Number(segment.end.toFixed(1))
-        };
-        transformed.keys.push(id);
-    });
+            start: Number(segmentRaw.start.toFixed(3)), // More precise rounding
+            end: Number(segmentRaw.end.toFixed(3)),
+            words: segmentWords2String(segmentRaw.words),
+        }
+        
+        transformedSegments.keys.push(id)
+        transformedSegments.entities[id] = segment
+    })
     
-    return transformed;
-};
+    return transformedSegments
+}

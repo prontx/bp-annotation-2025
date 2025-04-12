@@ -128,8 +128,6 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
         dispatch(chooseSegment({id: group.endSegmentID, type: "end"}))
         setPublish(group.publish)
         setTags(group.tags)
-
-        
     }, [group])
     
     const resetState = () => {
@@ -146,8 +144,6 @@ const GroupForm: FC<GroupFormProps> = ({$layer, groupID, parentID, parentTags, s
             setError("Chybí povinná pole!")
             return
         }
-
-        console.log("lorem ipsum" + JSON.stringify(group))
 
         dispatch(createOrUpdateGroup({
             id: groupID,
