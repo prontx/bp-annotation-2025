@@ -176,9 +176,31 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             if (!segment) return;
     
             // Get values from region without overlap constraints
-            const newStart = region.start;
-            const newEnd = region.end;
+            let newStart = region.start;
+            let newEnd = region.end;
     
+            if (!segmentOverlap) {
+                const duration = segment.end - segment.start;
+                newEnd = newStart + duration;
+    
+                const nextSegment = Object.values(segments.entities).find(
+                    other => other !== segment &&
+                    other.start >= newStart && 
+                    other.start < newEnd
+                );
+    
+                const prevSegment = Object.values(segments.entities).find(
+                    other => other !== segment &&
+                    other.end <= newEnd && 
+                    other.end > newStart
+                );
+    
+                if (nextSegment) newStart = Math.min(newStart, nextSegment.start - duration);
+                if (prevSegment) newStart = Math.max(newStart, prevSegment.end);
+                newEnd = newStart + duration;
+            }
+    
+
             // Update region position
             region.setOptions({ start: newStart, end: newEnd });
     
@@ -194,7 +216,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     
             console.log(`Segment moved: ID=${segmentID}, Start=${newStart}, End=${newEnd}`);
         },
-        [region2ID, dispatch, segments]
+        [region2ID, dispatch, segments, segmentOverlap]
     );
 
 
@@ -216,10 +238,28 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             let newEnd = region.end;
             const minDuration = 0.1;
     
-            // Only enforce minimum duration
-            if ((newEnd - newStart) < minDuration) {
-                newEnd = newStart + minDuration;
+            if (!segmentOverlap) {
+                const nextSegment = Object.values(segments.entities).find(
+                    other => other !== segment &&
+                    other.start >= newStart && 
+                    other.start < newEnd
+                );
+    
+                const prevSegment = Object.values(segments.entities).find(
+                    other => other !== segment &&
+                    other.end <= newEnd && 
+                    other.end > newStart
+                );
+    
+                if (nextSegment) newEnd = Math.max(newStart + minDuration, Math.min(newEnd, nextSegment.start));
+                if (prevSegment) newStart = Math.min(newEnd - minDuration, Math.max(newStart, prevSegment.end));
+            } else {
+                // Only enforce minimum duration
+                if ((newEnd - newStart) < minDuration) {
+                    newEnd = newStart + minDuration;
+                }
             }
+
 
             region.setOptions({ start: newStart, end: newEnd });
     
@@ -234,7 +274,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     
             console.log(`Segment updated: ID=${segmentID}, Start=${newStart}, End=${newEnd}`);
         },
-        [region2ID, dispatch, segments]
+        [region2ID, dispatch, segments, segmentOverlap]
     );
     
     
