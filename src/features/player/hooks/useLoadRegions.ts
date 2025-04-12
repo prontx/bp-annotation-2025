@@ -5,7 +5,7 @@ import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
 import { createSegment, mapRegion2Segment, selectSegments, updateSegment, clearDeletedRegions } from "../../transcript/redux/transcriptSlice";
 import { selectSpeaker2Color, resetLastCreatedSegmentID, setActiveSegmentId, resetActiveSegmentId } from "../../transcript/redux/transcriptSlice";
-
+import { selectSegmentOverlapEnabled } from "../../workspace/redux/workspaceSlice";
 
 // WaveSurfer
 import WaveSurfer from "wavesurfer.js";
@@ -47,6 +47,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
      const region2ID = useSelector((state: RootState) => state.transcript.region2ID);
 
     const deletedRegions = useSelector((state: RootState) => state.transcript.deletedRegions);
+    const segmentOverlap = useSelector(selectSegmentOverlapEnabled);
 
     // handle color updates
     useEffect(() => {
@@ -174,34 +175,9 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             const segment = segments.entities[segmentID];
             if (!segment) return;
     
-            const duration = segment.end - segment.start;
-            let newStart = region.start;
-            let newEnd = newStart + duration;
-    
-            // Prevent overlapping with next and previous segments
-            const nextSegment = Object.values(segments.entities).find(
-                (otherSegment) =>
-                    otherSegment !== segment &&
-                    otherSegment.start >= newStart &&
-                    otherSegment.start < newEnd // Overlaps with new position
-            );
-    
-            const prevSegment = Object.values(segments.entities).find(
-                (otherSegment) =>
-                    otherSegment !== segment &&
-                    otherSegment.end <= newEnd &&
-                    otherSegment.end > newStart // Overlaps with new position
-            );
-    
-            if (nextSegment) {
-                newStart = Math.min(newStart, nextSegment.start - duration);
-                newEnd = newStart + duration;
-            }
-    
-            if (prevSegment) {
-                newStart = Math.max(newStart, prevSegment.end);
-                newEnd = newStart + duration;
-            }
+            // Get values from region without overlap constraints
+            const newStart = region.start;
+            const newEnd = region.end;
     
             // Update region position
             region.setOptions({ start: newStart, end: newEnd });
@@ -220,7 +196,6 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         },
         [region2ID, dispatch, segments]
     );
-    
 
 
      // Function to handle region resize and dispatch updates to Redux
@@ -231,71 +206,36 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                 return;
             }
     
-            // Retrieve the segment ID from Redux
             const segmentID = region2ID[region.id];
-
-            console.log("region2ID mapping:", region2ID);
-            console.log("Resizing region:", region.id);
-
-            if (!segmentID) {
-                console.error(`No segment ID found for region ID: ${region.id}`);
-                return;
-            }
+            if (!segmentID) return;
     
-            // Get the segment being resized
             const segment = segments.entities[segmentID];
             if (!segment) return;
     
             let newStart = region.start;
             let newEnd = region.end;
-            const minDuration = 0.1; // Minimum segment length to prevent collapsing
+            const minDuration = 0.1;
     
-            // Find the next segment that starts after this one
-            const nextSegment = Object.values(segments.entities).find(
-                (otherSegment) =>
-                    otherSegment !== segment &&
-                    otherSegment.start >= newStart && // Must be positioned after this one
-                    otherSegment.start < newEnd // Only matters if it overlaps
-            );
-    
-            // Find the previous segment that ends before this one
-            const prevSegment = Object.values(segments.entities).find(
-                (otherSegment) =>
-                    otherSegment !== segment &&
-                    otherSegment.end <= newEnd && // Must be positioned before this one
-                    otherSegment.end > newStart // Only matters if it overlaps
-            );
-    
-            // Adjust newEnd to prevent overlapping into the next segment
-            if (nextSegment) {
-                newEnd = Math.max(newStart + minDuration, Math.min(newEnd, nextSegment.start));
+            // Only enforce minimum duration
+            if ((newEnd - newStart) < minDuration) {
+                newEnd = newStart + minDuration;
             }
-    
-            // Adjust newStart to prevent overlapping into the previous segment
-            if (prevSegment) {
-                newStart = Math.min(newEnd - minDuration, Math.max(newStart, prevSegment.end));
-            }
-    
-            // Apply the corrected values to the region
+
             region.setOptions({ start: newStart, end: newEnd });
     
-            // Dispatch the update
-            dispatch(
-                updateSegment({
-                    type: "region",
-                    key: segmentID,
-                    change: {
-                        start: newStart,
-                        end: newEnd,
-                    },
-                })
-            );
+            dispatch(updateSegment({
+                type: "region",
+                key: segmentID,
+                change: {
+                    start: newStart,
+                    end: newEnd,
+                },
+            }));
     
             console.log(`Segment updated: ID=${segmentID}, Start=${newStart}, End=${newEnd}`);
         },
         [region2ID, dispatch, segments]
     );
-    
     
     
     

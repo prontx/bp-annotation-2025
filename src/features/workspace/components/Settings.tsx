@@ -12,7 +12,7 @@ import { Checkbox } from "@mui/material"
 import { useAppDispatch } from "../../../redux/hooks"
 import { useSelector } from "react-redux"
 import { selectSkipLength, setSkipLength } from "../../player/redux/playbackSlice"
-import { selectAutosaveEnabled, setAutosaveEnabled, setAutosaveTime, selectAutosaveInterval } from "../redux/workspaceSlice"
+import { selectAutosaveEnabled, setAutosaveEnabled, setAutosaveTime, selectAutosaveInterval, setSegmentOverlapEnabled, selectSegmentOverlapEnabled} from "../redux/workspaceSlice"
 
 // types
 import Layer from "../../../types/Layer"
@@ -35,6 +35,7 @@ const Settings: FC<SettingsProps> = ({$layer, closeCallback}) => {
     const skipLength = useSelector(selectSkipLength)
     const autosaveEnabled = useSelector(selectAutosaveEnabled)
     const autosaveInterval = useSelector(selectAutosaveInterval)
+    const segmentOverlapEnabled = useSelector(selectSegmentOverlapEnabled)
 
     return (
         <NamedContainer style={{width: "clamp(400px, 800px, 40%)", margin: "64px auto"}} name={"Nastavení"} $layer={$layer} closeCallback={closeCallback}>
@@ -63,6 +64,21 @@ const Settings: FC<SettingsProps> = ({$layer, closeCallback}) => {
                         }}
                     />
                     <span>Automatické ukládání</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 10 }}>
+                    <Checkbox
+                        checked={segmentOverlapEnabled}
+                        onChange={(e) => dispatch(setSegmentOverlapEnabled(e.target.checked))}
+                        size="small"
+                        sx={{
+                            color: "#646464",
+                            '&.Mui-checked': {
+                                color: "#247BA0",
+                            },
+                            padding: 0
+                        }}
+                    />
+                    <span>Povolení překrývání segmentů</span>
                 </div>
                 <span>Doba po jejíž uplynutí se provede automatické uložení:</span>
                 <IntegerInput

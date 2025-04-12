@@ -13,4 +13,5 @@ export interface Workspace extends Pick<Job, "title"|"duration"|"url"> {
     manualSave: boolean,
     autosaveEnabled: boolean,
     autosaveInterval: number,
+    segmentOverlapEnabled: boolean,
 }
