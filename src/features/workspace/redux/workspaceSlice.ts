@@ -40,9 +40,9 @@ const initialState: Workspace = {
         snapshots: [],
     },
     manualSave: false,
-    autosaveEnabled: true, 
+    autosaveEnabled: localStorage.getItem('autosaveEnabled') === 'true' ? true : true,
     autosaveInterval: 5,
-    segmentOverlapEnabled: false,
+    segmentOverlapEnabled: localStorage.getItem('segmentOverlapEnabled') === 'true' ? true : false,
 }
 
 export const workspaceSlice = createSlice({
@@ -100,6 +100,7 @@ export const workspaceSlice = createSlice({
         setAutosaveEnabled: (state, action: PayloadAction<boolean>) => {
             console.log("autosave enabled.")
             state.autosaveEnabled = action.payload
+            localStorage.setItem('autosaveEnabled', action.payload.toString())
         },
         setAutosaveTime: (state, action: PayloadAction<number>) => {
             console.log("autosave time set.")
@@ -108,6 +109,7 @@ export const workspaceSlice = createSlice({
         setSegmentOverlapEnabled: (state, action: PayloadAction<boolean>) => {
             console.log("segment overlap enabled.")
             state.segmentOverlapEnabled = action.payload
+            localStorage.setItem('segmentOverlapEnabled', action.payload.toString())
         },
     },
     extraReducers(builder) {
