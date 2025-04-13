@@ -83,6 +83,10 @@ export const groupingSlice = createSlice({
             addGroupToSegmentMapping(state.endSegment2Group, endSegmentID, id)
 
             console.log("Printing groups " + JSON.stringify(state.groups))
+            const gr = state.groups.entities[id]
+            document.dispatchEvent(new CustomEvent('save-groups', {
+                detail: { gr }
+            }))
         },
         deleteGroup: (state, action: PayloadAction<{id: string, parentID?: string}>) => {
             const {id, parentID} = action.payload

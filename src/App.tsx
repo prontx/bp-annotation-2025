@@ -32,7 +32,7 @@ import { useHotkeys } from "./features/workspace/hooks/useHotkeys"
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { socket } from "./features/connection/websocket"
-import { BaseMessage, DeleteSegmentMessage, LoadJobMessage, MessageType, SaveTranscriptMessage } from "./features/connection/messages"
+import { BaseMessage, DeleteSegmentMessage, LoadJobMessage, MessageType, SaveGroupsMessage, SaveTranscriptMessage } from "./features/connection/messages"
 import { useAppDispatch } from "./redux/hooks"
 import { Job } from "./features/workspace/types/Job"
 import { deleteSegment, loadTranscriptData, selectGroupsRaw, selectSegments, selectTranscriptStatus } from "./features/transcript/redux/transcriptSlice"
@@ -41,6 +41,8 @@ import { adaptGroups } from "./features/grouping/utils/adaptGroups"
 import { save } from "./features/workspace/redux/workspaceSlice"
 import { RootState } from "./redux/store"
 import { adaptSegments } from "./features/transcript/utils/adaptSegments"
+import { Group } from "./features/grouping/types/Group"
+import { Lookup } from "./types/Lookup"
 
 
 const BaseStyle = createGlobalStyle`
@@ -157,12 +159,22 @@ function App() {
                 document.addEventListener('delete-segment', handleSegmentDelete)
 
 
+                const handleSaveGroups = (e: Event) => {
+                    const customEvent = e as CustomEvent<{ gr: Lookup<Group> }>;
+                    console.log("41111 ", customEvent.detail.gr);
+                     
+                    socket.send(new SaveGroupsMessage(JOB_ID!, {}, customEvent.detail.gr));
+                }
+                document.addEventListener('save-groups', handleSaveGroups);
+
+
                 // Cleanup
                 return () => {
                     document.removeEventListener('manual-save', handleManualSave)
                     document.removeEventListener('change-segment-text', handleSegmentEdit)
                     document.removeEventListener('update-segment-entities', handleUpdateEntities)
                     document.removeEventListener('delete-segment', handleSegmentDelete)
+                    document.removeEventListener('save-groups', handleSaveGroups)
                 }
             }
         }
@@ -198,6 +210,9 @@ function App() {
                     console.log("Save response received");
                     if (JOB_ID) socket.send(new LoadJobMessage(JOB_ID));
 
+                    break
+
+                case MessageType.SaveGroups:
                     break
 
                 default:
