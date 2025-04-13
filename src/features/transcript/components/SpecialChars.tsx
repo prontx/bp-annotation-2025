@@ -20,14 +20,14 @@ import { RootState } from "../../../redux/store"
 const SpecialCharLaylout = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 2px;
     background: #646464;
     border-radius: 1px 1px 10px 10px;
 
     div {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(2ch, 4ch));
-        gap: 4px;
+        gap: 2px;
     }
     `
 
@@ -36,7 +36,7 @@ const CharIcon = styled.span<Layer>` ${({theme, $layer}) => css`
     // background: ${theme.layers[$layer].background};
     background: #1F1F1F;
     text-align: center;
-    padding: 8px 0;
+    padding: 4px 0;
     font-family: Arial;
     color: white;
     
@@ -59,7 +59,7 @@ const SpecialChars: FC<Layer> = ({$layer}) => {
     );
 
     // Function to group characters into rows
-    const groupChars = (chars: string[], groupSize = 50) => {
+    const groupChars = (chars: string[], groupSize = 60) => {
         const groups = [];
         for (let i = 0; i < chars.length; i += groupSize) {
             groups.push(chars.slice(i, i + groupSize));

@@ -90,7 +90,7 @@ const SideBar = styled.aside`
     ${scrollableBaseStyles}
     display: flex;
     flex-direction: column;
-    gap: 38px;
+    gap: 18px;
 `
 
 function App() {
