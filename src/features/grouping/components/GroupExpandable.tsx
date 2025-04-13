@@ -64,7 +64,8 @@ const GroupExpandable: FC<GroupExpandableProps> = ({$layer, groupID, parentTags,
     const [isEditing, setIsEditing] = useState(false)
     const globalEditing = useSelector(selectIsEditing)
     const [startTime, endTime] = useSelector((state: RootState) => selectGroupStartEndByIDs(state)(data?.startSegmentID, data?.endSegmentID))
-    
+    if (startTime == null || endTime == null) return;
+
     const handleEditing = () => {
         // @ts-ignore if data is undefined, component returns null and the handler is never called
         dispatch(startEditing(data.parentID))

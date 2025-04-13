@@ -61,7 +61,7 @@ const StartEndSelection: FC<Layer> = ({$layer}) => {
             >
                 {(selecting === "start")
                     ? "Výběr..."
-                    : (startSegmentID && startTime)
+                    : (startSegmentID && typeof startTime === 'number')
                     ? time2FormatedString(startTime)
                     : "Zvolit začátek"}
             </Button>

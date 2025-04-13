@@ -412,11 +412,17 @@ export const selectStartEndTimeBySegmentIDs = createSelector(
 export const selectGroupStartEndByIDs = createSelector(
     selectSegmentEntities,
     (entities) => (startID: string|undefined, endID: string|undefined) => {
-        if (!startID || !endID)
-            return [-1, -1]
-        return [entities[startID]?.start || -1, entities[endID]?.end || -1]
+        if (!startID || !endID) return [null, null]
+        // This right here used to return -1 which was a problem when the first segment 
+        // got clicked on.. it couldn't be selected. This is why I'm returning null instead of -1
+        // in case of error.
+        return [
+            entities[startID]?.start ?? null, 
+            entities[endID]?.end ?? null
+        ]
     }
 )
+
 export const selectSpeakerByID = createSelector(
     selectSpeakers,
     (speakers) => (id: string|undefined) => speakers.find(speaker => speaker.id === id)
