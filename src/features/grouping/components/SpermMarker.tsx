@@ -6,7 +6,7 @@ import styled, { css } from "styled-components"
 // redux
 import { useSelector } from "react-redux"
 import { selectGroupByID } from "../redux/groupingSlice"
-import { selectGroupLen } from "../../transcript/redux/transcriptSlice"
+// import { selectGroupLen } from "../../transcript/redux/transcriptSlice"
 
 // types
 import { RootState } from "../../../redux/store"
@@ -26,7 +26,7 @@ interface StyledMarkerProps extends Layer {
     $index: number,
 }
 
-const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $totalHeight, $index}) => css`
+const StyledMarker = styled.div<StyledMarkerProps>` ${({theme, $layer, $totalHeight}) => css`
     border-radius: 16px;
     overflow: hidden;
     position: relative;

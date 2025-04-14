@@ -1,4 +1,4 @@
-import { FC, useRef, useEffect, useState } from "react"
+import { FC, useRef, useEffect} from "react"
 
 // hooks
 import useWavesurfer from "../hooks/useWavesurfer"

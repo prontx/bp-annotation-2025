@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../redux/hooks";
 import { deleteSegment, mergeSegment, selectSegmentByID, selectSegmentIDs } from "../redux/transcriptSlice";
 import { playPauseSegment, selectIsPlaying, setTime } from "../../player/redux/playbackSlice";
-import { selectGroupsByStartSegment, selectIsEditing, selectStartEndSegmentIDs, updateGroupSegmentReferences, deleteGroup } from "../../grouping/redux/groupingSlice";
+import { selectGroupsByStartSegment, selectIsEditing, selectStartEndSegmentIDs, updateGroupSegmentReferences } from "../../grouping/redux/groupingSlice";
 
 // types
 import type Layer from "../../../types/Layer"

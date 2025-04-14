@@ -1,10 +1,10 @@
 import React, { FC, HTMLAttributes, useState, useEffect } from "react"
-import { List, AutoSizer, CellMeasurer, CellMeasurerCache } from "react-virtualized"
+import { List, AutoSizer, CellMeasurer, CellMeasurerCache, AutosizerChildProps, ListRowRenderer } from "react-virtualized"
 // components
 import SegmentOptimized from "./SegmentOptimized"
 // import Segment from "./Segment"
 
-import { usePrevious } from "../../grouping/hooks/usePrevious"
+// import { usePrevious } from "../../grouping/hooks/usePrevious"
 
 // styles
 import styled, { css } from "styled-components"
@@ -28,9 +28,9 @@ import { selectJobStatus } from "../../workspace/redux/workspaceSlice";
 
 import { ClipLoader } from 'react-spinners';
 
-import { SegmentTag } from "../types/Tag"
+// import { SegmentTag } from "../types/Tag"
 
-import { selectSegmentTags, toggleSegmentTag, selectSegments, selectActiveSegmentId, resetActiveSegmentId } from "../redux/transcriptSlice";
+import { selectSegmentTags, toggleSegmentTag, selectSegments } from "../redux/transcriptSlice";
 
 interface SegmentLayoutProps extends HTMLAttributes<HTMLElement>, Layer {
     waveformRegionsRef: React.MutableRefObject<RegionsPlugin>
@@ -77,9 +77,9 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
 
 
       const lastCreatedSegmentID = useSelector(selectLastCreatedSegmentID);
-      const prevSegmentCount = usePrevious(segmentIDs.length);
-      const lastCreatedIndex = segmentIDs.indexOf(lastCreatedSegmentID);
-      const activeSegmentId = useSelector(selectActiveSegmentId);
+    //   const prevSegmentCount = usePrevious(segmentIDs.length);
+    //   const lastCreatedIndex = segmentIDs.indexOf(lastCreatedSegmentID);
+    //   const activeSegmentId = useSelector(selectActiveSegmentId);
   
 
         useEffect(() => {
@@ -134,7 +134,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     return (
         <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHoverID("")}>
             <AutoSizer>
-                {({ width, height }) => (
+                {({ width, height } : AutosizerChildProps) => (
                 <div className="list">
                        <List
                     ref={listRef}
@@ -143,7 +143,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                     rowHeight={cellCache.current.rowHeight}
                     deferredMeasurementCache={cellCache.current}
                     rowCount={segmentIDs.length}
-                    rowRenderer={({ key, index, style, parent }) => {
+                    rowRenderer={({ key, index, style, parent } : ListRowRenderer) => {
                         const segmentID = segmentIDs[index];
                         const segment = segments.entities[segmentID];
                     
@@ -155,33 +155,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                               columnIndex={0}
                               rowIndex={index}
                             >
-                              {/* <SegmentOptimized
-                                  key={segmentID}
-                                  className={`
-                                      ${selecting ? "selecting" : ""}
-                                      ${(selectionStartIdx >= 0 && index >= selectionStartIdx && index <= selectionEndIdx) ? "ingroup" : ""}`}
-                                  onClick={selecting ? () => dispatch(chooseSegment({id: segmentID})) : undefined}
-                                  onMouseOver={selecting ? () => setHoverID(segmentID) : undefined}
-                                  segmentID={segmentID}
-                                  $layer={$layer+1}
-                                  regionsReloadCallback={() => waveformRegionsRef.current.clearRegions()}
-                                  style={{
-                                    ...style,
-                                    // paddingBottom: "8px", // <-- Add space between items
-                                    paddingTop: "100px",
-                                    // marginBottom: "100px",
-                                    marginTop: "100px",
-                                    boxSizing: 'border-box',
-                                    
-                                  }}
-                                  onResize={() => {
-                                    updateListLayout();
-                                  }}
-                              /> */}
-
-
-
-{({ measure }) => (
+                    {({ measure } : any) => (
                     <div 
                         style={{ 
                             ...style, 
@@ -208,6 +182,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                             // onResize={measure}  
                             // waveformRegionsRef={waveformRegionsRef} // Pass the ref as a prop
                             onResize={() => {
+                                measure();
                                 updateListLayout();
                               }}
                             style={{

@@ -4,7 +4,7 @@ import { useEffect, useRef, useCallback } from "react";
 import { useAppDispatch } from "../../../redux/hooks";
 import { useSelector } from "react-redux";
 import { createSegment, mapRegion2Segment, selectSegments, updateSegment, clearDeletedRegions } from "../../transcript/redux/transcriptSlice";
-import { selectSpeaker2Color, resetLastCreatedSegmentID, setActiveSegmentId, resetActiveSegmentId } from "../../transcript/redux/transcriptSlice";
+import { selectSpeaker2Color } from "../../transcript/redux/transcriptSlice";
 import { selectSegmentOverlapEnabled } from "../../workspace/redux/workspaceSlice";
 
 // WaveSurfer
@@ -20,12 +20,12 @@ import type { RootState } from "../../../redux/store"
 import { v4 as uuid } from 'uuid'
 
 
-const scrollToSegmentEvent = (segmentID: string) => {
-    const event = new CustomEvent('scrollToSegment', { 
-      detail: { segmentID } 
-    });
-    window.dispatchEvent(event);
-  };
+// const scrollToSegmentEvent = (segmentID: string) => {
+//     const event = new CustomEvent('scrollToSegment', { 
+//       detail: { segmentID } 
+//     });
+//     window.dispatchEvent(event);
+//   };
 
 const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>, 
                         waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
@@ -71,8 +71,8 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         const visibleRangeStart = wavesurfer.current?.getCurrentTime() || 0;
         const containerWidth = wavesurfer.current?.getWrapper().clientWidth || 0;
         const duration = wavesurfer.current?.getDuration() || 0;
-        const pixelsPerSecond = containerWidth / duration;
-        const visibleRangeEnd = visibleRangeStart + containerWidth / pixelsPerSecond;
+        // const pixelsPerSecond = containerWidth / duration;
+        // const visibleRangeEnd = visibleRangeStart + containerWidth / pixelsPerSecond;
 
         if (!speaker2color || Object.keys(speaker2color).length === 0) {
             return;  
@@ -301,7 +301,7 @@ const handleClick = () => {
 
     //  Force region creation if missing
     if (!renderedSegments.current.has(clickedSegment)) {
-        const region = waveformRegionsRef.current.addRegion({
+        waveformRegionsRef.current.addRegion({
             id: `region-${clickedSegment}`, 
             start: segments.entities[clickedSegment].start,
             end: segments.entities[clickedSegment].end,
