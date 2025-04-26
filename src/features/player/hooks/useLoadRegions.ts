@@ -58,74 +58,49 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
 
     // Function to load visible regions
     const loadVisibleRegions = useCallback(() => {
-
         if (!wavesurfer.current) return;
-        const container = wavesurfer.current.getWrapper();
-        if (!container) return;
-    
-        // Track container for resize observer
-        containerRef.current = container;
-
-
-
-        const visibleRangeStart = wavesurfer.current?.getCurrentTime() || 0;
-        const containerWidth = wavesurfer.current?.getWrapper().clientWidth || 0;
-        const duration = wavesurfer.current?.getDuration() || 0;
-        // const pixelsPerSecond = containerWidth / duration;
-        // const visibleRangeEnd = visibleRangeStart + containerWidth / pixelsPerSecond;
-
-        if (!speaker2color || Object.keys(speaker2color).length === 0) {
-            return;  
-        }
-
-
-        // Add 10% padding to visible range
-    const visiblePadding = duration * 0.1;
-    const visibleRange = {
-        start: Math.max(0, visibleRangeStart - visiblePadding),
-        end: Math.min(duration, visibleRangeStart + (containerWidth / (containerWidth / duration)) + visiblePadding)
-    };
-
-        segments.keys.forEach((key) => {
-            const segment = segments.entities[key];
-            if (!segment) return;
-
-            const speakerColor = speaker2color[segment.speaker] || "#000000"; // Fallback grey;
-            if (!speakerColor) {
-                console.warn(`Missing color for speaker: ${segment.speaker}`);
-                return;
-            }
-
-            if (
-                segment.start < visibleRange.end &&
-                segment.end > visibleRange.start &&
-                !renderedSegments.current.has(key)
-            ) {
-                 // Force re-render even if previously rendered
-                renderedSegments.current.delete(key);
-                
-                // Remove existing region if present
-                const existingRegion = waveformRegionsRef.current.getRegions()
-                    .find(r => r.id === region2ID[key]);
-                if (existingRegion) {
-                    existingRegion.remove();
-                }
-
-                // Create new region with updated color
-                const region = waveformRegionsRef.current.addRegion({
-                    start: segment.start,
-                    end: segment.end,
-                    drag: true,
-                    minLength: 0.1,
-                    color: rgba(speakerColor, 0.4), 
-                });
-                
-                dispatch(mapRegion2Segment({ segmentID: key, regionID: region.id }));
-                renderedSegments.current.add(key);
-            }
+        const ws        = wavesurfer.current;
+        const duration  = ws.getDuration();
+        const wrapper   = ws.getWrapper();            // the scroll container
+        if (!wrapper) return;
+     
+        // First we compute pixels per second
+        const pixelsPerSecond = wrapper.scrollWidth / duration;
+        const scrollPx       = wrapper.scrollLeft;
+        // Then the number of pixels visible in the viewport
+        const visibleWidthPx = wrapper.clientWidth;
+     
+        const visibleStartSec = scrollPx / pixelsPerSecond;
+        const visibleEndSec   = (scrollPx + visibleWidthPx) / pixelsPerSecond;
+     
+        const pad   = duration * 0.1;
+        const start = Math.max(0, visibleStartSec - pad);
+        const end   = Math.min(duration, visibleEndSec   + pad);
+     
+        segments.keys.forEach(key => {
+          const seg = segments.entities[key];
+          if (!seg || renderedSegments.current.has(key)) return;
+     
+          if (seg.start < end && seg.end > start) {
+            // Removing any old regions
+            waveformRegionsRef.current
+              .getRegions()
+              .find(r => r.id === region2ID[key])
+              ?.remove();
+     
+            const region = waveformRegionsRef.current.addRegion({
+              start:    seg.start,
+              end:      seg.end,
+              drag:     true,
+              minLength: 0.1,
+              color:    rgba(speaker2color[seg.speaker], 0.4),
+            });
+     
+            dispatch(mapRegion2Segment({ segmentID: key, regionID: region.id }));
+            renderedSegments.current.add(key);
+          }
         });
-    }, [wavesurfer, segments, speaker2color, dispatch, waveformRegionsRef, region2ID]);
-
+      }, [wavesurfer, segments, speaker2color, region2ID, dispatch]);
     
 
     // Function to handle region creation 
