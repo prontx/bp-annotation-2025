@@ -50,11 +50,25 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     const segmentOverlap = useSelector(selectSegmentOverlapEnabled);
 
     // handle color updates
+    // useEffect(() => {
+    //     renderedSegments.current.clear();
+    //     waveformRegionsRef.current.clearRegions();
+    //     loadVisibleRegions();
+    // }, [speaker2color, segments.entities]); 
+
+    // Whenever speaker2color changes, I simply change the color of the region I need
     useEffect(() => {
-        renderedSegments.current.clear();
-        waveformRegionsRef.current.clearRegions();
-        loadVisibleRegions();
-    }, [speaker2color, segments.entities]); 
+        const regions = waveformRegionsRef.current.getRegions();
+            regions.forEach(region => {
+              const segID = region2ID[region.id];
+              if (!segID) return; 
+              const seg = segments.entities[segID];
+              if (!seg) return;
+              const newColor = rgba(speaker2color[seg.speaker], 0.4);
+              region.setOptions({ color: newColor });
+            });
+     }, [speaker2color, region2ID, segments.entities]);
+  
 
     // Function to load visible regions
     const loadVisibleRegions = useCallback(() => {
@@ -100,6 +114,28 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             renderedSegments.current.add(key);
           }
         });
+
+
+        segments.keys.forEach(key => {
+            const seg = segments.entities[key];
+            if (!seg) return;
+        
+            const existingRegion = waveformRegionsRef.current.getRegions()
+              .find(r => r.id === region2ID[key]);
+        
+            // Always update color if region exists
+            if (existingRegion) {
+              existingRegion.setOptions({
+                color: rgba(speaker2color[seg.speaker], 0.4)
+              });
+              return; // Skip recreation since we updated in-place
+            }
+        
+            // Only create new region if it doesn't exist
+            if (seg.start < end && seg.end > start && !renderedSegments.current.has(key)) {
+              // ... existing region creation code ...
+            }
+          });
       }, [wavesurfer, segments, speaker2color, region2ID, dispatch]);
     
 
