@@ -96,7 +96,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
             listRef.current.recomputeGridSize({ rowIndex: index });
         
             setTimeout(() => {
-                listRef.current?.scrollToRow(index);
+                // listRef.current?.scrollToRow(index);
                 dispatch(resetLastCreatedSegmentID());
             }, 50); 
         }, [lastCreatedSegmentID, segments.keys, dispatch]);
