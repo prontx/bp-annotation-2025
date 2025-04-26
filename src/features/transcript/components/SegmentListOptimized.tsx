@@ -45,7 +45,7 @@ const SegmentLayout = styled.section<Layer>` ${({theme, $layer}) => css`
     padding: 8px;
     border-radius: 8px 8px 0 0;
     min-width: 100%;
-
+    overflow: hidden;
     
 `}`
 
@@ -71,7 +71,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
             fixedWidth: true,
             fixedHeight: false,
             minHeight: 81,
-            defaultHeight: 81,
+            defaultHeight: 116,
         })
       );
 
@@ -128,6 +128,19 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
             )  
     }  
 
+    const handleScroll = ({ scrollTop }) => {
+        if (!listRef.current) return;
+        // Figure out roughly which row you’re over
+        const estimatedIdx = Math.floor(scrollTop / cellCache.current.defaultHeight);
+        // Kick off measurements for the next N rows
+        for (let i = estimatedIdx; i < estimatedIdx + 20; i++) {
+          if (cellCache.current.has(i, 0)) continue;
+          cellCache.current.clear(i, 0);          // force fresh measure
+          listRef.current.recomputeRowHeights(i);
+        }
+        listRef.current.forceUpdateGrid();
+      };
+
 
    
 
@@ -143,6 +156,8 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                     rowHeight={cellCache.current.rowHeight}
                     deferredMeasurementCache={cellCache.current}
                     rowCount={segmentIDs.length}
+                    onScroll={handleScroll}
+                    overscanRowCount={30}
                     rowRenderer={({ key, index, style, parent } : ListRowRenderer) => {
                         const segmentID = segmentIDs[index];
                         const segment = segments.entities[segmentID];
@@ -182,8 +197,10 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                             // onResize={measure}  
                             // waveformRegionsRef={waveformRegionsRef} // Pass the ref as a prop
                             onResize={() => {
-                                measure();
-                                updateListLayout();
+                                // measure();
+                                // updateListLayout();
+                                listRef.current?.recomputeRowHeights(index);
+                                listRef.current?.forceUpdateGrid();
                               }}
                             style={{
                                 height: '100%',  
