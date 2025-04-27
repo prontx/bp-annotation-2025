@@ -8,6 +8,7 @@ export interface Snapshot {
         segments: Lookup<Segment>,
         speaker_tags: SpeakerTag[],
         segment_tags: SegmentTag[],
+        region2ID: Record<string,string>,
     },
     grouping: {
         startSegment2Group: Record<string, string[]>,

@@ -12,6 +12,7 @@ import { historyPush, resetShouldTriggerUpdate, selectHistoryEnable, selectShoul
 import { Snapshot } from "../types/History"
 import { useUndoRedo } from "./useUndoRedo"
 import type RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js"
+import { RootState } from "../../../redux/store"
 
 
 export const useHistory = (waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
@@ -19,6 +20,7 @@ export const useHistory = (waveformRegionsRef: React.MutableRefObject<RegionsPlu
     const segments = useSelector(selectSegments)
     const speakerTags = useSelector(selectSpeakers)
     const segmentTags = useSelector(selectSegmentTags)
+    const region2ID = useSelector((s: RootState) => s.transcript.region2ID)
     const groups = useSelector(selectGroups)
     const {startSegment2Group, endSegment2Group} = useSelector(selectStartEndSegment2Group)
     const status = useSelector(selectTranscriptStatus)
@@ -44,6 +46,7 @@ export const useHistory = (waveformRegionsRef: React.MutableRefObject<RegionsPlu
                 segments: segments,
                 speaker_tags: speakerTags,
                 segment_tags: segmentTags,
+                region2ID: region2ID,
             },
             grouping: {
                 groups: groups,

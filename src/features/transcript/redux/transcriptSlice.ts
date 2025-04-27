@@ -265,6 +265,9 @@ export const transcriptSlice = createSlice({
         setSegmentTagsFromHistory: (state, action: PayloadAction<SegmentTag[]>) => {
             state.segment_tags = action.payload
         },
+        setRegion2IDFromHistory: (state, action: PayloadAction<Record<string, string>>) => {
+            state.region2ID = action.payload
+        },
         updateSpeaker: (state, action: PayloadAction<SpeakerTag>) => {
             if (!state.speakerTags)
                 state.speakerTags = []
@@ -350,7 +353,7 @@ setLastClickedSegmentID: (state, action: PayloadAction<string>) => {
 })
 
 export const { createSegment, updateSegment, updateMostRecentSpeaker, deleteSegment, clearDeletedRegions, mergeSegment, mapRegion2Segment, setSpecialChar, addCustomChar, removeCustomChar,
-            setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, setSegmentTagsFromHistory, updateSpeaker, deleteSpeaker, setLastCreatedSegmentID, resetLastCreatedSegmentID, toggleSegmentTag, setActiveSegmentId, resetActiveSegmentId } = transcriptSlice.actions
+            setLastFocusedSegment, setSegmentsFromHistory, setSpeakersFromHistory, setSegmentTagsFromHistory, setRegion2IDFromHistory,updateSpeaker, deleteSpeaker, setLastCreatedSegmentID, resetLastCreatedSegmentID, toggleSegmentTag, setActiveSegmentId, resetActiveSegmentId } = transcriptSlice.actions
 
 export const selectTranscript = (state: RootState) => state.transcript
 export const selectTranscriptStatus = (state: RootState) => state.transcript.status

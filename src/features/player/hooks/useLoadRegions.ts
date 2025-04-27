@@ -49,12 +49,6 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     const deletedRegions = useSelector((state: RootState) => state.transcript.deletedRegions);
     const segmentOverlap = useSelector(selectSegmentOverlapEnabled);
 
-    // handle color updates
-    // useEffect(() => {
-    //     renderedSegments.current.clear();
-    //     waveformRegionsRef.current.clearRegions();
-    //     loadVisibleRegions();
-    // }, [speaker2color, segments.entities]); 
 
     // Whenever speaker2color changes, I simply change the color of the region I need
     useEffect(() => {
