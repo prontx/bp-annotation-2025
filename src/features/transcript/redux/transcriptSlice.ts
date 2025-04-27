@@ -358,6 +358,7 @@ export const selectSegments = (state: RootState) => state.transcript.segments
 export const selectSpecialChar = (state: RootState) => state.transcript.specialChar
 export const selectLastFocusedSegment = (state: RootState) => state.transcript.lastFocusedSegment
 export const selectSpeakers = (state: RootState) => state.transcript.speakerTags
+// export const selectSegmentTags = (state: RootState) => state.transcript.segment_tags
 export const selectGroupsRaw = (state: RootState) => state.transcript.groups
 export const selectTranscriptError = (state: RootState) => state.transcript.error
 const selectSegmentKeys = (state: RootState) => state.transcript.segments.keys
