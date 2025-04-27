@@ -12,43 +12,45 @@ import { rgba } from "@carbon/colors"
 
 // types
 import type RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js"
+import { RootState } from "../../../redux/store"
 
 
-export const useUndoRedo = (waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
-    const dispatch = useAppDispatch()
-    const current = useSelector(selectHistory)
-    const shouldTriggerUpdate = useSelector(selectShouldTriggerUpdate)
-    const speaker2color       = useSelector(selectSpeaker2Color)
+export const useUndoRedo = (
+  waveformRegionsRef: React.MutableRefObject<RegionsPlugin>) => {
+    const dispatch            = useAppDispatch()
+    const history             = useSelector((s: RootState) => s.workspace.history)
+    const shouldTriggerUpdate = useSelector(selectShouldTriggerUpdate) 
 
     useEffect(() => {
-        if (!current || !shouldTriggerUpdate)
-            return
+      if (!shouldTriggerUpdate) return   
 
-        dispatch(setSegmentsFromHistory(current.transcript.segments))
-        dispatch(setSpeakersFromHistory(current.transcript.speaker_tags))
-        dispatch(setGroupingFromHistory(current.grouping))
-        dispatch(setSegmentTagsFromHistory(current.transcript.segment_tags))
-        dispatch(setRegion2IDFromHistory(current.transcript.region2ID))
-        waveformRegionsRef.current.clearRegions()
+      const snap = history.snapshots[history.pointer]
+      if (!snap) {
+          dispatch(resetShouldTriggerUpdate())
+          return
+      }   
 
-        // Adding every region from the snapshot
-        for (const key of current.transcript.segments.keys) {
-          const seg = current.transcript.segments.entities[key]
-          if (!seg) continue
-        
-          const rid = current.transcript.region2ID[key]
-          waveformRegionsRef.current.addRegion({
-            id:       rid,
-            start:    seg.start,
-            end:      seg.end,
-            drag:     true,
-            minLength: 0.1,
-            color:    rgba(speaker2color[seg.speaker], 0.4),
-          })
-        }
-      
-        dispatch(resetShouldTriggerUpdate())
+      dispatch(setSegmentsFromHistory(snap.transcript.segments))
+      dispatch(setSpeakersFromHistory(snap.transcript.speaker_tags))
+      dispatch(setSegmentTagsFromHistory(snap.transcript.segment_tags))
+      dispatch(setRegion2IDFromHistory(snap.transcript.region2ID))
+      dispatch(setGroupingFromHistory(snap.grouping))   
 
+      //    Mappinh speakerID to colors 
+      const snapshotColorMap: Record<string,string> = {}
+      snap.transcript.speaker_tags.forEach(tag => {
+          snapshotColorMap[tag.id] = tag.color
+      })    
 
-    }, [current, shouldTriggerUpdate, waveformRegionsRef, dispatch, speaker2color])
+      waveformRegionsRef.current.getRegions().forEach(region => {
+          const segID = snap.transcript.region2ID[region.id]
+          if (!segID) return
+          const seg = snap.transcript.segments.entities[segID]
+          if (!seg) return
+          const col = rgba(snapshotColorMap[seg.speaker] || "#000000", 0.4)
+          region.setOptions({ color: col })
+      })    
+
+      dispatch(resetShouldTriggerUpdate())
+    }, [shouldTriggerUpdate, history.snapshots, history.pointer, dispatch, waveformRegionsRef])
 }
