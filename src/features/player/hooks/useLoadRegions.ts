@@ -14,6 +14,8 @@ import RegionsPlugin, {Region} from "wavesurfer.js/plugins/regions";
 // Utils
 // @ts-ignore
 import { rgba } from "@carbon/colors";
+import { rgba as polishedRgba } from 'polished'
+
 
 import type { RootState } from "../../../redux/store"
 
@@ -58,7 +60,12 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
               if (!segID) return; 
               const seg = segments.entities[segID];
               if (!seg) return;
-              const newColor = rgba(speaker2color[seg.speaker], 0.4);
+            //   const newColor = rgba(speaker2color[seg.speaker], 0.4);
+            
+            const hex = speaker2color[seg.speaker]
+            if (!hex) return;
+            const newColor = polishedRgba(hex, 0.4)
+
               region.setOptions({ color: newColor });
             });
      }, [speaker2color, region2ID, segments.entities]);
@@ -96,13 +103,17 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
               .find(r => r.id === region2ID[key])
               ?.remove();
      
+            const hex = speaker2color[seg.speaker]
+            if (!hex) return
             const region = waveformRegionsRef.current.addRegion({
-              start:    seg.start,
-              end:      seg.end,
-              drag:     true,
+              start:     seg.start,
+              end:       seg.end,
+              drag:      true,
               minLength: 0.1,
-              color:    rgba(speaker2color[seg.speaker], 0.4),
-            });
+              color:     polishedRgba(hex, 0.4),
+            })
+
+
      
             dispatch(mapRegion2Segment({ segmentID: key, regionID: region.id }));
             renderedSegments.current.add(key);
@@ -119,9 +130,12 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
         
             // Always update color if region exists
             if (existingRegion) {
-              existingRegion.setOptions({
-                color: rgba(speaker2color[seg.speaker], 0.4)
-              });
+                const hex = speaker2color[seg.speaker]
+                if (hex) {
+                    existingRegion.setOptions({
+                    color: polishedRgba(hex, 0.4)
+                })
+                }
               return; // Skip recreation since we updated in-place
             }
         
