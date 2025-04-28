@@ -3,7 +3,7 @@ import { MinimapPluginOptions } from "wavesurfer.js/plugins/minimap"
 
 export const wavesurferOptions : WaveSurferOptions = {
     normalize: true,
-    waveColor: '#FB3640',
+    waveColor: '#c6c6c6',
     progressColor: '#8d8d8d',
     cursorColor: '#ff0000',
     cursorWidth: 2,
@@ -16,7 +16,7 @@ export const wavesurferOptions : WaveSurferOptions = {
 
 export const minimapOptions : MinimapPluginOptions = { 
     normalize: true,
-    waveColor: '#FB3640',
+    waveColor: '#c6c6c6',
     progressColor: '#8d8d8d',
     cursorColor: '#ff0000',
     cursorWidth: 2,
@@ -30,6 +30,6 @@ export const minimapOptions : MinimapPluginOptions = {
 export const timelineOptions = {
     height: 5,
     style: {
-        color: '#FB3640'
+        color: '#c6c6c6'
     },
 }
