@@ -16,7 +16,6 @@ import RegionsPlugin, {Region} from "wavesurfer.js/plugins/regions";
 import { rgba } from "@carbon/colors";
 import { rgba as polishedRgba } from 'polished'
 
-
 import type { RootState } from "../../../redux/store"
 
 import { v4 as uuid } from 'uuid'
@@ -51,25 +50,12 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     const deletedRegions = useSelector((state: RootState) => state.transcript.deletedRegions);
     const segmentOverlap = useSelector(selectSegmentOverlapEnabled);
 
-
-    // Whenever speaker2color changes, I simply change the color of the region I need
+    // Handling color updates
     useEffect(() => {
-        const regions = waveformRegionsRef.current.getRegions();
-            regions.forEach(region => {
-              const segID = region2ID[region.id];
-              if (!segID) return; 
-              const seg = segments.entities[segID];
-              if (!seg) return;
-            //   const newColor = rgba(speaker2color[seg.speaker], 0.4);
-            
-            const hex = speaker2color[seg.speaker]
-            if (!hex) return;
-            const newColor = polishedRgba(hex, 0.4)
-
-              region.setOptions({ color: newColor });
-            });
-     }, [speaker2color, region2ID, segments.entities]);
-  
+        renderedSegments.current.clear();
+        waveformRegionsRef.current.clearRegions();
+        loadVisibleRegions();
+    }, [speaker2color, segments.entities]); 
 
     // Function to load visible regions
     const loadVisibleRegions = useCallback(() => {
@@ -99,56 +85,33 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
           if (seg.start < end && seg.end > start) {
             // Removing any old regions
             waveformRegionsRef.current
-              .getRegions()
-              .find(r => r.id === region2ID[key])
-              ?.remove();
+                .getRegions().find(r => r.id === region2ID[key])?.remove(); 
+                const hex = speaker2color[seg.speaker]
+                if (!hex) return;
+                const newColor = polishedRgba(hex, 0.4)
      
-            const hex = speaker2color[seg.speaker]
-            if (!hex) return
             const region = waveformRegionsRef.current.addRegion({
-              start:     seg.start,
-              end:       seg.end,
-              drag:      true,
+              start:    seg.start,
+              end:      seg.end,
+              drag:     true,
               minLength: 0.1,
-              color:     polishedRgba(hex, 0.4),
-            })
-
-
+              color:    newColor,
+              
+            });
+            // Tagging the region programatically so that it doesn't get rendered twice:
+            ;(region as any).__programmatic = true;
      
             dispatch(mapRegion2Segment({ segmentID: key, regionID: region.id }));
             renderedSegments.current.add(key);
           }
         });
-
-
-        segments.keys.forEach(key => {
-            const seg = segments.entities[key];
-            if (!seg) return;
-        
-            const existingRegion = waveformRegionsRef.current.getRegions()
-              .find(r => r.id === region2ID[key]);
-        
-            // Always update color if region exists
-            if (existingRegion) {
-                const hex = speaker2color[seg.speaker]
-                if (hex) {
-                    existingRegion.setOptions({
-                    color: polishedRgba(hex, 0.4)
-                })
-                }
-              return; // Skip recreation since we updated in-place
-            }
-        
-            // Only create new region if it doesn't exist
-            if (seg.start < end && seg.end > start && !renderedSegments.current.has(key)) {
-              // ... existing region creation code ...
-            }
-          });
       }, [wavesurfer, segments, speaker2color, region2ID, dispatch]);
     
 
     // Function to handle region creation 
     const handleRegionCreated = useCallback((region: Region) => {
+        // If the region is a newly created one, I skip it.
+        if ((region as any).__programmatic) return;
         const regionEnd = Math.max(region.start + 0.1, region.end);
         
         region.setOptions({
