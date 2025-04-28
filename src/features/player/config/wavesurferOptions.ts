@@ -11,7 +11,7 @@ export const wavesurferOptions : WaveSurferOptions = {
     autoScroll: true,
     autoCenter: false,
     container: '#waveform',
-    height: 80,
+    height: 60,
 }
 
 export const minimapOptions : MinimapPluginOptions = { 
@@ -21,14 +21,14 @@ export const minimapOptions : MinimapPluginOptions = {
     cursorColor: '#ff0000',
     cursorWidth: 2,
     hideScrollbar: true,
-    height: 44,
+    height: 34,
     container: '#minimap',
     interact: true,
     overlayColor: "#6f6f6f",
 }
 
 export const timelineOptions = {
-    height: 5,
+    height: 20,
     style: {
         color: '#c6c6c6'
     },
