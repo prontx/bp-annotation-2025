@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks"
@@ -6,7 +6,7 @@ import { useSelector } from "react-redux"
 import { selectSegmentTags, selectSegments, selectTranscriptStatus } from "../../transcript/redux/transcriptSlice"
 import { selectSpeakers } from "../../transcript/redux/transcriptSlice"
 import { selectGroups, selectStartEndSegment2Group } from "../../grouping/redux/groupingSlice"
-import { historyPush, resetShouldTriggerUpdate, selectHistoryEnable, selectShouldTriggerUpdate } from "../redux/workspaceSlice"
+import { enableHistory, historyPush, resetShouldTriggerUpdate, selectHistoryEnable, selectShouldTriggerUpdate } from "../redux/workspaceSlice"
 
 // types
 import { Snapshot } from "../types/History"
@@ -27,33 +27,53 @@ export const useHistory = (waveformRegionsRef: React.MutableRefObject<RegionsPlu
     const shouldTriggerUpdate = useSelector(selectShouldTriggerUpdate)
     const historyEnable = useSelector(selectHistoryEnable)
 
-    useUndoRedo(waveformRegionsRef)
+    //  The latest snapshot pushed
+    const lastSerializedRef = useRef<string|null>(null)
+    const timerRef = useRef<number>()
 
     useEffect(() => {
-        if (status === "loading" || status === "error" || status === "idle" || status === "")
-            return
+        if (status === "succeeded" && !historyEnable) {
+            dispatch(enableHistory())
+    }
+    }, [status, historyEnable, dispatch])
 
-        if (!historyEnable)
-            return
+    useEffect(() => {
+        if (!historyEnable) return
 
-        if (shouldTriggerUpdate){ // do not add snapshot if history got loaded
+        // undo in progress
+        if (shouldTriggerUpdate) {
             dispatch(resetShouldTriggerUpdate())
             return
         }
 
-        const snapshot: Snapshot = {
+        clearTimeout(timerRef.current)
+
+        timerRef.current = window.setTimeout(() => {
+          const snap: Snapshot = {
             transcript: {
-                segments: segments,
-                speaker_tags: speakerTags,
-                segment_tags: segmentTags,
-                region2ID: region2ID,
+              segments,
+              speaker_tags: speakerTags,
+              segment_tags: segmentTags,
+              region2ID,
             },
             grouping: {
-                groups: groups,
-                startSegment2Group: startSegment2Group,
-                endSegment2Group: endSegment2Group,
+              groups,
+              startSegment2Group,
+              endSegment2Group,
             },
-        }
-        dispatch(historyPush(snapshot))
-    }, [segments, speakerTags, groups, startSegment2Group, endSegment2Group])
+          }
+
+          const ser = JSON.stringify(snap)
+          // Push if DIfferent
+          if (ser !== lastSerializedRef.current) {
+                dispatch(historyPush(snap))
+                lastSerializedRef.current = ser
+          }
+        }, 250)
+
+        return () => clearTimeout(timerRef.current)
+    }, [historyEnable, shouldTriggerUpdate, segments, speakerTags, segmentTags, region2ID,
+      groups, startSegment2Group, endSegment2Group, dispatch])
+
+    useUndoRedo(waveformRegionsRef)
 }

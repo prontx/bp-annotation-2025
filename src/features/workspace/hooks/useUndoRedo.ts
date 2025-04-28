@@ -2,7 +2,7 @@ import { useEffect } from "react"
 
 // redux
 import { useAppDispatch } from "../../../redux/hooks"
-import { useSelector } from "react-redux"
+import { batch, useSelector } from "react-redux"
 import { resetShouldTriggerUpdate, selectHistory, selectShouldTriggerUpdate } from "../redux/workspaceSlice"
 import { setSegmentsFromHistory, setSpeakersFromHistory, setSegmentTagsFromHistory, selectSpeaker2Color, setRegion2IDFromHistory } from "../../transcript/redux/transcriptSlice"
 import { setGroupingFromHistory } from "../../grouping/redux/groupingSlice"
@@ -30,27 +30,29 @@ export const useUndoRedo = (
           return
       }   
 
-      dispatch(setSegmentsFromHistory(snap.transcript.segments))
-      dispatch(setSpeakersFromHistory(snap.transcript.speaker_tags))
-      dispatch(setSegmentTagsFromHistory(snap.transcript.segment_tags))
-      dispatch(setRegion2IDFromHistory(snap.transcript.region2ID))
-      dispatch(setGroupingFromHistory(snap.grouping))   
+      batch(() => {
+          dispatch(setSegmentsFromHistory(snap.transcript.segments))
+          dispatch(setSpeakersFromHistory(snap.transcript.speaker_tags))
+          dispatch(setSegmentTagsFromHistory(snap.transcript.segment_tags))
+          dispatch(setRegion2IDFromHistory(snap.transcript.region2ID))
+          dispatch(setGroupingFromHistory(snap.grouping))   
 
-      //    Mappinh speakerID to colors 
-      const snapshotColorMap: Record<string,string> = {}
-      snap.transcript.speaker_tags.forEach(tag => {
-          snapshotColorMap[tag.id] = tag.color
-      })    
-
-      waveformRegionsRef.current.getRegions().forEach(region => {
-          const segID = snap.transcript.region2ID[region.id]
-          if (!segID) return
-          const seg = snap.transcript.segments.entities[segID]
-          if (!seg) return
-          const col = rgba(snapshotColorMap[seg.speaker] || "#000000", 0.4)
-          region.setOptions({ color: col })
-      })    
-
-      dispatch(resetShouldTriggerUpdate())
+          //    Mappinh speakerID to colors 
+          const snapshotColorMap: Record<string,string> = {}
+          snap.transcript.speaker_tags.forEach(tag => {
+              snapshotColorMap[tag.id] = tag.color
+          })    
+        
+          waveformRegionsRef.current.getRegions().forEach(region => {
+              const segID = snap.transcript.region2ID[region.id]
+              if (!segID) return
+              const seg = snap.transcript.segments.entities[segID]
+              if (!seg) return
+              const col = rgba(snapshotColorMap[seg.speaker] || "#000000", 0.4)
+              region.setOptions({ color: col })
+          })    
+        
+          dispatch(resetShouldTriggerUpdate())
+    })
     }, [shouldTriggerUpdate, history.snapshots, history.pointer, dispatch, waveformRegionsRef])
 }
