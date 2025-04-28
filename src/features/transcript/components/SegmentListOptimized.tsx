@@ -198,7 +198,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                             // waveformRegionsRef={waveformRegionsRef} // Pass the ref as a prop
                             onResize={() => {
                                 // measure();
-                                // updateListLayout();
+                                updateListLayout();
                                 listRef.current?.recomputeRowHeights(index);
                                 listRef.current?.forceUpdateGrid();
                               }}
