@@ -86,7 +86,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
             // Removing any old regions
             waveformRegionsRef.current
                 .getRegions().find(r => r.id === region2ID[key])?.remove(); 
-                const hex = speaker2color[seg.speaker]
+                const hex = speaker2color[seg.speaker] || "#000000"
                 if (!hex) return;
                 const newColor = polishedRgba(hex, 0.4)
      
