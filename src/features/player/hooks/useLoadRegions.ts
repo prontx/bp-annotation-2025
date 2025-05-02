@@ -181,6 +181,12 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
                 if (prevSegment) newStart = Math.max(newStart, prevSegment.end);
                 newEnd = newStart + duration;
             }
+
+            // It fixed situations when in case of dragging one of the waveform regions at the beginning
+            // of the transcript over another region up till the start of the recording, the start timestamp of
+            // the dragged region would be set to -1, rendering as 1:59:59 in the layout.
+            // This is fixed by clamping the value to 0.
+            if (newStart < 0) newStart = 0;
     
 
             // Update region position
