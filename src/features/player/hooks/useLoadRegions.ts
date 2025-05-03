@@ -34,7 +34,7 @@ const useLoadRegions = (wavesurfer: React.MutableRefObject<WaveSurfer | null>,
     const segments = useSelector(selectSegments);
     const speaker2color = useSelector(selectSpeaker2Color);
 
-    const containerRef = useRef<HTMLElement | null>(null);
+    // const containerRef = useRef<HTMLElement | null>(null);
 
     
     const mostRecentSpeaker = useSelector(

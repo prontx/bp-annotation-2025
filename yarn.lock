@@ -1726,6 +1726,11 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/carbon__colors@^10.31.3":
+  version "10.31.3"
+  resolved "https://registry.yarnpkg.com/@types/carbon__colors/-/carbon__colors-10.31.3.tgz#1c8b4c174d358aa25da5fe2f25967c42a44d3ded"
+  integrity sha512-FZiLSh4WeVNZiD5r3YA9FFMHcxLt4SoKfh8FwvsEw7/3jyHlzx2duwWsvl3QXI/eDEqsmxALR4mV4IhlokbbCA==
+
 "@types/hoist-non-react-statics@^3.3.1":
   version "3.3.2"
   resolved "https://registry.npmjs.org/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz"
@@ -1766,6 +1771,14 @@
   resolved "https://registry.npmjs.org/@types/react-transition-group/-/react-transition-group-4.4.10.tgz"
   integrity sha512-hT/+s0VQs2ojCX823m60m5f0sL5idt9SO6Tj6Dg+rdphGPIeJbJ6CxvBYkgkGKrYeDjvIpKTR38UzmtHJOGW3Q==
   dependencies:
+    "@types/react" "*"
+
+"@types/react-virtualized@^9.22.2":
+  version "9.22.2"
+  resolved "https://registry.yarnpkg.com/@types/react-virtualized/-/react-virtualized-9.22.2.tgz#97674f050a85d0f7aab827b3d894f3f1b237922a"
+  integrity sha512-0Eg/ME3OHYWGxs+/n4VelfYrhXssireZaa1Uqj5SEkTpSaBu5ctFGOCVxcOqpGXRiEdrk/7uho9tlZaryCIjHA==
+  dependencies:
+    "@types/prop-types" "*"
     "@types/react" "*"
 
 "@types/react@*", "@types/react@^18.2.15":

@@ -37,7 +37,12 @@ const StyledMenuButton = styled(BaseMenuButton)<Layer>` ${({theme, $layer}) => c
     }
 `}`
 
-export const MenuButton : FC<MenuButtonProps & Layer & {className?: string}> = ({...props}) => {
+interface CustomMenuButtonProps extends MenuButtonProps {
+    style?: React.CSSProperties;
+}
+
+
+export const MenuButton : FC<CustomMenuButtonProps & Layer & {className?: string}> = ({...props}) => {
     const { isExpanded } = useMenuButtonContext()
 
     return (

@@ -112,10 +112,9 @@ const SegmentOptimized: FC<SegmentProps> = ({segmentID, $layer, regionsReloadCal
         // });
         const observer = new ResizeObserver(entries => {
             onResize && onResize();
-            for (let entry of entries) {
+            entries.forEach(() => {
                 setSegmentHeight(container.offsetHeight);
-
-            }
+            });
         });
 
         observer.observe(container);

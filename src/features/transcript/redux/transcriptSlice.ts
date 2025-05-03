@@ -53,6 +53,7 @@ const initialState: Transcript = {
         ],
         custom: JSON.parse(localStorage.getItem('customSpecialChars') || '[]'),
     },
+    activeSegmentId: null,
 }
 
 export const transcriptSlice = createSlice({
@@ -456,6 +457,8 @@ export const selectSpeakerIDBySegment = createSelector(
 )
 export const selectSegmentTags = (state: RootState) => 
     state.transcript.segment_tags || [];
+
+export const selectMostRecentSpeaker = (state: RootState) => state.transcript.mostRecentSpeaker;
 
 export const selectLastCreatedSegmentID = (state: RootState) => state.transcript.lastCreatedSegmentID
 

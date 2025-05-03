@@ -3,8 +3,8 @@ import { useEffect } from "react"
 // redux
 import { useAppDispatch } from "../../../redux/hooks"
 import { batch, useSelector } from "react-redux"
-import { resetShouldTriggerUpdate, selectHistory, selectShouldTriggerUpdate } from "../redux/workspaceSlice"
-import { setSegmentsFromHistory, setSpeakersFromHistory, setSegmentTagsFromHistory, selectSpeaker2Color, setRegion2IDFromHistory } from "../../transcript/redux/transcriptSlice"
+import { resetShouldTriggerUpdate, selectShouldTriggerUpdate } from "../redux/workspaceSlice"
+import { setSegmentsFromHistory, setSpeakersFromHistory, setSegmentTagsFromHistory, setRegion2IDFromHistory } from "../../transcript/redux/transcriptSlice"
 import { setGroupingFromHistory } from "../../grouping/redux/groupingSlice"
 
 
@@ -40,7 +40,8 @@ export const useUndoRedo = (
           //    Mappinh speakerID to colors 
           const snapshotColorMap: Record<string,string> = {}
           snap.transcript.speaker_tags.forEach(tag => {
-              snapshotColorMap[tag.id] = tag.color
+            if (!tag.color) return;
+                snapshotColorMap[tag.id] = tag.color
           })    
         
           waveformRegionsRef.current.getRegions().forEach(region => {
@@ -49,7 +50,7 @@ export const useUndoRedo = (
               const seg = snap.transcript.segments.entities[segID]
               if (!seg) return
               const col = rgba(snapshotColorMap[seg.speaker] || "#000000", 0.4)
-              region.setOptions({ color: col })
+              region.setOptions({ color: col } as any)
           })    
         
           dispatch(resetShouldTriggerUpdate())

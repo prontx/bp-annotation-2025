@@ -81,7 +81,7 @@ const SegmentText: FC<SegmentTextProps> = ({segmentID, ...props}) => {
     }
 
     const updateGlobalState = (text: string) => {
-        debouncedWrite.clear()
+        // debouncedWrite.clear()
         dispatch(updateSegment({
             type: "id",
             key: segmentID,

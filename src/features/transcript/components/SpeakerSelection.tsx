@@ -26,6 +26,7 @@ interface SpeakerSelectionProps extends React.HTMLAttributes<typeof Menu>, Layer
     regionReloadCallback: () => void,
 }
 
+
 const SpeakerSelection: FC<SpeakerSelectionProps> = ({$layer, regionReloadCallback, segmentID, ...props}) => {
     const dispatch = useAppDispatch()
     const speakerID = useSelector((state: RootState) => selectSpeakerIDBySegment(state)(segmentID))

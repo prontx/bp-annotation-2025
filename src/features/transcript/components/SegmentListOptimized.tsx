@@ -1,5 +1,5 @@
 import React, { FC, HTMLAttributes, useState, useEffect } from "react"
-import { List, AutoSizer, CellMeasurer, CellMeasurerCache, AutosizerChildProps, ListRowRenderer } from "react-virtualized"
+import { List, AutoSizer, CellMeasurer, CellMeasurerCache, ListRowProps } from "react-virtualized"
 // components
 import SegmentOptimized from "./SegmentOptimized"
 // import Segment from "./Segment"
@@ -27,6 +27,7 @@ import { useSelectingStartEnd } from "../../grouping/hooks/useSelectingStartEnd"
 import { selectJobStatus } from "../../workspace/redux/workspaceSlice";
 
 import { ClipLoader } from 'react-spinners';
+import { ScrollEventData } from 'react-virtualized';
 
 // import { SegmentTag } from "../types/Tag"
 
@@ -128,7 +129,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
             )  
     }  
 
-    const handleScroll = ({ scrollTop }) => {
+    const handleScroll = ({ scrollTop }: ScrollEventData) => {
         if (!listRef.current) return;
         // Figure out roughly which row you’re over
         const estimatedIdx = Math.floor(scrollTop / cellCache.current.defaultHeight);
@@ -147,7 +148,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
     return (
         <SegmentLayout $layer={$layer} {...props} onMouseLeave={() => setHoverID("")}>
             <AutoSizer>
-                {({ width, height } : AutosizerChildProps) => (
+                {({ width, height } : any) => (
                 <div className="list">
                        <List
                     ref={listRef}
@@ -158,7 +159,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                     rowCount={segmentIDs.length}
                     onScroll={handleScroll}
                     overscanRowCount={30}
-                    rowRenderer={({ key, index, style, parent } : ListRowRenderer) => {
+                    rowRenderer={({ key, index, style, parent } : ListRowProps) => {
                         const segmentID = segmentIDs[index];
                         const segment = segments.entities[segmentID];
                     
@@ -170,7 +171,7 @@ const SegmentList: FC<SegmentLayoutProps> = ({waveformRegionsRef, $layer, ...pro
                               columnIndex={0}
                               rowIndex={index}
                             >
-                    {({ measure } : any) => (
+                    {({ measure: _measure } : any) => (
                     <div 
                         style={{ 
                             ...style, 

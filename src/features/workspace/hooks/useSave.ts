@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 // redux
 import { useSelector } from "react-redux"
 import { useAppDispatch } from "../../../redux/hooks"
-import { selectSegments, selectSpeakers } from "../../transcript/redux/transcriptSlice"
+import { selectActiveSegmentId, selectLastCreatedSegmentID, selectMostRecentSpeaker, selectSegments, selectSpeakers } from "../../transcript/redux/transcriptSlice"
 import { saved, selectJobID, selectManualSave, setError, selectAutosaveInterval } from "../redux/workspaceSlice"
 import { selectGroups } from "../../grouping/redux/groupingSlice"
 
@@ -30,6 +30,11 @@ export const useSave = () => {
     const manualSave = useSelector(selectManualSave)
     const autosaveInterval = useSelector(selectAutosaveInterval)
 
+    const mostRecentSpeaker = useSelector(selectMostRecentSpeaker)
+    const lastCreatedSegmentID = useSelector(selectLastCreatedSegmentID)
+    const activeSegmentId = useSelector(selectActiveSegmentId)
+
+
     const putTranscript = async () => {
         // transform segments and groups from local representation to API JSON format
         const segmentArr = adaptSegments(segments)
@@ -38,6 +43,9 @@ export const useSave = () => {
             speaker_tags: speakers,
             segments: segmentArr,
             groups: groupArr,
+            mostRecentSpeaker,
+            lastCreatedSegmentID,
+            activeSegmentId,
         }
 
         console.log("the groups: " + JSON.stringify(groupArr))
