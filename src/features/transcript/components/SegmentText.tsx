@@ -14,6 +14,8 @@ import { RootState } from "../../../redux/store"
 import Layer from "../../../types/Layer"
 import { useInsertSpecialChars } from "../hooks/useInsertSpecialChars"
 
+import { useDebouncedCallback } from "use-debounce"
+
 
 interface SegmentTextProps extends Layer, TextareaHTMLAttributes<HTMLTextAreaElement>{
     segmentID: string,
@@ -62,13 +64,24 @@ const SegmentText: FC<SegmentTextProps> = ({segmentID, ...props}) => {
 
     useInsertSpecialChars(textAreaRef, segmentID, text, setText)
 
+    const debouncedWrite = useDebouncedCallback((value: string) => {
+        dispatch(updateSegment({
+          type: "id",
+          key: segmentID,
+          change: { words: value },
+        }))
+      }, 250)
+
     const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-        setText(e.target.value)
+        const newValue = e.target.value 
+        setText(newValue)
+        debouncedWrite(newValue)
         if (textAreaRef.current)
             textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`
     }
 
     const updateGlobalState = (text: string) => {
+        debouncedWrite.clear()
         dispatch(updateSegment({
             type: "id",
             key: segmentID,

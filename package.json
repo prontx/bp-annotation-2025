@@ -34,6 +34,7 @@
     "react-toastify": "^10.0.5",
     "react-virtualized": "^9.22.5",
     "styled-components": "^6.0.8",
+    "use-debounce": "^10.0.4",
     "uuid": "^9.0.1",
     "wavesurfer.js": "^7.3.4"
   },
